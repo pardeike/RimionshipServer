@@ -1,0 +1,41 @@
+using Flurl;
+using Flurl.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+
+namespace RimionshipServer.Services
+{
+	public class UserInfoService
+	{
+		private readonly IConfiguration _configuration;
+		private readonly TokenProvider _tokenProvider;
+		private readonly ILogger<UserInfoService> _logger;
+
+		public UserInfoService(IConfiguration configuration, TokenProvider tokenProvider, ILogger<UserInfoService> logger)
+		{
+			_configuration = configuration;
+			_tokenProvider = tokenProvider;
+			_logger = logger;
+		}
+
+		public async Task<UserInfo> RunAsync(string userid)
+		{
+			var clientid = _configuration["Twitch:ClientId"];
+			var token = _tokenProvider.AccessToken;
+
+			_logger.LogWarning($"clientid = {clientid}");
+			_logger.LogWarning($"token = {token}");
+
+			var result = await "https://api.twitch.tv/helix/users/follows"
+				 .SetQueryParam("to_id", userid)
+				 .SetQueryParam("first", 100)
+				 .WithHeader("Authorization", $"Bearer {token}")
+				 .WithHeader("Client-ID", clientid)
+				 .GetJsonAsync<UserInfoWrapper>();
+
+			_logger.LogWarning($"result = {result.Info}");
+			return result.Info;
+		}
+	}
+}
