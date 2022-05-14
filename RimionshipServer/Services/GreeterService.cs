@@ -1,17 +1,16 @@
-﻿using Grpc.Core;
+using Grpc.Core;
 using Helloworld;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace RimionshipServer
 {
-	[Authorize]
+	//[Authorize]
 	public class GreeterService : Greeter.GreeterBase
 	{
-		private readonly ILogger<APIService> _logger;
+		private readonly ILogger<GreeterService> _logger;
 
-		public GreeterService(ILogger<APIService> logger)
+		public GreeterService(ILogger<GreeterService> logger)
 		{
 			_logger = logger;
 		}

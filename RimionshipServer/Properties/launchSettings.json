@@ -1,12 +1,12 @@
 {
-  "profiles": {
-    "RimionshipServer": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "dotnetRunMessages": "true",
-      "applicationUrl": "https://localhost:5001"
-    }
-  }
+	"profiles": {
+		"RimionshipServer": {
+			"commandName": "Project",
+			"externalUrlConfiguration": true,
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development"
+			},
+			"dotnetRunMessages": "true"
+		}
+	}
 }
