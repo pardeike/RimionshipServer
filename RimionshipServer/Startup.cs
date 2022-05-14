@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,18 +20,19 @@ namespace RimionshipServer
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
-			_ = services.AddRazorPages();
-			_ = services.AddServerSideBlazor();
-			_ = services.AddControllersWithViews();
+			// _ = services.AddRazorPages();
+			// _ = services.AddServerSideBlazor();
+			// _ = services.AddControllersWithViews();
 
+			/*
 			_ = services
 				.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-				/*.AddAuthentication(options =>
-				{
-					options.DefaultAuthenticateScheme = TwitchAuthenticationDefaults.AuthenticationScheme;
-					options.DefaultSignInScheme = TwitchAuthenticationDefaults.AuthenticationScheme;
-					options.DefaultChallengeScheme = "Twitch";
-				})*/
+				// .AddAuthentication(options =>
+				// {
+				// 	options.DefaultAuthenticateScheme = TwitchAuthenticationDefaults.AuthenticationScheme;
+				// 	options.DefaultSignInScheme = TwitchAuthenticationDefaults.AuthenticationScheme;
+				// 	options.DefaultChallengeScheme = "Twitch";
+				// })
 				.AddCookie()
 				.AddTwitch(options =>
 				{
@@ -44,11 +44,12 @@ namespace RimionshipServer
 					options.ForceVerify = true;
 					options.SaveTokens = true;
 				});
+			*/
 
 			//_ = services.AddAuthorization();
 
-			_ = services.AddHttpClient();
-			_ = services.AddScoped<TokenProvider>();
+			// _ = services.AddHttpClient();
+			// _ = services.AddScoped<TokenProvider>();
 
 			_ = services.AddGrpc(options =>
 			{
@@ -68,16 +69,15 @@ namespace RimionshipServer
 				_ = app.UseHsts();
 			}
 
-			_ = app.UseHttpsRedirection();
-			_ = app.UseStaticFiles();
+			// _ = app.UseHttpsRedirection();
+			// _ = app.UseStaticFiles();
 			_ = app.UseRouting();
-			_ = app.UseAuthentication();
-			_ = app.UseAuthorization();
+			// _ = app.UseAuthentication();
+			// _ = app.UseAuthorization();
 
 			_ = app.UseEndpoints(endpoints =>
 			{
 				_ = endpoints.MapGrpcService<GreeterService>();
-				_ = endpoints.MapGrpcService<APIService>();
 
 				//_ = endpoints.MapBlazorHub();
 				//_ = endpoints.MapFallbackToPage("/_Host");
