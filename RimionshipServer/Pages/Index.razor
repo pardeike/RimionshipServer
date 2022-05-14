@@ -1,0 +1,13 @@
+﻿@page "/"
+@using RimionshipServer.Services
+
+<AuthorizeView>
+	<Authorized>
+		<LoginComponent />
+	</Authorized>
+
+	<NotAuthorized>
+		<h1>Please authenticate yourself</h1>
+		<a href="/auth/signin-twitch">Sign in with Twitch</a>
+	</NotAuthorized>
+</AuthorizeView>
