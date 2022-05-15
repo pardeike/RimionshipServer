@@ -1,12 +1,13 @@
+using Api;
 using Grpc.Core;
-using Helloworld;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace RimionshipServer
 {
 	//[Authorize]
-	public class GreeterService : Greeter.GreeterBase
+	public class GreeterService : API.APIBase
 	{
 		private readonly ILogger<GreeterService> _logger;
 
@@ -15,13 +16,10 @@ namespace RimionshipServer
 			_logger = logger;
 		}
 
-		public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
+		public override Task<HelloReply> Hello(HelloRequest request, ServerCallContext context)
 		{
-			_logger.LogWarning("Progress request from {Name} with age {Age}", request.Name, request.Age);
-			return Task.FromResult(new HelloReply
-			{
-				Message = $"Hello {request.Name}"
-			});
+			_logger.LogWarning("Hello request");
+			return Task.FromResult(new HelloReply { Id = Guid.NewGuid().ToString() });
 		}
 	}
 }
