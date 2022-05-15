@@ -11,11 +11,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="Protos\helloworld.proto" />
+		<None Remove="Protos\*.proto" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="Protos\helloworld.proto" GrpcServices="Server" />
+		<Protobuf Include="Protos\*.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 	<ItemGroup>
