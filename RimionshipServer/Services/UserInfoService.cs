@@ -27,7 +27,7 @@ namespace RimionshipServer.Services
 			_logger.LogWarning($"clientid = {clientid}");
 			_logger.LogWarning($"token = {token}");
 
-			var result = await "https://api.twitch.tv/helix/users/follows"
+			var result = await "https://api.twitch.tv/helix/users/follows" // change path to something else than .../follows
 				 .SetQueryParam("to_id", userid)
 				 .SetQueryParam("first", 100)
 				 .WithHeader("Authorization", $"Bearer {token}")

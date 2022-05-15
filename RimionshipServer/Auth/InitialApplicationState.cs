@@ -1,4 +1,4 @@
-﻿namespace RimionshipServer
+namespace RimionshipServer
 {
 	public class InitialApplicationState
 	{
