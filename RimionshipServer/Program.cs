@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
 
 namespace RimionshipServer
 {
@@ -7,6 +8,9 @@ namespace RimionshipServer
 	{
 		public static void Main(string[] args)
 		{
+			using var db = new DataContext();
+			Debug.WriteLine($"Database path: {db.DbPath}");
+
 			CreateHostBuilder(args).Build().Run();
 		}
 
