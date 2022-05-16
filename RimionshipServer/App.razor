@@ -1,5 +1,4 @@
-﻿@using RimionshipServer
-@inject TokenProvider TokenProvider
+﻿@inject TokenProvider TokenProvider
 
 <CascadingAuthenticationState>
 	<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
@@ -21,7 +20,6 @@
 	protected override Task OnInitializedAsync()
 	{
 		TokenProvider.AccessToken = InitialState.AccessToken;
-
 		return base.OnInitializedAsync();
 	}
 }

@@ -23,8 +23,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		var claim = authState.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
-		var userid = claim.Value;
-		login = await UserInfoService.RunAsync(userid);
+		var nameidentifier = authState.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
+		login = await UserInfoService.RunAsync(nameidentifier);
 	}
 }

@@ -19,7 +19,7 @@ namespace RimionshipServer.Services
 			_logger = logger;
 		}
 
-		public async Task<UserInfo> RunAsync(string userid)
+		public async Task<UserInfo> RunAsync(string userName) // change to use channel_id
 		{
 			var clientid = _configuration["Twitch:ClientId"];
 			var token = _tokenProvider.AccessToken;
@@ -28,7 +28,7 @@ namespace RimionshipServer.Services
 			_logger.LogWarning($"token = {token}");
 
 			var result = await "https://api.twitch.tv/helix/users/follows" // change path to something else than .../follows
-				 .SetQueryParam("to_id", userid)
+				 .SetQueryParam("to_id", userName)
 				 .SetQueryParam("first", 100)
 				 .WithHeader("Authorization", $"Bearer {token}")
 				 .WithHeader("Client-ID", clientid)
