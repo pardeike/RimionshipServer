@@ -38,6 +38,7 @@ namespace RimionshipServer
 				});
 
 			_ = services.AddHttpClient();
+			_ = services.AddScoped<ModProvider>();
 			_ = services.AddScoped<TokenProvider>();
 			_ = services.AddScoped<UserInfoService>();
 
@@ -58,7 +59,7 @@ namespace RimionshipServer
 
 			_ = app.UseEndpoints(endpoints =>
 			{
-				_ = endpoints.MapGrpcService<GreeterService>();
+				_ = endpoints.MapGrpcService<APIService>();
 
 				_ = endpoints.MapBlazorHub();
 				_ = endpoints.MapFallbackToPage("/_Host");

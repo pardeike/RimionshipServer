@@ -4,19 +4,19 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
 	Layout = null;
-
+	
 	var id = Request.Query["id"].ToString();
 	if (id != null && id.Length > 0)
 	{
 		var cookieOptions = new CookieOptions { Expires = DateTime.Now.AddDays(1) };
 		Response.Cookies.Append("ModID", id, cookieOptions);
-		var url = string.Format("{0}{1}={2}", Request.Scheme, Request.Host, Request.Path);
+		var url = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.Path);
 		Response.Redirect(url);
 		return;
 	}
 
 	var tokens = new InitialApplicationState();
-	tokens.AssociateModID(HttpContext, Request, Response);
+	tokens.AssociateModID(HttpContext, Request, Response).Wait();
 }
 
 <!DOCTYPE html>

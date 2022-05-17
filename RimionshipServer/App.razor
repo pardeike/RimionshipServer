@@ -1,4 +1,5 @@
-﻿@inject TokenProvider TokenProvider
+﻿@inject ModProvider ModProvider
+@inject TokenProvider TokenProvider
 
 <CascadingAuthenticationState>
 	<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
@@ -19,6 +20,7 @@
 
 	protected override Task OnInitializedAsync()
 	{
+		ModProvider.ModId = InitialState.ModID;
 		TokenProvider.AccessToken = InitialState.AccessToken;
 		return base.OnInitializedAsync();
 	}

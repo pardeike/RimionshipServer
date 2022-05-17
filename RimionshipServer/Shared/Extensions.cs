@@ -1,3 +1,6 @@
+using System;
+using System.Threading.Tasks;
+
 namespace RimionshipServer
 {
 	public static class Extensions
@@ -10,6 +13,14 @@ namespace RimionshipServer
 		public static bool IsNotEmpty(this string str)
 		{
 			return str != null && str != "";
+		}
+	}
+
+	public static class Run
+	{
+		public static void Sync(Func<Task> function)
+		{
+			Task.Run(function).Wait();
 		}
 	}
 }
