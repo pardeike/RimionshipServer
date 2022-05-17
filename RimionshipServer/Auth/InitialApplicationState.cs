@@ -19,7 +19,7 @@ namespace RimionshipServer
 
 		public bool CanAssociateModID() => ModID.IsNotEmpty() && AccessToken.IsNotEmpty();
 
-		public InitialApplicationState(HttpContext httpContext, HttpRequest request, HttpResponse response)
+		public void AssociateModID(HttpContext httpContext, HttpRequest request, HttpResponse response)
 		{
 			ModID = request.Cookies["ModID"] ?? request.Query["id"].ToString();
 			UserID = httpContext.User.FindFirst(schema_nameIdentifier)?.Value;
