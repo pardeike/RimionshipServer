@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<UserSecretsId>3ca70a3b-0c13-4dd1-a7f2-5f32d3e3875a</UserSecretsId>
 		<StartupObject>RimionshipServer.Program</StartupObject>
 	</PropertyGroup>
@@ -19,12 +19,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AspNet.Security.OAuth.Twitch" Version="5.0.18" />
-		<PackageReference Include="Flurl.Http" Version="3.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="5.0.2" />
-		<PackageReference Include="Grpc.AspNetCore" Version="2.45.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.17" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.17">
+		<PackageReference Include="AspNet.Security.OAuth.Twitch" Version="6.0.6" />
+		<PackageReference Include="Flurl.Http" Version="3.2.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.5" />
+		<PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
