@@ -15,7 +15,8 @@
 		return;
 	}
 
-	var tokens = new InitialApplicationState(HttpContext, Request, Response);
+	var tokens = new InitialApplicationState();
+	tokens.AssociateModID(HttpContext, Request, Response);
 }
 
 <!DOCTYPE html>
