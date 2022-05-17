@@ -1,8 +1,14 @@
-﻿<AuthorizeView>
+﻿@inject ModProvider ModProvider
+
+<AuthorizeView>
 	<Authorized>
-		Hello, @context.User.Identity.Name!
 		<form method="post" action="auth/signout">
-			<button type="submit" class="nav-link btn btn-link">Sign Out</button>
+			Hello <b>@context.User.Identity.Name</b> !<br />
+			@if (@ModProvider.ModId.IsEmpty()) {
+			   <span>Mod not yet configured</span>
+			} else {
+				<span>Mod configured</span>
+			}, <a href="javascript:document.forms[0].submit()">Sign out</a>
 		</form>
 	</Authorized>
 
