@@ -40,7 +40,7 @@ namespace RimionshipServer
 					_ = context.Update(participant);
 					_ = await context.SaveChangesAsync();
 
-					Debug.WriteLine($"User {twitchName} / {twitchId} with accessToken {AccessToken} associated with mod {ModID}");
+					Debug.WriteLine($"User {twitchName} [{twitchId}] with accessToken {AccessToken} associated with mod {tempModId}");
 					response.Cookies.Delete("ModID");
 				}
 			}
