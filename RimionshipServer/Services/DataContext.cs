@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Models;
 using System;
+using System.IO;
 
 namespace RimionshipServer
 {
@@ -13,9 +14,11 @@ namespace RimionshipServer
 
 		public DataContext()
 		{
-			var folder = Environment.SpecialFolder.LocalApplicationData;
-			var path = Environment.GetFolderPath(folder);
-			DbPath = System.IO.Path.Join(path, "rimionship.db");
+			// under docker linux DbPath will be /usr/share/database/rimionship.db
+			// so we --mount type=bind,source="C:\Users\andre\Documents\Rimionship",target="/usr/share/database"
+
+			var commonAppData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+			DbPath = Path.Combine(commonAppData, "database", "rimionship.db");
 		}
 
 		protected override void OnConfiguring(DbContextOptionsBuilder options)
