@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RimionshipServer.Services;
+using LettuceEncrypt;
+using System.IO;
 
 namespace RimionshipServer
 {
@@ -19,6 +21,9 @@ namespace RimionshipServer
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			_ = services.AddLettuceEncrypt()
+				  .PersistDataToDirectory(new DirectoryInfo("/usr/share/database"), "X95%4g@fd.fg//r");
+
 			_ = services.AddRazorPages();
 			_ = services.AddServerSideBlazor();
 			_ = services.AddControllersWithViews();
