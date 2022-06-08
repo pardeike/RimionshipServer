@@ -9,6 +9,7 @@ namespace RimionshipServer.Models
 		public long Id { get; set; }
 
 		public DateTime Created { get; set; }
+
 		public long ColonyWealth { get; set; }
 	}
 }

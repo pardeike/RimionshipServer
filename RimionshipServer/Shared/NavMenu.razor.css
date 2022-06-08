@@ -3,12 +3,12 @@
 }
 
 .top-row {
-    height: 3.5rem;
     background-color: rgba(0,0,0,0.4);
 }
 
 .navbar-brand {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
+    margin: 0 1rem;
 }
 
 .oi {
@@ -18,8 +18,18 @@
     top: -2px;
 }
 
+.nav-adjust {
+    margin: auto 0;
+    width: 100%;
+}
+
+.nav-items {
+    flex-direction: column;
+}
+
 .nav-item {
-    font-size: 0.9rem;
+    display: flex;
+    font-size: 1rem;
     padding-bottom: 0.5rem;
 }
 
@@ -36,8 +46,10 @@
         border-radius: 4px;
         height: 3rem;
         display: flex;
-        align-items: center;
         line-height: 3rem;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
     }
 
 .nav-item ::deep a.active {
@@ -51,6 +63,29 @@
 }
 
 @media (min-width: 641px) {
+    .nav-items {
+        flex-direction: row;
+    }
+
+    .nav-item {
+        font-size: 1rem;
+        padding-bottom: 0;
+        width: 200px;
+    }
+
+    .nav-item:first-of-type {
+        padding-top: 0;
+    }
+
+    .nav-item:last-of-type {
+        padding-bottom: 0;
+        margin-left: auto;
+    }
+
+        .nav-item:last-of-type ::deep a  {
+            text-align: end;
+        }
+
     .navbar-toggler {
         display: none;
     }
