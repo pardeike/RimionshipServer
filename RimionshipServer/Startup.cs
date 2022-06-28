@@ -21,8 +21,8 @@ namespace RimionshipServer
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-			_ = services.AddLettuceEncrypt()
-				  .PersistDataToDirectory(new DirectoryInfo("/opt/rimionship/letsencrypt"), Configuration["LettuceEncrypt:PFXPassword"]);
+			//_ = services.AddLettuceEncrypt()
+			//	  .PersistDataToDirectory(new DirectoryInfo("/opt/rimionship/letsencrypt"), Configuration["LettuceEncrypt:PFXPassword"]);
 
 			_ = services.AddRazorPages();
 			_ = services.AddServerSideBlazor();
@@ -52,10 +52,7 @@ namespace RimionshipServer
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			if (env.IsDevelopment())
-				_ = app.UseDeveloperExceptionPage();
-			else
-				_ = app.UseExceptionHandler("/Error");
+			_ = env.IsDevelopment() ? app.UseDeveloperExceptionPage() : app.UseExceptionHandler("/Error");
 
 			_ = app.UseStaticFiles();
 			_ = app.UseRouting();
