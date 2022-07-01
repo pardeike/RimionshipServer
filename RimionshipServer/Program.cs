@@ -10,6 +10,8 @@ namespace RimionshipServer
 		{
 			using var db = new DataContext();
 			Debug.WriteLine($"Database path: {db.DbPath}");
+			db.Database.EnsureDeleted();
+			db.Database.EnsureCreated();
 
 			CreateHostBuilder(args).Build().Run();
 		}
