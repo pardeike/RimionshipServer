@@ -9,6 +9,7 @@ namespace RimionshipServer
 	{
 		public DbSet<Participant> Participants { get; set; }
 		public DbSet<Stat> Stats { get; set; }
+		public DbSet<FutureEvent> FutureEvents { get; set; }
 
 		public string DbPath { get; }
 

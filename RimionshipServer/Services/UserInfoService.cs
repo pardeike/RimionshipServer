@@ -24,8 +24,8 @@ namespace RimionshipServer.Services
 			var clientid = _configuration["Twitch:ClientId"];
 			var token = _tokenProvider.AccessToken;
 
-			_logger.LogWarning($"clientid = {clientid}");
-			_logger.LogWarning($"token = {token}");
+			_logger.LogWarning("clientid = {clientid}", clientid);
+			_logger.LogWarning("token = {token}", token);
 
 			var result = await "https://api.twitch.tv/helix/users/follows" // change path to something else than .../follows
 				 .SetQueryParam("to_id", userName)
@@ -34,7 +34,7 @@ namespace RimionshipServer.Services
 				 .WithHeader("Client-ID", clientid)
 				 .GetJsonAsync<UserInfoWrapper>();
 
-			_logger.LogWarning($"result = {result.Info}");
+			_logger.LogWarning("result = {userinfo}", result.Info);
 			return result.Info;
 		}
 	}
