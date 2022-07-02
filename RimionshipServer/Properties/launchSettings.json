@@ -6,7 +6,7 @@
 			"ASPNETCORE_ENVIRONMENT": "Development"
 		},
 		"dotnetRunMessages": "true",
-		"applicationUrl": "https://localhost:443"
+		"applicationUrl": "https://mod.rimionship.com:443"
 	},
 	"Docker": {
 		"commandName": "Docker",
