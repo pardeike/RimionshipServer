@@ -1,23 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <TypeScriptTarget>ES2021</TypeScriptTarget>
-	  <TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
-	  <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+		<TypeScriptTarget>ES2021</TypeScriptTarget>
+		<TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
+		<TypeScriptRemoveComments>True</TypeScriptRemoveComments>
 	</PropertyGroup>
 
 	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <TypeScriptTarget>ES2021</TypeScriptTarget>
-	  <TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
-	  <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+		<TypeScriptTarget>ES2021</TypeScriptTarget>
+		<TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
+		<TypeScriptRemoveComments>True</TypeScriptRemoveComments>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<UserSecretsId>3ca70a3b-0c13-4dd1-a7f2-5f32d3e3875a</UserSecretsId>
 		<StartupObject>RimionshipServer.Program</StartupObject>
-		<DockerfileRunArguments>-p "443:443" --mount type=bind,source="C:\Users\andre\Documents\Rimionship",target="/usr/share/database"</DockerfileRunArguments>
+		<DockerfileRunArguments>-p "443:1443" --mount type=bind,source="C:\Users\andre\Documents\Rimionship",target="/usr/share/database"</DockerfileRunArguments>
 		<AnalysisLevel>latest-recommended</AnalysisLevel>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -40,8 +41,8 @@
 		<PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
 	</ItemGroup>
