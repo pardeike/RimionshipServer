@@ -6,7 +6,7 @@
 				"ASPNETCORE_ENVIRONMENT": "Development"
 			},
 			"dotnetRunMessages": "true",
-			"applicationUrl": "https://*:1443"
+			"applicationUrl": "https://*:443"
 		},
 		"Docker": {
 			"commandName": "Docker",
