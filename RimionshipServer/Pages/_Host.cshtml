@@ -15,8 +15,8 @@
 		return;
 	}
 
-	var tokens = new InitialApplicationState();
-	tokens.AssociateModID(HttpContext, Request, Response).Wait();
+	var state = new InitialApplicationState();
+	state.Associate(HttpContext, Request, Response).Wait();
 }
 
 <!DOCTYPE html>
@@ -31,7 +31,7 @@
 	<link href="RimionshipServer.styles.css" rel="stylesheet" />
 </head>
 <body>
-	<component type="typeof(App)" render-mode="ServerPrerendered" param-InitialState="tokens" />
+	<component type="typeof(App)" render-mode="ServerPrerendered" param-InitialState="state" />
 
 	<div id="blazor-error-ui">
 		<environment include="Staging,Production">

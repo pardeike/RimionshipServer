@@ -10,44 +10,37 @@ namespace RimionshipServer
 {
 	public class InitialApplicationState
 	{
-		const string schema_nameIdentifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
-		const string schema_name = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
-
 		public string ModID { get; set; }
 		public string AccessToken { get; set; }
 
-		public async Task AssociateModID(HttpContext httpContext, HttpRequest request, HttpResponse response)
+		public async Task Associate(HttpContext httpContext, HttpRequest request, HttpResponse response)
 		{
 			var user = httpContext.User;
 			if (user.Identity.IsAuthenticated == false)
 				return;
 
-			var tempModId = request.Cookies["ModID"] ?? request.Query["id"].ToString();
 			AccessToken = await httpContext.GetTokenAsync("access_token");
+			if (AccessToken.IsNotEmpty())
+				return;
 
-			var twitchId = user.FindFirst(schema_nameIdentifier)?.Value;
-			var twitchName = user.FindFirst(schema_name)?.Value;
+			var participant = await Participant.ForPrincipal(user);
+			if (participant == null)
+				return;
 
-			using var context = new DataContext();
-			if (tempModId.IsNotEmpty() && AccessToken.IsNotEmpty())
+			var tempModId = request.Cookies["ModID"] ?? request.Query["id"].ToString();
+			if (tempModId.IsNotEmpty() == false)
 			{
-				var participant = await Participant.ForNewModID(tempModId);
-				if (participant != null)
-				{
-					await context.Participants.Where(p => p.TwitchId == twitchId).ForEachAsync(p => context.Remove(p));
-					participant.TwitchId = twitchId;
-					participant.TwitchName = twitchName;
-					_ = context.Update(participant);
-					_ = await context.SaveChangesAsync();
+				participant.Mod = tempModId;
 
-					Debug.WriteLine($"User {twitchName} [{twitchId}] with accessToken {AccessToken} associated with mod {tempModId}");
-					response.Cookies.Delete("ModID");
-				}
+				using var context = new DataContext();
+				_ = context.Update(participant);
+				_ = await context.SaveChangesAsync();
+
+				Debug.WriteLine($"User {participant.TwitchName} [{participant.TwitchId}] with accessToken {AccessToken} associated with mod {tempModId}");
+				response.Cookies.Delete("ModID");
 			}
 
-			var current = await Participant.ForTwitchId(twitchId);
-			if (current != null)
-				ModID = current.Mod;
+			ModID = participant.Mod;
 		}
 	}
 }

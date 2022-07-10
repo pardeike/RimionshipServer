@@ -20,23 +20,13 @@ namespace RimionshipServer
 
 		public override async Task<HelloResponse> Hello(HelloRequest request, ServerCallContext context)
 		{
-			using var dataContext = new DataContext();
-			var oldId = request.Id ?? "";
-			var existingParticipant = await dataContext.Participants.FirstOrDefaultAsync(p => p.Mod == oldId);
-			if (existingParticipant != null)
-				return new HelloResponse { Id = oldId };
-
-			var randBytes = new byte[80];
-			new Random().NextBytes(randBytes);
-			var newId = BitConverter.ToString(randBytes).Replace("-", string.Empty);
-			_ = await dataContext.Participants.AddAsync(new Participant() { Mod = newId });
-			_ = await dataContext.SaveChangesAsync();
-			return new HelloResponse { Id = newId };
+			var found = await Participant.ForModId(request.Id ?? "") != null;
+			return new HelloResponse { Found = found };
 		}
 
 		public override async Task<StatsResponse> Stats(StatsRequest request, ServerCallContext context)
 		{
-			var participant = await Participant.ForNewModID(request.Id);
+			var participant = await Participant.ForModId(request.Id);
 			_logger.LogInformation("Stats from {twitchuser}", participant?.TwitchName ?? "<unknown>");
 			if (participant != null)
 			{
@@ -82,7 +72,7 @@ namespace RimionshipServer
 
 		public override async Task<FutureEventsResponse> FutureEvents(FutureEventsRequest request, ServerCallContext context)
 		{
-			var participant = await Participant.ForNewModID(request.Id);
+			var participant = await Participant.ForModId(request.Id);
 			_logger.LogInformation("FutureEvents from {twitchuser}", participant?.TwitchName ?? "<unknown>");
 			if (participant != null)
 			{

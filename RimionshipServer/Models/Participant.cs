@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RimionshipServer.Models
@@ -8,6 +9,9 @@ namespace RimionshipServer.Models
 	[Index(nameof(Mod))]
 	public class Participant
 	{
+		const string schema_nameIdentifier = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+		const string schema_name = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+
 		public long Id { get; set; }
 
 		public string TwitchId { get; set; }
@@ -18,16 +22,27 @@ namespace RimionshipServer.Models
 
 		public List<Stat> Stats { get; } = new();
 
-		public static async Task<Participant> ForNewModID(string modId)
+		public static async Task<Participant> ForModId(string id)
 		{
 			using var context = new DataContext();
-			return await context.Participants.FirstOrDefaultAsync(p => p.TwitchId == null && p.Mod == modId);
+			return await context.Participants.FirstOrDefaultAsync(p => p.Mod == id);
 		}
 
-		public static async Task<Participant> ForTwitchId(string twitchId)
+		public static async Task<Participant> ForPrincipal(ClaimsPrincipal user)
 		{
+			var twitchId = user.FindFirst(schema_nameIdentifier)?.Value;
+			var twitchName = user.FindFirst(schema_name)?.Value;
+			if (twitchId == null || twitchName == null)
+				return null;
+
 			using var context = new DataContext();
-			return await context.Participants.FirstOrDefaultAsync(p => p.TwitchId == twitchId);
+			var participant = await context.Participants.FirstOrDefaultAsync(p => p.TwitchId == twitchId);
+			if (participant == null)
+			{
+				participant = new Participant() { TwitchId = twitchId, TwitchName = twitchName };
+				_ = await context.Participants.AddAsync(participant);
+			}
+			return participant;
 		}
 	}
 }
