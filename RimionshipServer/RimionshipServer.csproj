@@ -16,7 +16,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<UserSecretsId>3ca70a3b-0c13-4dd1-a7f2-5f32d3e3875a</UserSecretsId>
 		<StartupObject>RimionshipServer.Program</StartupObject>
-		<DockerfileRunArguments>-p "443:443" --mount type=bind,source="C:\Users\andre\Documents\Rimionship",target="/usr/share/database"</DockerfileRunArguments>
+		<DockerfileRunArguments>-p "443:443" --mount type=bind,source="$(HOMEDRIVE)$(HOMEPATH)\Documents\Rimionship",target=/data</DockerfileRunArguments>
 		<AnalysisLevel>latest-recommended</AnalysisLevel>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>

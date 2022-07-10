@@ -20,7 +20,7 @@ namespace RimionshipServer.Auth
 				return;
 
 			AccessToken = await httpContext.GetTokenAsync("access_token");
-			if (AccessToken.IsNotEmpty())
+			if (AccessToken.IsEmpty())
 				return;
 
 			var participant = await Participant.ForPrincipal(user);
@@ -28,7 +28,7 @@ namespace RimionshipServer.Auth
 				return;
 
 			var tempModId = request.Cookies["ModID"] ?? request.Query["id"].ToString();
-			if (tempModId.IsNotEmpty() == false)
+			if (tempModId.IsNotEmpty())
 			{
 				participant.Mod = tempModId;
 

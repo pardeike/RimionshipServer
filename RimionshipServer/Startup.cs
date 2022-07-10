@@ -1,4 +1,4 @@
-using System.Reflection;
+using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,7 +18,7 @@ public class Startup
 			.SetBasePath(env.ContentRootPath)
 			.AddJsonFile("appsettings.json")
 			.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-			.AddUserSecrets(Assembly.GetExecutingAssembly())
+			.AddUserSecrets("3ca70a3b-0c13-4dd1-a7f2-5f32d3e3875a")
 			.AddEnvironmentVariables();
 
 		Configuration = builder.Build();

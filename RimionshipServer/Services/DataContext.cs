@@ -11,16 +11,7 @@ namespace RimionshipServer.Services
 		public DbSet<Stat> Stats { get; set; }
 		public DbSet<FutureEvent> FutureEvents { get; set; }
 
-		public string DbPath { get; }
-
-		public DataContext()
-		{
-			// under docker linux DbPath will be /usr/share/database/rimionship.db
-			// so we --mount type=bind,source="C:\Users\andre\Documents\Rimionship",target="/usr/share/database"
-
-			var commonAppData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-			DbPath = Path.Combine(commonAppData, "database", "rimionship.db");
-		}
+		public static readonly string DbPath = "/data/rimionship.db";
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 			 => optionsBuilder.UseSqlite($"Data Source={DbPath}");

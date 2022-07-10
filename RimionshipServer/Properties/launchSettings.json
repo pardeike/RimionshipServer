@@ -1,16 +1,16 @@
 {
-	"profiles": {
-		"RimionshipServer": {
-			"commandName": "Project",
-			"environmentVariables": {
-				"ASPNETCORE_ENVIRONMENT": "Development"
-			},
-			"dotnetRunMessages": "true",
-			"applicationUrl": "https://*:443"
-		},
-		"Docker": {
-			"commandName": "Docker",
-			"publishAllPorts": true
-		}
-	}
+  "profiles": {
+    "RimionshipServer": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://mod.rimionship.com",
+      "dotnetRunMessages": "true"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "publishAllPorts": true
+    }
+  }
 }

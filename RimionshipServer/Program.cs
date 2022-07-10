@@ -11,7 +11,6 @@ namespace RimionshipServer
 		public static void Main(string[] args)
 		{
 			using var db = new DataContext();
-			Debug.WriteLine($"Database path: {db.DbPath}");
 #if DEBUG
 			Debug.WriteLine("WARNING: The database will always be deleted during startup in Debug builds.");
 			_ = db.Database.EnsureDeleted();
