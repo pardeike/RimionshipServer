@@ -42,6 +42,7 @@ namespace RimionshipServer.Models
 			{
 				participant = new Participant() { TwitchId = twitchId, TwitchName = twitchName };
 				_ = await context.Participants.AddAsync(participant);
+				_ = await context.SaveChangesAsync();
 			}
 			return participant;
 		}
