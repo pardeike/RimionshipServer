@@ -2,6 +2,7 @@ using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using RimionshipServer.Auth;
 using System.Threading.Tasks;
 
 namespace RimionshipServer.Services

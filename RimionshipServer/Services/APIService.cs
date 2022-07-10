@@ -6,7 +6,7 @@ using RimionshipServer.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace RimionshipServer
+namespace RimionshipServer.Services
 {
 	//[Authorize]
 	public class APIService : API.APIBase

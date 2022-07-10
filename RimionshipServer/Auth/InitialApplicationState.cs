@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Models;
+using RimionshipServer.Services;
+using RimionshipServer.Shared;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace RimionshipServer
+namespace RimionshipServer.Auth
 {
 	public class InitialApplicationState
 	{

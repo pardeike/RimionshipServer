@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RimionshipServer;
+using RimionshipServer.Services;
 
 #nullable disable
 
 namespace RimionshipServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220701194328_AddsModels")]
-    partial class AddsModels
+    [Migration("20220710064435_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

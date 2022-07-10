@@ -3,7 +3,7 @@ using RimionshipServer.Models;
 using System;
 using System.IO;
 
-namespace RimionshipServer
+namespace RimionshipServer.Services
 {
 	public class DataContext : DbContext
 	{

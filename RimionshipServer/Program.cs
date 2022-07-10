@@ -2,8 +2,7 @@ using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
-using System.IO;
-using Microsoft.Extensions.Configuration;
+using RimionshipServer.Services;
 
 namespace RimionshipServer
 {
