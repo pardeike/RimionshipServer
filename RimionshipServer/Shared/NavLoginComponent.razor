@@ -1,0 +1,15 @@
+﻿@inject RimionshipServer.Auth.ModProvider ModProvider
+
+<AuthorizeView>
+	<Authorized>
+		<form class="nav-item mx-2" method="post" action="auth/signout">
+			<a class="btn btn-outline-light" href="javascript:document.forms[0].submit()">Sign out</a>
+		</form>
+	</Authorized>
+
+	<NotAuthorized>
+		<form class="nav-item mx-2" >
+			<a class="btn btn-outline-light" href="/auth/signin-twitch">Sign in</a>
+		</form>
+	</NotAuthorized>
+</AuthorizeView>

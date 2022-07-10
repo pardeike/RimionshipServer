@@ -1,16 +1,16 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-	<div class="topbar">
-		<NavMenu />
-	</div>
+<HeaderComponent />
 
-	<div class="main">
 
-		<SideBar />
+<AuthorizeView>
+	<Authorized>
+		<Placeholder />
+	</Authorized>
 
-		<div class="content px-4">
-			@Body
+	<NotAuthorized>
+		<div class="alert alert-warning fs-5" role="alert">
+			Please login using the button on the top right to access the dashboard.
 		</div>
-	</div>
-</div>
+	</NotAuthorized>
+</AuthorizeView>
