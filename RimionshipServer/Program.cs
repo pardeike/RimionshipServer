@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
 using RimionshipServer.Services;
+using Microsoft.Extensions.Logging;
 
 namespace RimionshipServer
 {
@@ -17,7 +18,8 @@ namespace RimionshipServer
 #endif
 			try
 			{
-				_ = db.Database.EnsureCreated();
+				if (db.Database.EnsureCreated())
+					db.CreateDefaults();
 			}
 			catch (Exception e)
 			{
@@ -30,6 +32,11 @@ namespace RimionshipServer
 		public static IHostBuilder CreateHostBuilder(string[] args)
 		{
 			return Host.CreateDefaultBuilder(args)
+				.ConfigureLogging((context, builder) =>
+				{
+					_ = builder.ClearProviders();
+					_ = builder.AddProvider(new ConsoleLoggingProvider());
+				})
 				.ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
 		}
 	}

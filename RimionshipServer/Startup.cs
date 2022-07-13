@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -53,8 +52,13 @@ public class Startup
 		_ = services.AddScoped<ModProvider>();
 		_ = services.AddScoped<TokenProvider>();
 		_ = services.AddScoped<UserInfoService>();
+		_ = services.AddSingleton<SyncService>();
 
-		_ = services.AddGrpc(options => options.EnableDetailedErrors = true);
+		_ = services.AddGrpc(options =>
+		{
+			options.EnableDetailedErrors = true;
+			// options.Interceptors.Add<UnaryInterceptor>();
+		});
 	}
 
 	public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
