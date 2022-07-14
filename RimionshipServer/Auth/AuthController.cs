@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace RimionshipServer
+namespace RimionshipServer.Auth
 {
 	[Route("[controller]")]
 	public class AuthController : Controller

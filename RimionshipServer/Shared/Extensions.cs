@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace RimionshipServer
+namespace RimionshipServer.Shared
 {
 	public static class Extensions
 	{

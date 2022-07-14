@@ -1,49 +1,70 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Http
 @using RimionshipServer
+@using RimionshipServer.Auth
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
 	Layout = null;
-	
+
 	var id = Request.Query["id"].ToString();
 	if (id != null && id.Length > 0)
 	{
 		var cookieOptions = new CookieOptions { Expires = DateTime.Now.AddDays(1) };
 		Response.Cookies.Append("ModID", id, cookieOptions);
-		var url = string.Format("{0}://{1}{2}", Request.Scheme, Request.Host, Request.Path);
+		var url = $"{Request.Scheme}://{Request.Host}{Request.Path}";
 		Response.Redirect(url);
 		return;
 	}
 
-	var tokens = new InitialApplicationState();
-	tokens.AssociateModID(HttpContext, Request, Response).Wait();
+	var state = new InitialApplicationState();
+	state.Associate(HttpContext, Request, Response).Wait();
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>Rimionship</title>
-	<base href="~/" />
-	<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-	<link href="css/site.css" rel="stylesheet" />
-	<link href="RimionshipServer.styles.css" rel="stylesheet" />
+
+	<base href="~/"/>
+
+	<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap-grid.min.css"/>
+	<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap-reboot.min.css"/>
+	<link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap-utilities.min.css"/>
+	<link rel="stylesheet" href="~/lib/open-iconic/font/css/open-iconic.min.css"/>
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+
+	<script src="~/lib/jquery/jquery.min.js"></script>
+	<script src="~/lib/feather-icons/feather.min.js"></script>
 </head>
 <body>
-	<component type="typeof(App)" render-mode="ServerPrerendered" param-InitialState="tokens" />
+<component type="typeof(App)" render-mode="ServerPrerendered" param-InitialState="state"/>
 
-	<div id="blazor-error-ui">
-		<environment include="Staging,Production">
-			An error has occurred. This application may no longer respond until reloaded.
-		</environment>
-		<environment include="Development">
-			An unhandled exception has occurred. See browser dev tools for details.
-		</environment>
-		<a href="" class="reload">Reload</a>
-		<a class="dismiss">🗙</a>
-	</div>
+<div id="blazor-error-ui">
+	<environment include="Staging,Production">
+		An error has occurred. This application may no longer respond until reloaded.
+	</environment>
+	<environment include="Development">
+		An unhandled exception has occurred. See browser dev tools for details.
+	</environment>
+	<a href="" class="reload">Reload</a>
+	<a class="dismiss">🗙</a>
+</div>
 
+<script>
+	feather.replace({ 'aria-hidden': 'true' });
+</script>
+
+<script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/Chart.js/chart.min.js"></script>
+
+<script src="~/js/site.js"></script>
+
+<!--
+	Need to investigate why this JS breaks the other scripts
 	<script src="_framework/blazor.server.js"></script>
+-->
 </body>
 </html>

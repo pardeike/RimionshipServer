@@ -1,5 +1,7 @@
-﻿@inject ModProvider ModProvider
-@inject TokenProvider TokenProvider
+﻿@using RimionshipServer.Shared
+
+@inject RimionshipServer.Auth.ModProvider ModProvider
+@inject RimionshipServer.Auth.TokenProvider TokenProvider
 
 <CascadingAuthenticationState>
 	<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
@@ -16,7 +18,7 @@
 
 @code {
 	[Parameter]
-	public InitialApplicationState InitialState { get; set; }
+	public RimionshipServer.Auth.InitialApplicationState InitialState { get; set; }
 
 	protected override Task OnInitializedAsync()
 	{

@@ -1,4 +1,4 @@
-namespace RimionshipServer
+namespace RimionshipServer.Auth
 {
 	public class TokenProvider
 	{
