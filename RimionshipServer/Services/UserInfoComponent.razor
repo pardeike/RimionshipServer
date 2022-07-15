@@ -1,29 +1,6 @@
 ﻿@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserInfoService UserInfoService
-
-<AuthorizeView>
-	<Authorized>
-		@if (login == null)
-		{
-			<p><em>Loading...</em></p>
-		}
-		else
-		{
-			<h1>Logged in</h1>
-		}
-	</Authorized>
-</AuthorizeView>
 
 @code {
 	[Parameter]
 	public RimionshipServer.Auth.InitialApplicationState InitialState { get; set; }
-
-	private UserInfo login;
-
-	protected override async Task OnInitializedAsync()
-	{
-		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-		var nameidentifier = authState.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
-		login = await UserInfoService.RunAsync(nameidentifier);
-	}
 }
