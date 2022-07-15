@@ -26,7 +26,7 @@ namespace RimionshipServer.Services
 			var participant = await Participant.ForModId(id);
 			if (participant == null)
 				throw new RpcException(new Status(StatusCode.PermissionDenied, "No such user"));
-			_logger.LogInformation("{callName} from {Twitchuser}", callName, participant.TwitchName);
+			_logger.LogInformation("{CallName} from {Twitchuser}", callName, participant.TwitchName);
 			return participant;
 		}
 

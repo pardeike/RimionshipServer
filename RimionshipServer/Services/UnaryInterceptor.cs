@@ -27,7 +27,7 @@ namespace RimionshipServer.Services
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Exception in {Method}: {ex}", context.Method, ex);
+				_logger.LogError(ex, "Exception in {Method}: {Ex}", context.Method, ex);
 				throw;
 			}
 		}
