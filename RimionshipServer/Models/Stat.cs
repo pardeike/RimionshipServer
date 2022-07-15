@@ -1,5 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using RimionshipServer.Services;
+using RimionshipServer.Shared;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RimionshipServer.Models
 {
@@ -10,6 +15,8 @@ namespace RimionshipServer.Models
 		public long Id { get; set; }
 
 		public long ParticipantId { get; set; }
+
+		public Participant Participant { get; set; }
 
 		public DateTime Created { get; set; }
 
@@ -71,5 +78,26 @@ namespace RimionshipServer.Models
 
 		public float DamageDealt { get; set; }
 
+		public static async Task<List<Api.Score>> WealthList()
+		{
+			using var context = new DataContext();
+			return await context.FromSqlQuery("""
+					SELECT DISTINCT
+						p.TwitchName,
+						LAST_VALUE ( s.Wealth ) OVER (
+							PARTITION BY p.Id
+							ORDER BY p.Id
+						) AS LatestScore 
+					FROM Stats s
+					JOIN Participants p ON (s.ParticipantId = p.Id)
+					ORDER BY LatestScore DESC
+				""",
+				row => new Api.Score()
+				{
+					TwitchName = row[0] as string,
+					LatestScore = (int)((long)row[1])
+				}
+			).ToListAsync();
+		}
 	}
 }

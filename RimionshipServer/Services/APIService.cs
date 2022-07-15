@@ -3,7 +3,9 @@ using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RimionshipServer.Models;
+using RimionshipServer.Shared;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RimionshipServer.Services
@@ -31,10 +33,17 @@ namespace RimionshipServer.Services
 
 		public override async Task<HelloResponse> Hello(HelloRequest request, ServerCallContext context)
 		{
-			var found = await Participant.ForModId(request.Id ?? "") != null;
+			var participant = await Participant.ForModId(request.Id ?? "");
+			var twitchName = participant?.TwitchName;
 			var mods = await AllowedMod.List();
-			var response = new HelloResponse() { Found = found };
+			var response = new HelloResponse() { Found = participant != null };
 			response.AllowedMods.AddRange(mods);
+			response.TwitchName = twitchName ?? "";
+			if (twitchName!= null)
+			{ 
+				var scores = await Stat.WealthList();
+				response.Score.AddRange(scores.ShrinkedScoreList(twitchName));
+			}
 			return response;
 		}
 

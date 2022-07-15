@@ -10,6 +10,7 @@
 		<TypeScriptTarget>ES2021</TypeScriptTarget>
 		<TypeScriptNoImplicitAny>True</TypeScriptNoImplicitAny>
 		<TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -23,6 +24,7 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -37,15 +39,16 @@
 		<PackageReference Include="AspNet.Security.OAuth.Twitch" Version="6.0.6" />
 		<PackageReference Include="Flurl.Http" Version="3.2.4" />
 		<PackageReference Include="LettuceEncrypt" Version="1.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.5" />
-		<PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5">
+		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.7" />
+		<PackageReference Include="Grpc.AspNetCore" Version="2.47.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.7">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
 		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
+		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
 	</ItemGroup>
 
 </Project>

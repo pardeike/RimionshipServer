@@ -9,6 +9,7 @@ namespace RimionshipServer.Services
 		public DbSet<Stat> Stats { get; set; }
 		public DbSet<FutureEvent> FutureEvents { get; set; }
 		public DbSet<AllowedMod> AllowedMods { get; set; }
+		public DbSet<PlayState> PlayStates { get; set; }
 
 		public static readonly string DbPath = "/data/rimionship.db";
 
