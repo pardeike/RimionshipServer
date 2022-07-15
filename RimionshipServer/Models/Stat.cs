@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Services;
-using RimionshipServer.Shared;
+using RimionshipServer.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;

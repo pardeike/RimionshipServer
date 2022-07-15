@@ -16,7 +16,11 @@ namespace RimionshipServer.Services
 			return logger;
 		}
 
-		public void Dispose() => loggers.Clear();
+		public void Dispose()
+		{
+			loggers.Clear();
+			GC.SuppressFinalize(this);
+		}
 	}
 
 	public class ConsoleLogger : ILogger

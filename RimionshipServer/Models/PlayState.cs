@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Services;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace RimionshipServer.Models
 {
@@ -53,24 +53,24 @@ namespace RimionshipServer.Models
 		public static int GetInt(StateKey key)
 		{
 			using var context = new DataContext();
-			if (int.TryParse(context.PlayStates.Find(key.ToString())?.Value, out var result))
+			if (int.TryParse(context.PlayStates.Find(key.ToString())?.Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
 				return result;
 			return 0;
 		}
 
-		public static void SetInt(StateKey key, int value) => SetString(key, value.ToString());
+		public static void SetInt(StateKey key, int value) => SetString(key, value.ToString(CultureInfo.InvariantCulture));
 
 
 
 		public static float GetFloat(StateKey key)
 		{
 			using var context = new DataContext();
-			if (float.TryParse(context.PlayStates.Find(key.ToString())?.Value, out var result))
+			if (float.TryParse(context.PlayStates.Find(key.ToString())?.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
 				return result;
 			return 0;
 		}
 
-		public static void SetFloat(StateKey key, float value) => SetString(key, value.ToString());
+		public static void SetFloat(StateKey key, float value) => SetString(key, value.ToString(CultureInfo.InvariantCulture));
 
 		public static TEnum GetEnum<TEnum>(StateKey key) where TEnum : struct, Enum
 		{

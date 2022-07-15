@@ -1,5 +1,4 @@
 using Api;
-using Microsoft.Extensions.Logging;
 using RimionshipServer.Models;
 using System;
 using System.Collections.Generic;
@@ -10,15 +9,13 @@ namespace RimionshipServer.Services
 {
 	public class SyncService
 	{
-		private readonly ILogger<SyncService> _logger;
-		private SyncResponse lastSyncState = new();
+		private readonly SyncResponse lastSyncState = new();
 		private readonly Dictionary<string, Channel<bool>> clientChannels = new();
 
-		private static bool dataPusherActive = false;
+		private static bool dataPusherActive;
 
-		public SyncService(ILogger<SyncService> logger)
+		public SyncService()
 		{
-			_logger = logger;
 			CreateDebugDataPusher();
 		}
 

@@ -5,5 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0058:Expression value is never used", Justification = "<Pending>", Scope = "member", Target = "~M:RimionshipServer.Migrations.Improvements.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)")]
-[assembly: SuppressMessage("Style", "IDE0058:Expression value is never used", Justification = "<Pending>", Scope = "member", Target = "~M:RimionshipServer.Migrations.Improvements.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)")]
+[assembly: SuppressMessage("Microsoft.Performance", "CA1848")]

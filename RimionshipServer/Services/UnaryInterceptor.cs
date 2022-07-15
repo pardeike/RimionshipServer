@@ -20,14 +20,14 @@ namespace RimionshipServer.Services
 			 ServerCallContext context,
 			 UnaryServerMethod<TRequest, TResponse> continuation)
 		{
-			_logger.LogInformation("Client call {method}", context.Method);
+			_logger.LogInformation("Client call {Method}", context.Method);
 			try
 			{
 				return await continuation(request, context);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Exception in {method}: {ex}", context.Method, ex);
+				_logger.LogError(ex, "Exception in {Method}: {ex}", context.Method, ex);
 				throw;
 			}
 		}

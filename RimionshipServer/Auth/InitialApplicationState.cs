@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using RimionshipServer.Models;
 using RimionshipServer.Services;
-using RimionshipServer.Shared;
+using RimionshipServer.Common;
 using System.Diagnostics;
 using System.Threading.Tasks;
 

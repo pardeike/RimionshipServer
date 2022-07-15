@@ -3,9 +3,8 @@ using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RimionshipServer.Models;
-using RimionshipServer.Shared;
+using RimionshipServer.Common;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace RimionshipServer.Services
@@ -27,7 +26,7 @@ namespace RimionshipServer.Services
 			var participant = await Participant.ForModId(id);
 			if (participant == null)
 				throw new RpcException(new Status(StatusCode.PermissionDenied, "No such user"));
-			_logger.LogInformation("{callName} from {twitchuser}", callName, participant.TwitchName);
+			_logger.LogInformation("{callName} from {Twitchuser}", callName, participant.TwitchName);
 			return participant;
 		}
 

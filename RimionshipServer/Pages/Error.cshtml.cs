@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using RimionshipServer.Shared;
+using RimionshipServer.Common;
 using System.Diagnostics;
 
 namespace RimionshipServer.Pages
