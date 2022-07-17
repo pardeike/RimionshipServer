@@ -8,14 +8,15 @@ namespace RimionshipServer.Models
 	public enum StateKey
 	{
 		ServerMessage,
+		StartingPawnCount,
+		GameFileUrl,
+		GameFileHash,
 		GameState,
 		GameStartHour,
 		GameStartMinute,
 		ScaleFactor,
 		GoodTraitSuppression,
 		BadTraitSuppression,
-		Rising,
-		Punishment,
 		MaxFreeColonistCount,
 		RisingInterval,
 		RandomStartPauseMin,

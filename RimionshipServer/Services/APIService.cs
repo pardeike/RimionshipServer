@@ -38,9 +38,11 @@ namespace RimionshipServer.Services
 			var response = new HelloResponse() { Found = participant != null };
 			response.AllowedMods.AddRange(mods);
 			response.TwitchName = twitchName ?? "";
+			response.Position = 0;
 			if (twitchName!= null)
 			{ 
 				var scores = await Stat.WealthList();
+				response.Position = scores.FindIndex(0, score => score.TwitchName == response.TwitchName) + 1;
 				response.Score.AddRange(scores.ShrinkedScoreList(twitchName));
 			}
 			return response;
@@ -49,7 +51,21 @@ namespace RimionshipServer.Services
 		public override async Task<SyncResponse> Sync(SyncRequest request, ServerCallContext context)
 		{
 			var participant = await GetParticipant(request.Id, "sync");
-			return await _syncService.StateForClient(participant.TwitchName);
+			if (request.WaitForChange)
+				return await _syncService.WaitForSyncResponseChange(participant.TwitchName);
+			return _syncService.Latest();
+		}
+
+		public override async Task<StartResponse> Start(StartRequest request, ServerCallContext context)
+		{
+			_ = await GetParticipant(request.Id, "start");
+			return new StartResponse
+			{
+				GameFileUrl = PlayState.GetString(StateKey.GameFileUrl),
+				GameFileHash = PlayState.GetString(StateKey.GameFileHash),
+				StartingPawnCount = PlayState.GetInt(StateKey.StartingPawnCount),
+				Settings = _syncService.LatestSettings()
+			};
 		}
 
 		public override async Task<StatsResponse> Stats(StatsRequest request, ServerCallContext context)

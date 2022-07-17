@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace RimionshipServer.Common
@@ -40,13 +42,12 @@ namespace RimionshipServer.Common
 			}
 			return scores.GetRange(i1, 3);
 		}
-	}
 
-	public static class Run
-	{
-		public static void Sync(Func<Task> function)
+		public static async Task<string> Hash(this Stream stream)
 		{
-			Task.Run(function).Wait();
+			using var md5 = MD5.Create();
+			var checksum = await md5.ComputeHashAsync(stream);
+			return BitConverter.ToString(checksum).Replace("-", "").ToLower();
 		}
 	}
 }

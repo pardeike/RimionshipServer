@@ -9,51 +9,56 @@ namespace RimionshipServer.Services
 {
 	public class SyncService
 	{
-		private readonly SyncResponse lastSyncState = new();
+		private readonly SyncResponse lastSyncState;
 		private readonly Dictionary<string, Channel<bool>> clientChannels = new();
-
-		private static bool dataPusherActive;
 
 		public SyncService()
 		{
-			CreateDebugDataPusher();
+			var (gameState, hour, minute) = GameState;
+			var (scaleFactor, goodTraitSuppression, badTraitSuppression) = Traits;
+			var (maxFreeColonistCount, risingInterval) = Rising;
+			var (randomStartPauseMin, randomStartPauseMax, startPauseInterval, finalPauseInterval) = Punishment;
+			lastSyncState = new()
+			{
+				Message = ServerMessage,
+				State = new()
+				{
+					Game = gameState,
+					PlannedStartHour = hour,
+					PlannedStartMinute = minute
+				},
+				Settings = new()
+				{
+					Traits = new()
+					{
+						ScaleFactor = scaleFactor,
+						GoodTraitSuppression = goodTraitSuppression,
+						BadTraitSuppression = badTraitSuppression
+					},
+					Rising = new()
+					{
+						MaxFreeColonistCount = maxFreeColonistCount,
+						RisingInterval = risingInterval
+					},
+					Punishment = new()
+					{
+						RandomStartPauseMin = randomStartPauseMin,
+						RandomStartPauseMax = randomStartPauseMax,
+						StartPauseInterval = startPauseInterval,
+						FinalPauseInterval = finalPauseInterval
+					}
+				}
+			};
 		}
 
-		// ONLY FOR TESTING, REMOVE LATER
-		public void CreateDebugDataPusher()
+		public SyncResponse Latest()
 		{
-			if (dataPusherActive) return;
-			dataPusherActive = true;
+			return lastSyncState;
+		}
 
-			_ = Task.Run(async () =>
-			{
-				var flag = 0;
-				while (true)
-				{
-					flag++;
-					switch (flag % 5)
-					{
-						case 0:
-							ServerMessage = $"Test message {flag}";
-							break;
-						case 1:
-							GameState = (State.Types.Game.Prepare, flag % 24, flag % 60);
-							break;
-						case 2:
-							ServerMessage = "";
-							break;
-						case 3:
-							GameState = (State.Types.Game.Started, 0, 0);
-							break;
-						case 4:
-							Traits = (0.2f, 0.7f, 0.15f);
-							Rising = (5, 120000);
-							Punishment = (140, 600, 30000, 5000);
-							break;
-					};
-					await Task.Delay(2000);
-				}
-			});
+		public Settings LatestSettings()
+		{
+			return lastSyncState.Settings;
 		}
 
 		public void Update(Action<SyncResponse> modifier)
@@ -63,10 +68,10 @@ namespace RimionshipServer.Services
 				_ = client.Value.Writer.TryWrite(true);
 		}
 
-		public async Task<SyncResponse> StateForClient(string twitchId)
+		public async Task<SyncResponse> WaitForSyncResponseChange(string twitchId)
 		{
 			if (clientChannels.TryGetValue(twitchId, out var channel))
-				_ = await channel.Reader.ReadAsync();
+				await foreach (var _ in channel.Reader.ReadAllAsync()) ;
 			else
 			{
 				channel = Channel.CreateBounded<bool>(1);

@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using RimionshipServer.Auth;
 using RimionshipServer.Services;
+using System.IO;
 
 namespace RimionshipServer;
 
@@ -65,7 +68,10 @@ public class Startup
 	{
 		_ = env.IsDevelopment() ? app.UseDeveloperExceptionPage() : app.UseExceptionHandler("/Error");
 
-		_ = app.UseStaticFiles();
+		var provider = new FileExtensionContentTypeProvider();
+		provider.Mappings[".rws"] = "application/binary";
+		_ = app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
+
 		_ = app.UseRouting();
 		_ = app.UseAuthentication();
 		_ = app.UseAuthorization();

@@ -81,6 +81,7 @@ namespace RimionshipServer.Models
 		public static async Task<List<Api.Score>> WealthList()
 		{
 			using var context = new DataContext();
+			var pos = 1;
 			return await context.FromSqlQuery("""
 					SELECT DISTINCT
 						p.TwitchName,
@@ -94,10 +95,12 @@ namespace RimionshipServer.Models
 				""",
 				row => new Api.Score()
 				{
+					Position = pos++,
 					TwitchName = row[0] as string,
 					LatestScore = (int)((long)row[1])
 				}
-			).ToListAsync();
+			)
+			.ToListAsync();
 		}
 	}
 }
