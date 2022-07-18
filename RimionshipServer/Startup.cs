@@ -54,7 +54,7 @@ public class Startup
 		_ = services.AddHttpClient();
 		_ = services.AddScoped<ModProvider>();
 		_ = services.AddScoped<TokenProvider>();
-		_ = services.AddSingleton<TwitchInfoService>();
+		_ = services.AddScoped<TwitchInfoService>();
 		_ = services.AddSingleton<SyncService>();
 
 		_ = services.AddGrpc(options =>
