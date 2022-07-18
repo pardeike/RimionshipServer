@@ -17,7 +17,7 @@
 	}
 
 	var state = new InitialApplicationState();
-	state.Associate(HttpContext, Request, Response).Wait();
+	await state.Associate(HttpContext, Request, Response);
 }
 
 <!DOCTYPE html>
