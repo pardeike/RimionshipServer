@@ -38,16 +38,39 @@ namespace RimionshipServer.Services
 			var all = await AllowedMods.ToListAsync();
 			if (all.Count == 0)
 			{
-				_ = await AllowedMods.AddAsync(new AllowedMod(1, "brrainz.harmony", 2009463077));
-				_ = await AllowedMods.AddAsync(new AllowedMod(2, "ludeon.rimworld", 0));
-				_ = await AllowedMods.AddAsync(new AllowedMod(3, "brrainz.rimionship", 2834585352));
-				_ = await AllowedMods.AddAsync(new AllowedMod(4, "brrainz.cameraplus", 867467808));
+				_ = await AllowedMods.AddAsync(new AllowedMod(01, "brrainz.harmony", 2009463077));
+				_ = await AllowedMods.AddAsync(new AllowedMod(02, "ludeon.rimworld", 0));
+				_ = await AllowedMods.AddAsync(new AllowedMod(03, "unlimitedhugs.hugslib", 818773962));
+				_ = await AllowedMods.AddAsync(new AllowedMod(04, "brrainz.rimionship", 2834585352));
+				_ = await AllowedMods.AddAsync(new AllowedMod(05, "automatic.bionicicons", 1677616980));
+				_ = await AllowedMods.AddAsync(new AllowedMod(06, "brrainz.cameraplus", 867467808));
+				_ = await AllowedMods.AddAsync(new AllowedMod(07, "tiagocc0.colorblindminerals", 1424338139));
+				_ = await AllowedMods.AddAsync(new AllowedMod(08, "dubwise.dubsmintmenus", 1446523594));
+				_ = await AllowedMods.AddAsync(new AllowedMod(09, "dubwise.dubsmintminimap", 1662119905));
+				_ = await AllowedMods.AddAsync(new AllowedMod(10, "fluffy.followme", 715759739));
+				_ = await AllowedMods.AddAsync(new AllowedMod(11, "falconne.heatmap", 947972722));
+				_ = await AllowedMods.AddAsync(new AllowedMod(12, "krafs.levelup", 1701592470));
+				_ = await AllowedMods.AddAsync(new AllowedMod(13, "fluffy.medicaltab", 715565817));
+				_ = await AllowedMods.AddAsync(new AllowedMod(14, "com.github.alandariva.moreplanning", 2551225702));
+				_ = await AllowedMods.AddAsync(new AllowedMod(15, "fluffy.musicmanager", 2229205672));
+				_ = await AllowedMods.AddAsync(new AllowedMod(16, "peppsen.pmusic", 725130005));
+				_ = await AllowedMods.AddAsync(new AllowedMod(17, "legodude17.qualcolor", 2420141361));
+				_ = await AllowedMods.AddAsync(new AllowedMod(18, "ben.rpgstyleinventory", 2407434654));
+				_ = await AllowedMods.AddAsync(new AllowedMod(19, "automatic.recipeicons", 1616643195));
+				_ = await AllowedMods.AddAsync(new AllowedMod(20, "targhetti.showdrafteesweapon", 1690978457));
+				_ = await AllowedMods.AddAsync(new AllowedMod(21, "crashm.colorcodedmoodbar.11", 2006605356));
+				_ = await AllowedMods.AddAsync(new AllowedMod(22, "mlie.silentdoors", 2012447929));
+				_ = await AllowedMods.AddAsync(new AllowedMod(23, "heye.twitchchat", 2075845400));
+				_ = await AllowedMods.AddAsync(new AllowedMod(24, "vanillaexpanded.vhe", 1888705256));
+				_ = await AllowedMods.AddAsync(new AllowedMod(25, "bodlosh.weaponstats", 974066449));
+				_ = await AllowedMods.AddAsync(new AllowedMod(26, "odeum.wmbp", 2314407956));
+				_ = await AllowedMods.AddAsync(new AllowedMod(27, "showhair.kv.rw", 1180826364));
 				_ = await SaveChangesAsync();
 			}
 			PlayState.SetString(StateKey.ServerMessage, "");
-			PlayState.SetInt(StateKey.StartingPawnCount, 3);
+			PlayState.SetInt(StateKey.StartingPawnCount, 5);
 			PlayState.SetString(StateKey.GameFileUrl, "https://mod.rimionship.com/game/rimionship.rws");
-			PlayState.SetString(StateKey.GameFileHash, "9c55a4b50658be8d31c1cc6cbf2587d5");
+			PlayState.SetString(StateKey.GameFileHash, "837e504433e8f5ffa9283271e4906063");
 			PlayState.SetEnum(StateKey.GameState, Game.Training);
 			PlayState.SetInt(StateKey.GameStartHour, 0);
 			PlayState.SetInt(StateKey.GameStartMinute, 0);
@@ -56,8 +79,8 @@ namespace RimionshipServer.Services
 			PlayState.SetFloat(StateKey.BadTraitSuppression, 0.15f);
 			PlayState.SetInt(StateKey.MaxFreeColonistCount, 5);
 			PlayState.SetInt(StateKey.RisingInterval, 120000);
-			PlayState.SetInt(StateKey.RandomStartPauseMin, 140);
-			PlayState.SetInt(StateKey.RandomStartPauseMax, 600);
+			PlayState.SetInt(StateKey.RandomStartPauseMin, 600);
+			PlayState.SetInt(StateKey.RandomStartPauseMax, 1200);
 			PlayState.SetInt(StateKey.StartPauseInterval, 30000);
 			PlayState.SetInt(StateKey.FinalPauseInterval, 5000);
 		}
