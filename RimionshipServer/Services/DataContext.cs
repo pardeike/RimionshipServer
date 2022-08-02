@@ -79,10 +79,13 @@ namespace RimionshipServer.Services
 			PlayState.SetFloat(StateKey.BadTraitSuppression, 0.15f);
 			PlayState.SetInt(StateKey.MaxFreeColonistCount, 5);
 			PlayState.SetInt(StateKey.RisingInterval, 120000);
+			PlayState.SetInt(StateKey.RisingCooldown, 60000);
 			PlayState.SetInt(StateKey.RandomStartPauseMin, 600);
 			PlayState.SetInt(StateKey.RandomStartPauseMax, 1200);
 			PlayState.SetInt(StateKey.StartPauseInterval, 30000);
 			PlayState.SetInt(StateKey.FinalPauseInterval, 5000);
+			PlayState.SetFloat(StateKey.MinThoughtFactor, 1f);
+			PlayState.SetFloat(StateKey.MaxThoughtFactor, 3f);
 		}
 	}
 }

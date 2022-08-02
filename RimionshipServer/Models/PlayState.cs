@@ -19,10 +19,13 @@ namespace RimionshipServer.Models
 		BadTraitSuppression,
 		MaxFreeColonistCount,
 		RisingInterval,
+		RisingCooldown,
 		RandomStartPauseMin,
 		RandomStartPauseMax,
 		StartPauseInterval,
-		FinalPauseInterval
+		FinalPauseInterval,
+		MinThoughtFactor,
+		MaxThoughtFactor
 	}
 
 	public class PlayState

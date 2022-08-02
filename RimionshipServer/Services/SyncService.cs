@@ -16,8 +16,8 @@ namespace RimionshipServer.Services
 		{
 			var (gameState, hour, minute) = GameState;
 			var (scaleFactor, goodTraitSuppression, badTraitSuppression) = Traits;
-			var (maxFreeColonistCount, risingInterval) = Rising;
-			var (randomStartPauseMin, randomStartPauseMax, startPauseInterval, finalPauseInterval) = Punishment;
+			var (maxFreeColonistCount, risingInterval, risingCooldown) = Rising;
+			var (randomStartPauseMin, randomStartPauseMax, startPauseInterval, finalPauseInterval, minThoughtFactor, maxThoughtFactor) = Punishment;
 			lastSyncState = new()
 			{
 				Message = ServerMessage,
@@ -38,14 +38,17 @@ namespace RimionshipServer.Services
 					Rising = new()
 					{
 						MaxFreeColonistCount = maxFreeColonistCount,
-						RisingInterval = risingInterval
+						RisingInterval = risingInterval,
+						RisingCooldown = risingCooldown
 					},
 					Punishment = new()
 					{
 						RandomStartPauseMin = randomStartPauseMin,
 						RandomStartPauseMax = randomStartPauseMax,
 						StartPauseInterval = startPauseInterval,
-						FinalPauseInterval = finalPauseInterval
+						FinalPauseInterval = finalPauseInterval,
+						MinThoughtFactor = minThoughtFactor,
+						MaxThoughtFactor = maxThoughtFactor
 					}
 				}
 			};
@@ -71,7 +74,8 @@ namespace RimionshipServer.Services
 		public async Task<SyncResponse> WaitForSyncResponseChange(string twitchId)
 		{
 			if (clientChannels.TryGetValue(twitchId, out var channel))
-				await foreach (var _ in channel.Reader.ReadAllAsync()) ;
+				await foreach (var _ in channel.Reader.ReadAllAsync())
+					;
 			else
 			{
 				channel = Channel.CreateBounded<bool>(1);
@@ -142,35 +146,40 @@ namespace RimionshipServer.Services
 			}
 		}
 
-		public (int maxFreeColonistCount, int risingInterval) Rising
+		public (int maxFreeColonistCount, int risingInterval, int risingCooldown) Rising
 		{
 			get =>
 			(
 				PlayState.GetInt(StateKey.MaxFreeColonistCount),
-				PlayState.GetInt(StateKey.RisingInterval)
+				PlayState.GetInt(StateKey.RisingInterval),
+				PlayState.GetInt(StateKey.RisingCooldown)
 			);
 			set
 			{
 				PlayState.SetInt(StateKey.MaxFreeColonistCount, value.maxFreeColonistCount);
 				PlayState.SetInt(StateKey.RisingInterval, value.risingInterval);
+				PlayState.SetInt(StateKey.RisingCooldown, value.risingCooldown);
 				Update(state =>
 				{
 					state.Settings ??= new Settings();
 					state.Settings.Rising ??= new Rising();
 					state.Settings.Rising.MaxFreeColonistCount = value.maxFreeColonistCount;
 					state.Settings.Rising.RisingInterval = value.risingInterval;
+					state.Settings.Rising.RisingCooldown = value.risingCooldown;
 				});
 			}
 		}
 
-		public (int randomStartPauseMin, int randomStartPauseMax, int startPauseInterval, int finalPauseInterval) Punishment
+		public (int randomStartPauseMin, int randomStartPauseMax, int startPauseInterval, int finalPauseInterval, float minThoughtFactor, float maxThoughtFactor) Punishment
 		{
 			get =>
 			(
 				PlayState.GetInt(StateKey.RandomStartPauseMin),
 				PlayState.GetInt(StateKey.RandomStartPauseMax),
 				PlayState.GetInt(StateKey.StartPauseInterval),
-				PlayState.GetInt(StateKey.FinalPauseInterval)
+				PlayState.GetInt(StateKey.FinalPauseInterval),
+				PlayState.GetInt(StateKey.MinThoughtFactor),
+				PlayState.GetInt(StateKey.MaxThoughtFactor)
 			);
 			set
 			{
@@ -178,6 +187,8 @@ namespace RimionshipServer.Services
 				PlayState.SetInt(StateKey.RandomStartPauseMax, value.randomStartPauseMax);
 				PlayState.SetInt(StateKey.StartPauseInterval, value.startPauseInterval);
 				PlayState.SetInt(StateKey.FinalPauseInterval, value.finalPauseInterval);
+				PlayState.SetFloat(StateKey.MinThoughtFactor, value.minThoughtFactor);
+				PlayState.SetFloat(StateKey.MaxThoughtFactor, value.maxThoughtFactor);
 				Update(state =>
 				{
 					state.Settings ??= new Settings();
@@ -186,6 +197,8 @@ namespace RimionshipServer.Services
 					state.Settings.Punishment.RandomStartPauseMax = value.randomStartPauseMax;
 					state.Settings.Punishment.StartPauseInterval = value.startPauseInterval;
 					state.Settings.Punishment.FinalPauseInterval = value.finalPauseInterval;
+					state.Settings.Punishment.MinThoughtFactor = value.minThoughtFactor;
+					state.Settings.Punishment.MaxThoughtFactor = value.maxThoughtFactor;
 				});
 			}
 		}
