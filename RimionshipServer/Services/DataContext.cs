@@ -80,8 +80,6 @@ namespace RimionshipServer.Services
 			PlayState.SetInt(StateKey.MaxFreeColonistCount, 5);
 			PlayState.SetInt(StateKey.RisingInterval, 120000);
 			PlayState.SetInt(StateKey.RisingCooldown, 60000);
-			PlayState.SetInt(StateKey.RandomStartPauseMin, 600);
-			PlayState.SetInt(StateKey.RandomStartPauseMax, 1200);
 			PlayState.SetInt(StateKey.StartPauseInterval, 30000);
 			PlayState.SetInt(StateKey.FinalPauseInterval, 5000);
 			PlayState.SetFloat(StateKey.MinThoughtFactor, 1f);

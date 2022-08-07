@@ -1,7 +1,9 @@
 using Api;
+using Microsoft.Extensions.Logging;
 using RimionshipServer.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
@@ -9,15 +11,19 @@ namespace RimionshipServer.Services
 {
 	public class SyncService
 	{
+		private readonly ILogger<APIService> _logger;
+
 		private readonly SyncResponse lastSyncState;
 		private readonly Dictionary<string, Channel<bool>> clientChannels = new();
 
-		public SyncService()
+		public SyncService(ILogger<APIService> logger)
 		{
+			_logger = logger;
+
 			var (gameState, hour, minute) = GameState;
 			var (scaleFactor, goodTraitSuppression, badTraitSuppression) = Traits;
 			var (maxFreeColonistCount, risingInterval, risingCooldown) = Rising;
-			var (randomStartPauseMin, randomStartPauseMax, startPauseInterval, finalPauseInterval, minThoughtFactor, maxThoughtFactor) = Punishment;
+			var (startPauseInterval, finalPauseInterval, minThoughtFactor, maxThoughtFactor) = Punishment;
 			lastSyncState = new()
 			{
 				Message = ServerMessage,
@@ -43,10 +49,6 @@ namespace RimionshipServer.Services
 					},
 					Punishment = new()
 					{
-						RandomStartPauseMin = randomStartPauseMin,
-						RandomStartPauseMax = randomStartPauseMax,
-						StartPauseInterval = startPauseInterval,
-						FinalPauseInterval = finalPauseInterval,
 						MinThoughtFactor = minThoughtFactor,
 						MaxThoughtFactor = maxThoughtFactor
 					}
@@ -64,29 +66,43 @@ namespace RimionshipServer.Services
 			return lastSyncState.Settings;
 		}
 
-		public void Update(Action<SyncResponse> modifier)
+		public void Update(string twitchName)
 		{
-			modifier(lastSyncState);
+			if (clientChannels.TryGetValue(twitchName, out var channel))
+				_ = clientChannels.Remove(twitchName);
+		}
+
+		public void Update(Action<SyncResponse> modifier = null)
+		{
+			modifier?.Invoke(lastSyncState);
 			foreach (var client in clientChannels)
 				_ = client.Value.Writer.TryWrite(true);
 		}
 
-		public async Task<SyncResponse> WaitForSyncResponseChange(string twitchId)
+		public async Task<SyncResponse> WaitForSyncResponseChange(string twitchName, CancellationToken cancellationToken)
 		{
-			if (clientChannels.TryGetValue(twitchId, out var channel))
-				await foreach (var _ in channel.Reader.ReadAllAsync())
-					;
+			if (clientChannels.TryGetValue(twitchName, out var channel))
+			{
+				try
+				{
+					await foreach (var _ in channel.Reader.ReadAllAsync(cancellationToken))
+						;
+				}
+				catch (OperationCanceledException)
+				{
+				}
+			}
 			else
 			{
 				channel = Channel.CreateBounded<bool>(1);
-				clientChannels.Add(twitchId, channel);
+				clientChannels.Add(twitchName, channel);
 			}
 			return lastSyncState;
 		}
 
-		public void RemoveClient(string twitchId)
+		public void RemoveClient(string twitchName)
 		{
-			_ = clientChannels.Remove(twitchId);
+			_ = clientChannels.Remove(twitchName);
 		}
 
 		public string ServerMessage
@@ -170,12 +186,10 @@ namespace RimionshipServer.Services
 			}
 		}
 
-		public (int randomStartPauseMin, int randomStartPauseMax, int startPauseInterval, int finalPauseInterval, float minThoughtFactor, float maxThoughtFactor) Punishment
+		public (int startPauseInterval, int finalPauseInterval, float minThoughtFactor, float maxThoughtFactor) Punishment
 		{
 			get =>
 			(
-				PlayState.GetInt(StateKey.RandomStartPauseMin),
-				PlayState.GetInt(StateKey.RandomStartPauseMax),
 				PlayState.GetInt(StateKey.StartPauseInterval),
 				PlayState.GetInt(StateKey.FinalPauseInterval),
 				PlayState.GetInt(StateKey.MinThoughtFactor),
@@ -183,8 +197,6 @@ namespace RimionshipServer.Services
 			);
 			set
 			{
-				PlayState.SetInt(StateKey.RandomStartPauseMin, value.randomStartPauseMin);
-				PlayState.SetInt(StateKey.RandomStartPauseMax, value.randomStartPauseMax);
 				PlayState.SetInt(StateKey.StartPauseInterval, value.startPauseInterval);
 				PlayState.SetInt(StateKey.FinalPauseInterval, value.finalPauseInterval);
 				PlayState.SetFloat(StateKey.MinThoughtFactor, value.minThoughtFactor);
@@ -193,8 +205,6 @@ namespace RimionshipServer.Services
 				{
 					state.Settings ??= new Settings();
 					state.Settings.Punishment ??= new Punishment();
-					state.Settings.Punishment.RandomStartPauseMin = value.randomStartPauseMin;
-					state.Settings.Punishment.RandomStartPauseMax = value.randomStartPauseMax;
 					state.Settings.Punishment.StartPauseInterval = value.startPauseInterval;
 					state.Settings.Punishment.FinalPauseInterval = value.finalPauseInterval;
 					state.Settings.Punishment.MinThoughtFactor = value.minThoughtFactor;

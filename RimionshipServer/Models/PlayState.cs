@@ -20,8 +20,6 @@ namespace RimionshipServer.Models
 		MaxFreeColonistCount,
 		RisingInterval,
 		RisingCooldown,
-		RandomStartPauseMin,
-		RandomStartPauseMax,
 		StartPauseInterval,
 		FinalPauseInterval,
 		MinThoughtFactor,

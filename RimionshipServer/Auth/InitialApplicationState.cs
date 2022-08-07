@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using RimionshipServer.Common;
 using RimionshipServer.Models;
 using RimionshipServer.Services;
-using RimionshipServer.Common;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace RimionshipServer.Auth
@@ -13,7 +13,7 @@ namespace RimionshipServer.Auth
 		public string ModID { get; set; }
 		public string AccessToken { get; set; }
 
-		public async Task Associate(HttpContext httpContext, HttpRequest request, HttpResponse response)
+		public async Task Associate(SyncService syncService, ILogger<APIService> logger, HttpContext httpContext, HttpRequest request, HttpResponse response)
 		{
 			var user = httpContext.User;
 			if (user.Identity.IsAuthenticated == false)
@@ -28,7 +28,7 @@ namespace RimionshipServer.Auth
 				return;
 
 			var tempModId = request.Cookies["ModID"] ?? request.Query["id"].ToString();
-			if (tempModId.IsNotEmpty())
+			if (tempModId.IsNotEmpty() && participant.Mod != tempModId)
 			{
 				participant.Mod = tempModId;
 
@@ -36,7 +36,14 @@ namespace RimionshipServer.Auth
 				_ = context.Update(participant);
 				_ = await context.SaveChangesAsync();
 
-				Debug.WriteLine($"User {participant.TwitchName} [{participant.TwitchId}] with accessToken {AccessToken} associated with mod {tempModId}");
+				logger.LogInformation("User {TwitchName} [{TwitchId}] associated with mod {tempModId}",
+					participant.TwitchName,
+					participant.TwitchId,
+					tempModId
+				);
+
+				syncService.Update(participant.TwitchName);
+
 				response.Cookies.Delete("ModID");
 			}
 

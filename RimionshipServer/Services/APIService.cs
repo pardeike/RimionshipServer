@@ -2,8 +2,8 @@ using Api;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using RimionshipServer.Models;
 using RimionshipServer.Common;
+using RimionshipServer.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -39,8 +39,8 @@ namespace RimionshipServer.Services
 			response.AllowedMods.AddRange(mods);
 			response.TwitchName = twitchName ?? "";
 			response.Position = 0;
-			if (twitchName!= null)
-			{ 
+			if (twitchName != null)
+			{
 				var scores = await Stat.WealthList();
 				response.Position = scores.FindIndex(0, score => score.TwitchName == response.TwitchName) + 1;
 				response.Score.AddRange(scores.ShrinkedScoreList(twitchName));
@@ -51,9 +51,10 @@ namespace RimionshipServer.Services
 		public override async Task<SyncResponse> Sync(SyncRequest request, ServerCallContext context)
 		{
 			var participant = await GetParticipant(request.Id, "sync");
+			var result = _syncService.Latest();
 			if (request.WaitForChange)
-				return await _syncService.WaitForSyncResponseChange(participant.TwitchName);
-			return _syncService.Latest();
+				result = await _syncService.WaitForSyncResponseChange(participant.TwitchName, context.CancellationToken);
+			return result;
 		}
 
 		public override async Task<StartResponse> Start(StartRequest request, ServerCallContext context)
@@ -116,7 +117,7 @@ namespace RimionshipServer.Services
 			using var dataContext = new DataContext();
 			_ = await dataContext.Database.ExecuteSqlRawAsync(@$"DELETE FROM FutureEvents WHERE ParticipantId = {participant.Id}");
 			var enumerator = request.Event.GetEnumerator();
-			while(enumerator.MoveNext())
+			while (enumerator.MoveNext())
 			{
 				var futureEvent = enumerator.Current;
 				_ = await dataContext.FutureEvents.AddAsync(new Models.FutureEvent()
