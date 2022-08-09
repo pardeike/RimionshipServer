@@ -12,6 +12,8 @@ namespace RimionshipServer.Services
 	//[Authorize]
 	public class APIService : API.APIBase
 	{
+		const int APIVersion = 1;
+
 		private readonly SyncService _syncService;
 		private readonly ILogger<APIService> _logger;
 
@@ -32,6 +34,9 @@ namespace RimionshipServer.Services
 
 		public override async Task<HelloResponse> Hello(HelloRequest request, ServerCallContext context)
 		{
+			if (request.ApiVersion != APIVersion)
+				throw new RpcException(new Status(StatusCode.Internal, $"API version [{request.ApiVersion}] is too old and must be [{APIVersion}]"));
+
 			var participant = await Participant.ForModId(request.Id ?? "");
 			var twitchName = participant?.TwitchName;
 			var mods = await AllowedMod.List();

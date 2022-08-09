@@ -19,6 +19,8 @@ namespace RimionshipServer.Models
 		BadTraitSuppression,
 		MaxFreeColonistCount,
 		RisingInterval,
+		RisingReductionPerColonist,
+		RisingIntervalMinimum,
 		RisingCooldown,
 		StartPauseInterval,
 		FinalPauseInterval,

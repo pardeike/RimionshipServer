@@ -78,10 +78,12 @@ namespace RimionshipServer.Services
 			PlayState.SetFloat(StateKey.GoodTraitSuppression, 0.7f);
 			PlayState.SetFloat(StateKey.BadTraitSuppression, 0.15f);
 			PlayState.SetInt(StateKey.MaxFreeColonistCount, 5);
-			PlayState.SetInt(StateKey.RisingInterval, 120000);
-			PlayState.SetInt(StateKey.RisingCooldown, 60000);
-			PlayState.SetInt(StateKey.StartPauseInterval, 30000);
-			PlayState.SetInt(StateKey.FinalPauseInterval, 5000);
+			PlayState.SetInt(StateKey.RisingInterval, 2400000);
+			PlayState.SetInt(StateKey.RisingReductionPerColonist, 240000);
+			PlayState.SetInt(StateKey.RisingIntervalMinimum, 120000);
+			PlayState.SetInt(StateKey.RisingCooldown, 120000);
+			PlayState.SetInt(StateKey.StartPauseInterval, 120000);
+			PlayState.SetInt(StateKey.FinalPauseInterval, 120000);
 			PlayState.SetFloat(StateKey.MinThoughtFactor, 1f);
 			PlayState.SetFloat(StateKey.MaxThoughtFactor, 3f);
 		}

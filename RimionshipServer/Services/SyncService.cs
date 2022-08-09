@@ -22,7 +22,7 @@ namespace RimionshipServer.Services
 
 			var (gameState, hour, minute) = GameState;
 			var (scaleFactor, goodTraitSuppression, badTraitSuppression) = Traits;
-			var (maxFreeColonistCount, risingInterval, risingCooldown) = Rising;
+			var (maxFreeColonistCount, risingInterval, risingReductionPerColonist, risingIntervalMinimum, risingCooldown) = Rising;
 			var (startPauseInterval, finalPauseInterval, minThoughtFactor, maxThoughtFactor) = Punishment;
 			lastSyncState = new()
 			{
@@ -45,6 +45,8 @@ namespace RimionshipServer.Services
 					{
 						MaxFreeColonistCount = maxFreeColonistCount,
 						RisingInterval = risingInterval,
+						RisingReductionPerColonist = risingReductionPerColonist,
+						RisingIntervalMinimum = risingIntervalMinimum,
 						RisingCooldown = risingCooldown
 					},
 					Punishment = new()
@@ -162,18 +164,22 @@ namespace RimionshipServer.Services
 			}
 		}
 
-		public (int maxFreeColonistCount, int risingInterval, int risingCooldown) Rising
+		public (int maxFreeColonistCount, int risingInterval, int risingReductionPerColonist, int risingIntervalMinimum, int risingCooldown) Rising
 		{
 			get =>
 			(
 				PlayState.GetInt(StateKey.MaxFreeColonistCount),
 				PlayState.GetInt(StateKey.RisingInterval),
+				PlayState.GetInt(StateKey.RisingReductionPerColonist),
+				PlayState.GetInt(StateKey.RisingIntervalMinimum),
 				PlayState.GetInt(StateKey.RisingCooldown)
 			);
 			set
 			{
 				PlayState.SetInt(StateKey.MaxFreeColonistCount, value.maxFreeColonistCount);
 				PlayState.SetInt(StateKey.RisingInterval, value.risingInterval);
+				PlayState.SetInt(StateKey.RisingReductionPerColonist, value.risingReductionPerColonist);
+				PlayState.SetInt(StateKey.RisingIntervalMinimum, value.risingIntervalMinimum);
 				PlayState.SetInt(StateKey.RisingCooldown, value.risingCooldown);
 				Update(state =>
 				{
@@ -181,6 +187,8 @@ namespace RimionshipServer.Services
 					state.Settings.Rising ??= new Rising();
 					state.Settings.Rising.MaxFreeColonistCount = value.maxFreeColonistCount;
 					state.Settings.Rising.RisingInterval = value.risingInterval;
+					state.Settings.Rising.RisingReductionPerColonist = value.risingReductionPerColonist;
+					state.Settings.Rising.RisingIntervalMinimum = value.risingIntervalMinimum;
 					state.Settings.Rising.RisingCooldown = value.risingCooldown;
 				});
 			}
