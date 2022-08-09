@@ -35,7 +35,7 @@ namespace RimionshipServer.Services
 		public override async Task<HelloResponse> Hello(HelloRequest request, ServerCallContext context)
 		{
 			if (request.ApiVersion != APIVersion)
-				throw new RpcException(new Status(StatusCode.Internal, $"API version [{request.ApiVersion}] is too old and must be [{APIVersion}]"));
+				throw new RpcException(new Status(StatusCode.Aborted, $"Expected API version {APIVersion} but got {request.ApiVersion}"));
 
 			var participant = await Participant.ForModId(request.Id ?? "");
 			var twitchName = participant?.TwitchName;
