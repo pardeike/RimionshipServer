@@ -42,8 +42,10 @@ namespace RimionshipServer.Services
 				_ = await AllowedMods.AddAsync(new AllowedMod(02, "ludeon.rimworld", 0));
 				_ = await AllowedMods.AddAsync(new AllowedMod(03, "unlimitedhugs.hugslib", 818773962));
 				_ = await AllowedMods.AddAsync(new AllowedMod(04, "brrainz.rimionship", 2834585352));
+				_ = await AllowedMods.AddAsync(new AllowedMod(04, "mastertea.randomplus", 1434137894)); // remove later
 				_ = await AllowedMods.AddAsync(new AllowedMod(05, "automatic.bionicicons", 1677616980));
 				_ = await AllowedMods.AddAsync(new AllowedMod(06, "brrainz.cameraplus", 867467808));
+				_ = await AllowedMods.AddAsync(new AllowedMod(06, "jaxe.rimhud", 1508850027));
 				_ = await AllowedMods.AddAsync(new AllowedMod(07, "tiagocc0.colorblindminerals", 1424338139));
 				_ = await AllowedMods.AddAsync(new AllowedMod(08, "dubwise.dubsmintmenus", 1446523594));
 				_ = await AllowedMods.AddAsync(new AllowedMod(09, "dubwise.dubsmintminimap", 1662119905));
@@ -55,7 +57,6 @@ namespace RimionshipServer.Services
 				_ = await AllowedMods.AddAsync(new AllowedMod(15, "fluffy.musicmanager", 2229205672));
 				_ = await AllowedMods.AddAsync(new AllowedMod(16, "peppsen.pmusic", 725130005));
 				_ = await AllowedMods.AddAsync(new AllowedMod(17, "legodude17.qualcolor", 2420141361));
-				_ = await AllowedMods.AddAsync(new AllowedMod(18, "ben.rpgstyleinventory", 2407434654));
 				_ = await AllowedMods.AddAsync(new AllowedMod(19, "automatic.recipeicons", 1616643195));
 				_ = await AllowedMods.AddAsync(new AllowedMod(20, "targhetti.showdrafteesweapon", 1690978457));
 				_ = await AllowedMods.AddAsync(new AllowedMod(21, "crashm.colorcodedmoodbar.11", 2006605356));
