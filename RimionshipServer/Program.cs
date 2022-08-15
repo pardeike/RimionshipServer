@@ -12,23 +12,29 @@ void ConfigureServices(IServiceCollection services)
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     services.AddDbContext<RimionDbContext>(options =>
-        options.UseSqlite(connectionString));
+         options.UseSqlite(connectionString));
     services.AddDatabaseDeveloperPageExceptionFilter();
 
     services.AddIdentity<RimionUser, IdentityRole>()
-        .AddEntityFrameworkStores<RimionDbContext>();
+         .AddEntityFrameworkStores<RimionDbContext>();
+
+    services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+    });
+
     services.AddRazorPages()
 #if DEBUG
-        .AddRazorRuntimeCompilation()
+         .AddRazorRuntimeCompilation()
 #endif
-        ;
+         ;
 
     services.AddAuthentication()
-        .AddTwitch(options =>
-        {
-            options.Scope.Clear();
-            configuration.GetSection("Twitch").Bind(options);
-        });
+         .AddTwitch(options =>
+         {
+             options.Scope.Clear();
+             configuration.GetSection("Twitch").Bind(options);
+         });
 }
 
 ConfigureServices(builder.Services);
@@ -39,10 +45,12 @@ void Configure(WebApplication app)
     if (app.Environment.IsDevelopment())
     {
         app.UseMigrationsEndPoint();
+        app.UseForwardedHeaders();
     }
     else
     {
         app.UseExceptionHandler("/Error");
+        app.UseForwardedHeaders();
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
     }
