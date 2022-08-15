@@ -21,5 +21,6 @@ jobs:
         name: Build & push Docker image
         with:
           image: ${{ secrets.DOCKERHUB_USERNAME }}/rimionship-server
+          tags: latest
           registry: docker.io
           dockerfile: RimionshipServer/Dockerfile
