@@ -20,6 +20,7 @@ void ConfigureServices(IServiceCollection services)
 
     services.Configure<ForwardedHeadersOptions>(options =>
     {
+        options.AllowedHosts.Clear();
         options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
     });
 
