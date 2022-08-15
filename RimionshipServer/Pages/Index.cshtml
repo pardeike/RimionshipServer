@@ -13,13 +13,25 @@
         <p>
             Weitere Infos folgen.
         </p>
+
+        <p>
+            Du hast es dir anders überlegt? Du kannst deine Teilnahme <a asp-page="/DeleteAccount">hier</a> zurückziehen.
+        </p>
     }
     else
     {
         <h1 class="display-4">Rimionship 2022</h1>
 
         <p>
-            Um dein Interesse zu bekunden, melde dich bitte <a asp-page="/Login">hier</a> an.
+            Um dein Interesse zu bekunden, melde dich bitte mit Twitch an.
         </p>
+
+        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="/" method="post" class="form-horizontal">
+            <div>
+                <p>
+                    <button type="submit" class="btn btn-primary" name="provider" value="Twitch" title="Login mit deinem Twitch Account">Login</button>
+                </p>
+            </div>
+        </form>
     }
 </div>

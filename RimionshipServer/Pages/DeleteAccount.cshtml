@@ -1,0 +1,26 @@
+﻿@page
+@model RimionshipServer.Pages.DeleteAccountModel
+@inject SignInManager<RimionUser> SignInManager
+@inject UserManager<RimionUser> UserManager
+@{
+    ViewData["Title"] = "Teilnahme zurückziehen";
+}
+
+<h1>@ViewData["Title"]</h1>
+@{
+    if (SignInManager.IsSignedIn(User) && await UserManager.GetUserAsync(User) != null)
+    {
+        <p>
+        Falls du dich anders entschieden hast, kannst du deine Teilnahme zurückziehen. Du kannst dich später jederzeit wieder anmelden.
+        </p>
+
+        <form class="form-inline" asp-page="/DeleteAccount" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+            <button type="submit" class="nav-link btn btn-link text-light btn-danger">Klick hier um nicht mehr teilzunehmen.</button>
+        </form>
+    }
+    else
+    {
+        <p>Du nimmst nicht an der Rimionship 2022 teil.</p>
+    }
+}
+
