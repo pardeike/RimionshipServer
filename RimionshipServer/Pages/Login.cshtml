@@ -1,0 +1,23 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    Um fortzufahren melde dich bitte mit deinem Twitch Account an.
+</p>
+
+<form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+    <div>
+        <p>
+            @foreach (var provider in Model.ExternalLogins)
+            {
+                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Login mit deinem @provider.DisplayName Account">Login</button>
+            }
+        </p>
+    </div>
+</form>

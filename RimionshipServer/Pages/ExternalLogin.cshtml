@@ -1,0 +1,41 @@
+﻿@page
+@model ExternalLoginModel
+@{
+    ViewData["Title"] = "Registrierung";
+}
+
+<h1 id="external-login-title">Hallo @Model.UserName!</h1>
+<hr />
+
+<p id="external-login-description">
+    Um deine Registrierung abzuschliessen, stimme bitte noch den folgenden Bedingungen zu:
+</p>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-check">
+                <input asp-for="Input.JoinConfirmation" class="form-check-input" />
+                <label asp-for="Input.JoinConfirmation" class="form-check-label">Ich möchte an der Rimionship 2022 teilnehmen</label>
+                <div>
+                    <span asp-validation-for="Input.JoinConfirmation" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-check">
+                <input asp-for="Input.TOSConfirmation" class="form-check-input" />
+                <label asp-for="Input.TOSConfirmation" class="form-check-label">Ich akzeptiere die <a href="https://i.redd.it/s7ikz8syu8y61.jpg" target="_blank">Teilnahmebedingungen</a></label>
+                <div>
+                    <span asp-validation-for="Input.TOSConfirmation" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button type="submit" class="btn btn-lg btn-primary">Anmelden</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,25 @@
+﻿@page
+@inject SignInManager<RimionUser> SignInManager
+@model IndexModel
+@{
+    ViewData["Title"] = "Startseite";
+}
+
+<div class="text-center">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <h1 class="display-5">Du bist erfolgreich angemeldet für die Rimionship 2022.</h1>
+
+        <p>
+            Weitere Infos folgen.
+        </p>
+    }
+    else
+    {
+        <h1 class="display-4">Rimionship 2022</h1>
+
+        <p>
+            Um dein Interesse zu bekunden, melde dich bitte <a asp-page="/Login">hier</a> an.
+        </p>
+    }
+</div>
