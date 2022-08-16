@@ -26,7 +26,6 @@ namespace RimionshipServer.Pages.Account
         private readonly SignInManager<RimionUser> _signInManager;
         private readonly UserManager<RimionUser> _userManager;
         private readonly IUserStore<RimionUser> _userStore;
-        private readonly IUserEmailStore<RimionUser> _emailStore;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(

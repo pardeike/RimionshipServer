@@ -4,7 +4,7 @@ namespace RimionshipServer
 {
     public class MustBeCheckedAttribute : ValidationAttribute
     {
-        public override bool IsValid(object value)
+        public override bool IsValid(object? value)
         {
             if (value is bool b)
                 return b;

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Data;
+using RimionshipServer.Services;
+using RimionshipServer.Users;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +18,15 @@ void ConfigureServices(IServiceCollection services)
     services.AddDatabaseDeveloperPageExceptionFilter();
 
     services.AddIdentity<RimionUser, IdentityRole>()
-         .AddEntityFrameworkStores<RimionDbContext>();
+         .AddEntityFrameworkStores<RimionDbContext>()
+         .AddUserManager<UserManager>()
+         .AddUserStore<UserStore>();
+
+    services.AddTransient<DbSeedService>()
+        .AddScoped<IUserStore>(ctx => ctx.GetRequiredService<UserStore>())
+        .AddScoped<DataService>()
+        .AddScoped<ConfigurationService>()
+        .AddSingleton<ScoreService>();
 
     services.Configure<ForwardedHeadersOptions>(options =>
     {
@@ -27,7 +37,7 @@ void ConfigureServices(IServiceCollection services)
 
     services.AddRazorPages()
 #if DEBUG
-         .AddRazorRuntimeCompilation()
+        .AddRazorRuntimeCompilation()
 #endif
          ;
 
@@ -37,6 +47,7 @@ void ConfigureServices(IServiceCollection services)
              options.Scope.Clear();
              configuration.GetSection("Twitch").Bind(options);
          });
+
 }
 
 ConfigureServices(builder.Services);
@@ -79,7 +90,10 @@ await using (var scope = app.Services.CreateAsyncScope())
     var db = scope.ServiceProvider.GetRequiredService<RimionDbContext>();
     Log.Information("Migrating databases...");
     await db.Database.MigrateAsync();
-    Log.Information("Migration complete!");
+    Log.Information("Migration complete! Seeding database...");
+    var seeder = scope.ServiceProvider.GetRequiredService<DbSeedService>();
+    await seeder.SeedAsync();
+    Log.Information("Seeding complete!");
 }
 
 Configure(app);
