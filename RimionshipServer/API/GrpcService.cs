@@ -14,18 +14,22 @@ namespace RimionshipServer.API
         private readonly DataService dataService;
         private readonly LoginService loginService;
 
+        private readonly GameDataService _gameDataService;
+
         public GrpcService(
             IUserStore userStore,
             ConfigurationService configurationService,
             ScoreService scoreService,
             DataService dataService,
-            LoginService loginService)
+            LoginService loginService,
+            GameDataService gameDataService)
         {
             this.userStore = userStore;
             this.configurationService = configurationService;
             this.scoreService = scoreService;
             this.dataService = dataService;
             this.loginService = loginService;
+            _gameDataService = gameDataService;
         }
 
         /// <summary>
@@ -150,6 +154,8 @@ namespace RimionshipServer.API
             // PARTIALLY implemented - at least, we keep the scores in-memory
             await this.scoreService.AddOrUpdateScoreAsync(request.Id, user.UserName, user.AvatarUrl, request.Wealth, ct);
 
+            await _gameDataService.ProcessStatsRequestAsync(request, ct);
+            
             return new StatsResponse { Interval = 10 };
         }
 
