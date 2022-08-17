@@ -38,7 +38,7 @@ namespace RimionshipServer.Services
             string secret;
             using (var rng = RandomNumberGenerator.Create())
             {
-                var tokenData = new byte[16];
+                Span<byte> tokenData = stackalloc byte[16];
                 rng.GetBytes(tokenData);
                 secret = Convert.ToBase64String(tokenData);
             }
