@@ -11,5 +11,16 @@ namespace RimionshipServer.Data
             : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<AllowedMod>(entity =>
+            {
+                entity.HasIndex(e => e.SteamId).IsUnique();
+                entity.HasIndex(e => e.PackageId).IsUnique();
+            });
+        }
     }
 }

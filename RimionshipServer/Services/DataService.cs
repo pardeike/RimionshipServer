@@ -20,18 +20,18 @@ namespace RimionshipServer.Services
             this.memoryCache = memoryCache;
         }
 
-        public async Task<RimionUser?> GetCachedUserAsync(string clientId, CancellationToken cancellationToken = default)
+        public async Task<RimionUser?> GetCachedUserAsync(string playerId, CancellationToken cancellationToken = default)
         {
-            string key = $"RimionshipServer.Clients.{clientId}";
+            string key = $"RimionshipServer.Clients.{playerId}";
 
-            if (memoryCache.TryGetValue<RimionUser>(clientId, out var user))
+            if (memoryCache.TryGetValue<RimionUser>(playerId, out var user))
                 return user;
 
-            user = await userStore.FindUserByClientIdAsync(clientId, cancellationToken);
+            user = await userStore.FindUserByClientIdAsync(playerId, cancellationToken);
             if (user == null)
                 return null;
 
-            var entry = memoryCache.CreateEntry(key);
+            using var entry = memoryCache.CreateEntry(key);
             entry.Value = user;
             entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
             entry.SetSlidingExpiration(TimeSpan.FromSeconds(30));

@@ -12,17 +12,20 @@ namespace RimionshipServer.API
         private readonly ConfigurationService configurationService;
         private readonly ScoreService scoreService;
         private readonly DataService dataService;
+        private readonly LoginService loginService;
 
         public GrpcService(
             IUserStore userStore,
             ConfigurationService configurationService,
             ScoreService scoreService,
-            DataService dataService)
+            DataService dataService,
+            LoginService loginService)
         {
             this.userStore = userStore;
             this.configurationService = configurationService;
             this.scoreService = scoreService;
             this.dataService = dataService;
+            this.loginService = loginService;
         }
 
         /// <summary>
@@ -46,10 +49,9 @@ namespace RimionshipServer.API
             {
                 response = new HelloResponse()
                 {
-                    Found = false,
-                    LoginUrl = configurationService.GetLoginUrl(request.Id),
+                    UserExists = false,
                     Position = 0,
-                    TwitchName = null
+                    TwitchName = String.Empty
                 };
             }
             else
@@ -57,8 +59,7 @@ namespace RimionshipServer.API
                 var (position, scoreEntries) = scoreService.GetPlayerScoreData(request.Id);
                 response = new HelloResponse()
                 {
-                    Found = true,
-                    LoginUrl = null,
+                    UserExists = true,
                     TwitchName = user.UserName,
                     Position = position
                 };
@@ -71,16 +72,74 @@ namespace RimionshipServer.API
             return response;
         }
 
+        public override Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
+        {
+            VerifyId(request.Id);
+            var (secret, token) = loginService.CreateLoginToken(request.Id);
+
+            return Task.FromResult(new LoginResponse()
+            {
+                LoginToken = secret,
+                LoginUrl = configurationService.GetLoginUrl(token)
+            });
+        }
+
+        public override async Task<LinkAccountResponse> LinkAccount(LinkAccountRequest request, ServerCallContext context)
+        {
+            VerifyId(request.Id);
+            var name = await loginService.RedeemTokenAsync(request.Id, request.LoginToken, context.CancellationToken);
+
+            return new LinkAccountResponse
+            {
+                UserExists = name != null,
+                TwitchName = name ?? string.Empty
+            };
+        }
+
         public override async Task<StartResponse> Start(StartRequest request, ServerCallContext context)
         {
             var user = await GetCachedUserAsync(request.Id);
-            throw new NotImplementedException();
+
+            // NYI
+            return new StartResponse()
+            {
+                GameFileHash = "837e504433e8f5ffa9283271e4906063",
+                GameFileUrl = "https://mod.rimionship.com/game/rimionship.rws",
+                StartingPawnCount = 5,
+                Settings = DefaultSettings
+            };
         }
+
+        private Settings DefaultSettings => new Settings()
+        {
+            Rising = new()
+            {
+                MaxFreeColonistCount = 5,
+                RisingCooldown = 120_000,
+                RisingInterval = 2400_000,
+                RisingIntervalMinimum = 120_000,
+                RisingReductionPerColonist = 240_000
+            },
+            Punishment = new()
+            {
+                FinalPauseInterval = 10,
+                MaxThoughtFactor = 3f,
+                MinThoughtFactor = 1f,
+                StartPauseInterval = 120_000
+            },
+            Traits = new()
+            {
+                BadTraitSuppression = 0.15f,
+                GoodTraitSuppression = 0.7f,
+                ScaleFactor = 0.2f
+            }
+        };
 
         public override async Task<FutureEventsResponse> FutureEvents(FutureEventsRequest request, ServerCallContext context)
         {
             var user = await GetCachedUserAsync(request.Id);
-            throw new NotImplementedException();
+            // NYI
+            return new FutureEventsResponse();
         }
 
         public override async Task<StatsResponse> Stats(StatsRequest request, ServerCallContext context)
@@ -96,8 +155,23 @@ namespace RimionshipServer.API
 
         public override async Task<SyncResponse> Sync(SyncRequest request, ServerCallContext context)
         {
-            var user = await GetCachedUserAsync(request.Id);
-            throw new NotImplementedException();
+            // Authentication required?
+            // var user = await GetCachedUserAsync(request.Id);
+
+            if (request.WaitForChange)
+                await Task.Delay(-1, context.CancellationToken);
+
+            return new SyncResponse()
+            {
+                Message = "NYI",
+                State = new State
+                {
+                    Game = State.Types.Game.Training,
+                    PlannedStartHour = 0,
+                    PlannedStartMinute = 0
+                },
+                Settings = DefaultSettings
+            };
         }
 
         private void VerifyId(string id)

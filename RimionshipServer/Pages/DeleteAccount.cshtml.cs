@@ -27,6 +27,7 @@ namespace RimionshipServer.Pages
             if (user == null)
                 return NotFound("Kein Benutzerkonto vorhanden.");
 
+            await userManager.DeleteAsync(user);
             await signInManager.SignOutAsync();
             return RedirectToPage("/DeleteAccount");
         }

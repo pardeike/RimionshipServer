@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RimionshipServer;
+using RimionshipServer.API;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
 using RimionshipServer.Users;
@@ -12,6 +14,8 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configurati
 var configuration = builder.Configuration;
 void ConfigureServices(IServiceCollection services)
 {
+    services.Configure<RimionshipOptions>(configuration.GetSection("Rimionship"));
+
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     services.AddDbContext<RimionDbContext>(options =>
          options.UseSqlite(connectionString));
@@ -19,14 +23,17 @@ void ConfigureServices(IServiceCollection services)
 
     services.AddIdentity<RimionUser, IdentityRole>()
          .AddEntityFrameworkStores<RimionDbContext>()
-         .AddUserManager<UserManager>()
-         .AddUserStore<UserStore>();
+         .AddUserManager<UserManager>();
 
     services.AddTransient<DbSeedService>()
-        .AddScoped<IUserStore>(ctx => ctx.GetRequiredService<UserStore>())
+        .AddScoped<IUserStore, UserStore>()
+        .AddScoped<IUserStore<RimionUser>>(ctx => ctx.GetRequiredService<IUserStore>())
         .AddScoped<DataService>()
         .AddScoped<ConfigurationService>()
+        .AddScoped<LoginService>()
         .AddSingleton<ScoreService>();
+
+    services.AddGrpc();
 
     services.Configure<ForwardedHeadersOptions>(options =>
     {
@@ -40,6 +47,8 @@ void ConfigureServices(IServiceCollection services)
         .AddRazorRuntimeCompilation()
 #endif
          ;
+
+    services.AddControllers();
 
     services.AddAuthentication()
          .AddTwitch(options =>
@@ -66,9 +75,9 @@ void Configure(WebApplication app)
         app.UseForwardedHeaders();
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
+        app.UseHttpsRedirection();
     }
 
-    app.UseHttpsRedirection();
     app.UseStaticFiles();
 
     app.UseRouting();
@@ -77,10 +86,8 @@ void Configure(WebApplication app)
     app.UseAuthorization();
 
     app.MapRazorPages();
-
-#if DEBUG
     app.MapControllers();
-#endif
+    app.MapGrpcService<GrpcService>();
 }
 
 var app = builder.Build();

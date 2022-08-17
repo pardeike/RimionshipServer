@@ -17,27 +17,29 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using RimionshipServer.Data;
+using RimionshipServer.Users;
+using RimionshipServer.Services;
 
 namespace RimionshipServer.Pages.Account
 {
     [AllowAnonymous]
     public class ExternalLoginModel : PageModel
     {
-        private readonly SignInManager<RimionUser> _signInManager;
-        private readonly UserManager<RimionUser> _userManager;
-        private readonly IUserStore<RimionUser> _userStore;
-        private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly SignInManager<RimionUser> signInManager;
+        private readonly UserManager userManager;
+        private readonly IUserStore userStore;
+        private readonly ILogger<ExternalLoginModel> logger;
 
         public ExternalLoginModel(
             SignInManager<RimionUser> signInManager,
-            UserManager<RimionUser> userManager,
-            IUserStore<RimionUser> userStore,
+            UserManager userManager,
+            IUserStore userStore,
             ILogger<ExternalLoginModel> logger)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _userStore = userStore;
-            _logger = logger;
+            this.signInManager = signInManager;
+            this.userManager = userManager;
+            this.userStore = userStore;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace RimionshipServer.Pages.Account
         {
             // Request a redirect to the external login provider.
             var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
 
@@ -96,7 +98,7 @@ namespace RimionshipServer.Pages.Account
                 ErrorMessage = $"Error from external provider: {remoteError}";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
-            var info = await _signInManager.GetExternalLoginInfoAsync();
+            var info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information.";
@@ -104,10 +106,10 @@ namespace RimionshipServer.Pages.Account
             }
 
             // Sign in the user with this external login provider if the user already has a login.
-            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded)
             {
-                _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+                logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
@@ -128,7 +130,7 @@ namespace RimionshipServer.Pages.Account
         {
             returnUrl = returnUrl ?? Url.Content("~/");
             // Get the information about the user from the external login provider
-            var info = await _signInManager.GetExternalLoginInfoAsync();
+            var info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
                 ErrorMessage = "Error loading external login information during confirmation.";
@@ -139,17 +141,18 @@ namespace RimionshipServer.Pages.Account
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, info.Principal.GetTwitchName(), CancellationToken.None);
+                await userStore.SetUserNameAsync(user, info.Principal.GetTwitchName(), CancellationToken.None);
 
                 user.AvatarUrl = info.Principal.FindFirstValue("urn:twitch:profileimageurl");
-                var result = await _userManager.CreateAsync(user);
+                var result = await userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    result = await _userManager.AddLoginAsync(user, info);
+                    result = await userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
-                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+                        logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+                        await signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+
                         return LocalRedirect(returnUrl);
                     }
                 }
@@ -181,11 +184,11 @@ namespace RimionshipServer.Pages.Account
 
         private IUserEmailStore<RimionUser> GetEmailStore()
         {
-            if (!_userManager.SupportsUserEmail)
+            if (!userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<RimionUser>)_userStore;
+            return (IUserEmailStore<RimionUser>)userStore;
         }
     }
 }

@@ -1,20 +1,33 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Flurl;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using RimionshipServer.API;
 using RimionshipServer.Data;
+using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace RimionshipServer.Services
 {
     public class ConfigurationService
     {
         private const string ModListCacheKey = "RimionshipServer.ModList";
+        private readonly LoginService loginService;
         private readonly RimionDbContext db;
         private readonly IMemoryCache memoryCache;
+        private readonly IOptions<RimionshipOptions> options;
 
-        public ConfigurationService(RimionDbContext db, IMemoryCache memoryCache)
+        public ConfigurationService(
+            LoginService loginService, 
+            RimionDbContext db, 
+            IMemoryCache memoryCache,
+            IOptions<RimionshipOptions> options)
         {
+            this.loginService = loginService;
             this.db = db;
             this.memoryCache = memoryCache;
+            this.options = options;
         }
 
         /// <summary>
@@ -35,13 +48,9 @@ namespace RimionshipServer.Services
         public void FlushAllowedModsAsync()
             => memoryCache.Remove(ModListCacheKey);
 
-        /// <summary>
-        /// Returns the login URL for the service
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public string GetLoginUrl(string id)
-            => "http://localhost/not-yet-implemented/";
+        private record LoginToken(string Id, string PlayerId);
+
+        public string GetLoginUrl(string token)
+            => options.Value.LoginUrl.SetQueryParam("token", token);
     }
 }
