@@ -34,7 +34,7 @@ void ConfigureServices(IServiceCollection services)
         .AddSingleton<ScoreService>();
 
     services.AddGrpc();
-
+    
     services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.KnownProxies.Clear();

@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
+using Microsoft.Extensions.Options;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
-using RimionshipServer.Users;
 
 namespace RimionshipServer.API
 {
@@ -12,18 +12,20 @@ namespace RimionshipServer.API
         private readonly ScoreService scoreService;
         private readonly DataService dataService;
         private readonly LoginService loginService;
+        private readonly IOptions<RimionshipOptions> options;
 
         public GrpcService(
-            UserManager userManager,
             ConfigurationService configurationService,
             ScoreService scoreService,
             DataService dataService,
-            LoginService loginService)
+            LoginService loginService,
+            IOptions<RimionshipOptions> options)
         {
             this.configurationService = configurationService;
             this.scoreService = scoreService;
             this.dataService = dataService;
             this.loginService = loginService;
+            this.options = options;
         }
 
         /// <summary>
@@ -101,8 +103,8 @@ namespace RimionshipServer.API
             // NYI
             return new StartResponse()
             {
-                GameFileHash = "837e504433e8f5ffa9283271e4906063",
-                GameFileUrl = "https://mod.rimionship.com/game/rimionship.rws",
+                GameFileHash = options.Value.GameFileHash,
+                GameFileUrl = options.Value.GameFileUrl,
                 StartingPawnCount = 5,
                 Settings = DefaultSettings
             };
@@ -161,7 +163,7 @@ namespace RimionshipServer.API
 
             return new SyncResponse()
             {
-                Message = "NYI",
+                Message = options.Value.SyncMessage,
                 State = new State
                 {
                     Game = State.Types.Game.Training,
