@@ -9,25 +9,23 @@ namespace RimionshipServer.Services
     /// </summary>
     public class DataService
     {
-        private readonly RimionDbContext db;
-        private readonly IUserStore userStore;
+        private readonly UserManager userManager;
         private readonly IMemoryCache memoryCache;
 
-        public DataService(RimionDbContext db, IUserStore userStore, IMemoryCache memoryCache)
+        public DataService(UserManager userManager, IMemoryCache memoryCache)
         {
-            this.db = db;
-            this.userStore = userStore;
+            this.userManager = userManager;
             this.memoryCache = memoryCache;
         }
 
-        public async Task<RimionUser?> GetCachedUserAsync(string playerId, CancellationToken cancellationToken = default)
+        public async Task<RimionUser?> GetCachedUserAsync(string playerId)
         {
             string key = $"RimionshipServer.Clients.{playerId}";
 
             if (memoryCache.TryGetValue<RimionUser>(playerId, out var user))
                 return user;
 
-            user = await userStore.FindUserByClientIdAsync(playerId, cancellationToken);
+            user = await userManager.FindByPlayerIdAsync(playerId);
             if (user == null)
                 return null;
 

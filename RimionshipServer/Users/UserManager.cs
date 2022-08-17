@@ -6,6 +6,8 @@ namespace RimionshipServer.Users
 {
     public class UserManager : UserManager<RimionUser>
     {
+        private const string ModLoginProvider = "RimionshipMod";
+
         public UserManager(
             IUserStore store, 
             IOptions<IdentityOptions> optionsAccessor, 
@@ -19,5 +21,11 @@ namespace RimionshipServer.Users
             : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
         }
+
+        public Task<RimionUser> FindByPlayerIdAsync(string playerId)
+            => this.FindByLoginAsync(ModLoginProvider, playerId);
+
+        public Task<IdentityResult> AddPlayerIdAsync(RimionUser user, string playerId)
+            => this.AddLoginAsync(user, new UserLoginInfo(ModLoginProvider, playerId, null));
     }
 }

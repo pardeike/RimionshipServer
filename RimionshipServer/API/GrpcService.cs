@@ -8,20 +8,18 @@ namespace RimionshipServer.API
     public class GrpcService : API.APIBase
     {
         private const int ApiVersion = 1;
-        private readonly IUserStore userStore;
         private readonly ConfigurationService configurationService;
         private readonly ScoreService scoreService;
         private readonly DataService dataService;
         private readonly LoginService loginService;
 
         public GrpcService(
-            IUserStore userStore,
+            UserManager userManager,
             ConfigurationService configurationService,
             ScoreService scoreService,
             DataService dataService,
             LoginService loginService)
         {
-            this.userStore = userStore;
             this.configurationService = configurationService;
             this.scoreService = scoreService;
             this.dataService = dataService;
@@ -42,7 +40,7 @@ namespace RimionshipServer.API
             VerifyId(request.Id);
 
             var allowedModsTask = configurationService.GetAllowedModsAsync();
-            var user = await this.userStore.FindUserByClientIdAsync(request.Id, context.CancellationToken);
+            var user = await dataService.GetCachedUserAsync(request.Id);
 
             HelloResponse response;
             if (user == null)
@@ -145,7 +143,7 @@ namespace RimionshipServer.API
         public override async Task<StatsResponse> Stats(StatsRequest request, ServerCallContext context)
         {
             var ct = context.CancellationToken;
-            var user = await GetCachedUserAsync(request.Id, ct);
+            var user = await GetCachedUserAsync(request.Id);
 
             // PARTIALLY implemented - at least, we keep the scores in-memory
             await this.scoreService.AddOrUpdateScoreAsync(request.Id, user.UserName, user.AvatarUrl, request.Wealth, ct);
@@ -183,11 +181,11 @@ namespace RimionshipServer.API
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"{nameof(id)} has an invalid scheme"));
         }
 
-        private async Task<RimionUser> GetCachedUserAsync(string clientId, CancellationToken cancellationToken = default)
+        private async Task<RimionUser> GetCachedUserAsync(string clientId)
         {
             VerifyId(clientId);
 
-            return await dataService.GetCachedUserAsync(clientId, cancellationToken) ?? throw new RpcException(new Status(StatusCode.Unauthenticated, "User not found"));
+            return await dataService.GetCachedUserAsync(clientId) ?? throw new RpcException(new Status(StatusCode.Unauthenticated, "User not found"));
         }
     }
 }
