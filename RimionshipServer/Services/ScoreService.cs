@@ -68,9 +68,9 @@ namespace RimionshipServer.Services
 
         private IEnumerable<RelativeScoreEntry> GetScoreEntriesForPlayer(ImmutableList<ScoreEntry> scores, int playerPosition, string clientId)
         {
-            const int returnedRange = 3;
+            const int returnedRange = 1;
 
-            int start = playerPosition - returnedRange;
+            int start = playerPosition - returnedRange - 1;
             if (start < 0)
                 start = 0;
 
@@ -79,13 +79,7 @@ namespace RimionshipServer.Services
                 end = scores.Count - 1;
 
             for (int i = start; i <= end; ++i)
-            {
-                // Assuming we want to send the player's own position as well in this list
-                ////if (scores[i].ClientId == clientId)
-                ////    continue;
-
                 yield return new RelativeScoreEntry(i + 1, scores[i].Name, scores[i].Score);
-            }
         }
     }
 }

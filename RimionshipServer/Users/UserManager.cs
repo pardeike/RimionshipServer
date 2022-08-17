@@ -27,5 +27,11 @@ namespace RimionshipServer.Users
 
         public Task<IdentityResult> AddPlayerIdAsync(RimionUser user, string playerId)
             => this.AddLoginAsync(user, new UserLoginInfo(ModLoginProvider, playerId, null));
+
+        public async Task<string?> GetPlayerIdAsync(RimionUser user)
+        {
+            var logins = await this.GetLoginsAsync(user);
+            return logins.FirstOrDefault(s => s.LoginProvider == ModLoginProvider)?.ProviderKey;
+        }
     }
 }

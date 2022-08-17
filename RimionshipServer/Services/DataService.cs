@@ -20,7 +20,7 @@ namespace RimionshipServer.Services
 
         public async Task<RimionUser?> GetCachedUserAsync(string playerId)
         {
-            string key = $"RimionshipServer.Clients.{playerId}";
+            string key = GetCacheKey(playerId);
 
             if (memoryCache.TryGetValue<RimionUser>(playerId, out var user))
                 return user;
@@ -36,5 +36,11 @@ namespace RimionshipServer.Services
 
             return user;
         }
+
+        public void InvalidatePlayerCache(string playerId)
+            => memoryCache.Remove(GetCacheKey(playerId));
+
+        private string GetCacheKey(string playerId)
+            => $"RimionshipServer.Clients.{playerId}";
     }
 }
