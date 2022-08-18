@@ -23,7 +23,6 @@ namespace RimionshipServer.API
             LoginService loginService,
             IOptions<RimionshipOptions> options,
             GameDataService gameDataService)
-            )
         {
             this.configurationService = configurationService;
             this.scoreService = scoreService;
