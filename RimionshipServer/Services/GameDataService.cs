@@ -220,7 +220,7 @@ public class GameDataService
                    GetTimePointsForTimeSpan(closestTime.Time, end, stepsize);
     }
 
-    public ILookup<DateTime, T> GetIntDataForTimeSpan<T>(string playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize) 
+    public ILookup<DateTime, int> GetIntDataForTimeSpan<T>(string playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize) 
         where T : BaseIntRecord
     {
         var set        = (DbSet<T>) stat.GetDbSet(Context);
@@ -230,10 +230,11 @@ public class GameDataService
                   .Include(x => x.Id)
                   .Where(x => x.Id.UId == playerId)
                   .Where(x => timePoints.Contains(x.Id.Time))
-                  .ToLookup(x => x.Id.Time);
+                  .Select(x => new {x.Id.Time, x.Value})
+                  .ToLookup(x => x.Time, x => x.Value);
     }
     
-    public ILookup<DateTime, T> GetFloatDataForTimeSpan<T>(string playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize) 
+    public ILookup<DateTime, float> GetFloatDataForTimeSpan<T>(string playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize) 
         where T : BaseFloatRecord
     {
         var set        = (DbSet<T>) stat.GetDbSet(Context);
@@ -243,6 +244,7 @@ public class GameDataService
                   .Include(x => x.Id)
                   .Where(x => x.Id.UId == playerId)
                   .Where(x => timePoints.Contains(x.Id.Time))
-                  .ToLookup(x => x.Id.Time);
+                  .Select(x => new {x.Id.Time, x.Value})
+                  .ToLookup(x => x.Time, x => x.Value);
     }
 }
