@@ -35,7 +35,7 @@ void ConfigureServices(IServiceCollection services)
         .AddScoped<GameDataService>();
 
     services.AddGrpc();
-
+    
     services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.KnownProxies.Clear();

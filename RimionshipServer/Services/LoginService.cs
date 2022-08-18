@@ -9,7 +9,7 @@ namespace RimionshipServer.Services
 {
     public class LoginService
     {
-        private readonly IUserStore userStore;
+        private readonly UserManager userManager;
         private readonly IDataProtector dataProtector;
         private readonly IMemoryCache memoryCache;
         private readonly ILogger<LoginService> logger;
@@ -18,12 +18,12 @@ namespace RimionshipServer.Services
         private record ActivatedToken(string PlayerId, string UserId);
 
         public LoginService(
-            IUserStore userStore,
+            UserManager userManager,
             IDataProtectionProvider dataProtectionProvider,
             IMemoryCache memoryCache,
             ILogger<LoginService> logger)
         {
-            this.userStore = userStore;
+            this.userManager = userManager;
             this.dataProtector = dataProtectionProvider.CreateProtector(GetType().FullName!);
             this.memoryCache = memoryCache;
             this.logger = logger;
@@ -80,17 +80,25 @@ namespace RimionshipServer.Services
                 return null;
             }
 
-            var user = await userStore.FindByIdAsync(activatedToken.UserId, cancellationToken);
+            var user = await userManager.FindByIdAsync(activatedToken.UserId);
             if (user == null)
             {
                 logger.LogInformation("Could not activate token: User {UserId} does no longer exist in the database", activatedToken.UserId);
                 return null;
             }
 
-            await userStore.AddClientIdLoginAsync(user, playerId, cancellationToken);
-            memoryCache.Remove(GetCacheKey(secret));
+            var result = await userManager.AddPlayerIdAsync(user, playerId);
+            if (result.Succeeded)
+            {
+                memoryCache.Remove(GetCacheKey(secret));
 
-            return user.UserName;
+                return user.UserName;
+            }
+            else
+            {
+                logger.LogError("Could not link {PlayerId} to {UserName}: {@Errors}", playerId, user.UserName, result.Errors);
+                return null;
+            }
         }
 
         private string GetCacheKey(string secret)

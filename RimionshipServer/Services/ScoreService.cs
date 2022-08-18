@@ -55,22 +55,22 @@ namespace RimionshipServer.Services
         public (int Position, IEnumerable<RelativeScoreEntry> RelativeScores) GetPlayerScoreData(string clientId)
         {
             var scores = Scores;
-            var pos = GetPlayerPosition(scores, clientId);
-            var scoreData = GetScoreEntriesForPlayer(scores, pos, clientId);
+            var idx = GetPlayerIndex(scores, clientId);
+            var scoreData = GetScoreEntriesForPlayer(scores, idx);
 
-            return (pos, scoreData);
+            return (idx + 1, scoreData);
         }
-        private int GetPlayerPosition(ImmutableList<ScoreEntry> scores, string clientId)
+        private int GetPlayerIndex(ImmutableList<ScoreEntry> scores, string clientId)
         {
             int idx = scores.FindIndex(s => s.ClientId == clientId);
             return idx == -1 ? Scores.Count + 1 : idx;
         }
 
-        private IEnumerable<RelativeScoreEntry> GetScoreEntriesForPlayer(ImmutableList<ScoreEntry> scores, int playerPosition, string clientId)
+        private IEnumerable<RelativeScoreEntry> GetScoreEntriesForPlayer(ImmutableList<ScoreEntry> scores, int index)
         {
-            const int returnedRange = 3;
+            const int returnedRange = 1;
 
-            int start = playerPosition - returnedRange;
+            int start = index - returnedRange;
             if (start < 0)
                 start = 0;
 
@@ -79,13 +79,7 @@ namespace RimionshipServer.Services
                 end = scores.Count - 1;
 
             for (int i = start; i <= end; ++i)
-            {
-                // Assuming we want to send the player's own position as well in this list
-                ////if (scores[i].ClientId == clientId)
-                ////    continue;
-
                 yield return new RelativeScoreEntry(i + 1, scores[i].Name, scores[i].Score);
-            }
         }
     }
 }
