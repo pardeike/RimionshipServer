@@ -45,31 +45,40 @@ public class GameDataService
             if (_lock.IsReadLockHeld) 
                 _lock.ExitReadLock(); 
         }
-        
+        var now                 = DateTime.Now;
         if (gotLastTime)
         {
-            var now                 = DateTime.Now;
             var secondsDiff         = (now - lastRequestTime).Seconds;
             var secondsDiffAdjusted = RoundToNearestMultipleOfFactor(secondsDiff, PollingRate);
             if (secondsDiffAdjusted == secondsDiff)
             {
                 secondsDiffAdjusted += PollingRate;
             }
-            var nowToUse = now.Subtract(TimeSpan.FromSeconds(now.Second)).AddSeconds(secondsDiffAdjusted);
+            var nowToUse = now
+                          .Subtract(TimeSpan.FromSeconds(now.Second))
+                          .AddSeconds(secondsDiffAdjusted)
+                          .Subtract(TimeSpan.FromMilliseconds(now.Millisecond));
             return nowToUse;
         }
-        lastRequestTime      = DateTime.Now;
-        try
         {
-            _lock.EnterWriteLock();                 
-            LastRequestTimes[id] = lastRequestTime; 
+            var secondsDiff         = now.Second;
+            var secondsDiffAdjusted = RoundToNearestMultipleOfFactor(secondsDiff, PollingRate);
+            lastRequestTime = now
+                                 .Subtract(TimeSpan.FromSeconds(now.Second))
+                                 .AddSeconds(secondsDiffAdjusted)
+                                 .Subtract(TimeSpan.FromMilliseconds(now.Millisecond));
+            try
+            {
+                _lock.EnterWriteLock();                 
+                LastRequestTimes[id] = lastRequestTime; 
+            }
+            finally
+            {
+                if (_lock.IsWriteLockHeld)
+                    _lock.ExitWriteLock();
+            }
+            return lastRequestTime;
         }
-        finally
-        {
-            if (_lock.IsWriteLockHeld)
-                _lock.ExitWriteLock();
-        }
-        return lastRequestTime;
     }
 
     public async Task ProcessStatsRequestAsync(StatsRequest request, CancellationToken cancellationToken)
