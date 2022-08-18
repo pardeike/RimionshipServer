@@ -71,4 +71,39 @@ public static class ColonyStatExtension
                    _                               => throw new ArgumentOutOfRangeException(nameof(stat), stat, null)
                };
     }
+    public static Type GetDbType(this ColonyStat stat)
+    {
+        return stat switch{
+                   ColonyStat.DamageTakenPawns     => typeof(DamageTakenPawns),
+                   ColonyStat.DamageTakenThings    => typeof(DamageTakenThings),
+                   ColonyStat.DamageDealt          => typeof(DamageDealt),
+                   ColonyStat.Colonists            => typeof(Colonists),
+                   ColonyStat.Wealth               => typeof(Wealth),
+                   ColonyStat.MapCount             => typeof(MapCount),
+                   ColonyStat.ColonistsNeedTending => typeof(ColonistsNeedTending),
+                   ColonyStat.MedicalConditions    => typeof(MedicalConditions),
+                   ColonyStat.Enemies              => typeof(Enemies),
+                   ColonyStat.WildAnimals          => typeof(WildAnimals),
+                   ColonyStat.TamedAnimals         => typeof(TamedAnimals),
+                   ColonyStat.Visitors             => typeof(Visitors),
+                   ColonyStat.Prisoners            => typeof(Prisoners),
+                   ColonyStat.DownedColonists      => typeof(DownedColonists),
+                   ColonyStat.MentalColonists      => typeof(MentalColonists),
+                   ColonyStat.Rooms                => typeof(Rooms),
+                   ColonyStat.Caravans             => typeof(Caravans),
+                   ColonyStat.WeaponDps            => typeof(WeaponDps),
+                   ColonyStat.Electricity          => typeof(Electricity),
+                   ColonyStat.Medicine             => typeof(Medicine),
+                   ColonyStat.Food                 => typeof(Food),
+                   ColonyStat.Fire                 => typeof(Fire),
+                   ColonyStat.Conditions           => typeof(Conditions),
+                   ColonyStat.Temperature          => typeof(Temperature),
+                   ColonyStat.NumRaidsEnemy        => typeof(NumRaidsEnemy),
+                   ColonyStat.NumThreatBigs        => typeof(NumThreatBigs),
+                   ColonyStat.ColonistsKilled      => typeof(ColonistsKilled),
+                   ColonyStat.GreatestPopulation   => typeof(GreatestPopulation),
+                   ColonyStat.InGameHours          => typeof(InGameHours),
+                   _                               => throw new ArgumentOutOfRangeException(nameof(stat), stat, null)
+               };
+    }
 }
