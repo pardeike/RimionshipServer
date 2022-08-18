@@ -171,27 +171,29 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.BaseEntry", b =>
                 {
-                    b.Property<string>("UId")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("INTEGER")
+                        .HasAnnotation("Sqlite", "Autoincrement");
 
                     b.Property<long>("TimeTicks")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("UId");
+                    b.Property<string>("UId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.HasIndex("Id");
+                    b.HasKey("Id");
+
+                    b.HasIndex("UId");
 
                     b.ToTable("BaseEntry");
                 });
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Caravans", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -203,8 +205,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Colonists", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -216,8 +218,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.ColonistsKilled", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -229,8 +231,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.ColonistsNeedTending", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -242,8 +244,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Conditions", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -255,8 +257,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.DamageDealt", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<float>("Value")
                         .HasColumnType("REAL");
@@ -268,8 +270,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.DamageTakenPawns", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<float>("Value")
                         .HasColumnType("REAL");
@@ -281,8 +283,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.DamageTakenThings", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<float>("Value")
                         .HasColumnType("REAL");
@@ -294,8 +296,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.DownedColonists", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -307,8 +309,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Electricity", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -320,8 +322,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Enemies", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -333,8 +335,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Fire", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -346,8 +348,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Food", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -359,8 +361,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.GreatestPopulation", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -372,8 +374,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.InGameHours", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -385,8 +387,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.MapCount", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -398,8 +400,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.MedicalConditions", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -411,8 +413,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Medicine", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -424,8 +426,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.MentalColonists", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -437,8 +439,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.NumRaidsEnemy", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -450,8 +452,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.NumThreatBigs", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -463,8 +465,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Prisoners", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -476,8 +478,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Rooms", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -489,8 +491,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.TamedAnimals", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -502,8 +504,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Temperature", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -515,8 +517,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Visitors", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -528,8 +530,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.Wealth", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -541,8 +543,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.WeaponDps", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");
@@ -554,8 +556,8 @@ namespace RimionshipServer.Migrations
 
             modelBuilder.Entity("RimionshipServer.Data.Detailed.WildAnimals", b =>
                 {
-                    b.Property<string>("HiddenId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("HiddenId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Value")
                         .HasColumnType("INTEGER");

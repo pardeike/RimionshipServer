@@ -56,9 +56,9 @@ namespace RimionshipServer.Data
 
             builder.Entity<BaseEntry>(e =>
                                       {
-                                          e.Property(x => x.Id).ValueGeneratedOnAdd();
-                                          e.HasKey(x => x.UId);
-                                          e.HasIndex(x => x.Id);
+                                          e.Property(x => x.Id).ValueGeneratedOnAdd().HasAnnotation("Sqlite", "Autoincrement");
+                                          e.HasKey(x => x.Id);
+                                          e.HasIndex(x => x.UId);
                                       });
 
             builder.Entity<DamageTakenPawns>(e =>

@@ -12,20 +12,21 @@ namespace RimionshipServer.Migrations
                 name: "BaseEntry",
                 columns: table => new
                 {
-                    UId = table.Column<string>(type: "TEXT", nullable: false),
-                    TimeTicks = table.Column<long>(type: "INTEGER", nullable: false),
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UId = table.Column<string>(type: "TEXT", nullable: false),
+                    TimeTicks = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BaseEntry", x => x.UId);
+                    table.PrimaryKey("PK_BaseEntry", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Caravans",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -35,7 +36,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Caravans_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -43,7 +44,7 @@ namespace RimionshipServer.Migrations
                 name: "Colonists",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -53,7 +54,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Colonists_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -61,7 +62,7 @@ namespace RimionshipServer.Migrations
                 name: "ColonistsKilled",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -71,7 +72,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_ColonistsKilled_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -79,7 +80,7 @@ namespace RimionshipServer.Migrations
                 name: "ColonistsNeedTending",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -89,7 +90,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_ColonistsNeedTending_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -97,7 +98,7 @@ namespace RimionshipServer.Migrations
                 name: "Conditions",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -107,7 +108,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Conditions_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -115,7 +116,7 @@ namespace RimionshipServer.Migrations
                 name: "DamageDealt",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<float>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
@@ -125,7 +126,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_DamageDealt_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -133,7 +134,7 @@ namespace RimionshipServer.Migrations
                 name: "DamageTakenPawns",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<float>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
@@ -143,7 +144,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_DamageTakenPawns_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -151,7 +152,7 @@ namespace RimionshipServer.Migrations
                 name: "DamageTakenThings",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<float>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
@@ -161,7 +162,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_DamageTakenThings_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -169,7 +170,7 @@ namespace RimionshipServer.Migrations
                 name: "DownedColonists",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -179,7 +180,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_DownedColonists_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -187,7 +188,7 @@ namespace RimionshipServer.Migrations
                 name: "Electricity",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -197,7 +198,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Electricity_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -205,7 +206,7 @@ namespace RimionshipServer.Migrations
                 name: "Enemies",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -215,7 +216,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Enemies_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -223,7 +224,7 @@ namespace RimionshipServer.Migrations
                 name: "Fire",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -233,7 +234,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Fire_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -241,7 +242,7 @@ namespace RimionshipServer.Migrations
                 name: "Food",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -251,7 +252,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Food_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -259,7 +260,7 @@ namespace RimionshipServer.Migrations
                 name: "GreatestPopulation",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -269,7 +270,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_GreatestPopulation_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -277,7 +278,7 @@ namespace RimionshipServer.Migrations
                 name: "InGameHours",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -287,7 +288,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_InGameHours_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -295,7 +296,7 @@ namespace RimionshipServer.Migrations
                 name: "MapCount",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -305,7 +306,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_MapCount_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -313,7 +314,7 @@ namespace RimionshipServer.Migrations
                 name: "MedicalConditions",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -323,7 +324,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_MedicalConditions_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -331,7 +332,7 @@ namespace RimionshipServer.Migrations
                 name: "Medicine",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -341,7 +342,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Medicine_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -349,7 +350,7 @@ namespace RimionshipServer.Migrations
                 name: "MentalColonists",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -359,7 +360,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_MentalColonists_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -367,7 +368,7 @@ namespace RimionshipServer.Migrations
                 name: "NumRaidsEnemy",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -377,7 +378,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_NumRaidsEnemy_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -385,7 +386,7 @@ namespace RimionshipServer.Migrations
                 name: "NumThreatBigs",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -395,7 +396,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_NumThreatBigs_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -403,7 +404,7 @@ namespace RimionshipServer.Migrations
                 name: "Prisoners",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -413,7 +414,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Prisoners_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -421,7 +422,7 @@ namespace RimionshipServer.Migrations
                 name: "Rooms",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -431,7 +432,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Rooms_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -439,7 +440,7 @@ namespace RimionshipServer.Migrations
                 name: "TamedAnimals",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -449,7 +450,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_TamedAnimals_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -457,7 +458,7 @@ namespace RimionshipServer.Migrations
                 name: "Temperature",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -467,7 +468,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Temperature_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -475,7 +476,7 @@ namespace RimionshipServer.Migrations
                 name: "Visitors",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -485,7 +486,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Visitors_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -493,7 +494,7 @@ namespace RimionshipServer.Migrations
                 name: "Wealth",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -503,7 +504,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_Wealth_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -511,7 +512,7 @@ namespace RimionshipServer.Migrations
                 name: "WeaponDps",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -521,7 +522,7 @@ namespace RimionshipServer.Migrations
                         name: "FK_WeaponDps_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -529,7 +530,7 @@ namespace RimionshipServer.Migrations
                 name: "WildAnimals",
                 columns: table => new
                 {
-                    HiddenId = table.Column<string>(type: "TEXT", nullable: false),
+                    HiddenId = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -539,14 +540,14 @@ namespace RimionshipServer.Migrations
                         name: "FK_WildAnimals_BaseEntry_HiddenId",
                         column: x => x.HiddenId,
                         principalTable: "BaseEntry",
-                        principalColumn: "UId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BaseEntry_Id",
+                name: "IX_BaseEntry_UId",
                 table: "BaseEntry",
-                column: "Id");
+                column: "UId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
