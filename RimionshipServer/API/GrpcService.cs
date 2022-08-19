@@ -131,7 +131,11 @@ namespace RimionshipServer.API
             {
                 BadTraitSuppression = 0.15f,
                 GoodTraitSuppression = 0.7f,
-                ScaleFactor = 0.2f
+                ScaleFactor = 0.2f,
+                MaxMeleeSkill = 6,
+                MaxMeleeFlames = 1,
+                MaxShootingFlames = 1,
+                MaxShootingSkill = 6
             }
         };
 
