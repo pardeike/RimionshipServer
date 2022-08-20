@@ -8,6 +8,7 @@ namespace RimionshipServer.API
     public class GrpcService : API.APIBase
     {
         private const int ApiVersion = 1;
+        private readonly RimionDbContext db;
         private readonly ConfigurationService configurationService;
         private readonly ScoreService scoreService;
         private readonly DataService dataService;
@@ -15,12 +16,14 @@ namespace RimionshipServer.API
         private readonly IOptions<RimionshipOptions> options;
 
         public GrpcService(
+            RimionDbContext db,
             ConfigurationService configurationService,
             ScoreService scoreService,
             DataService dataService,
             LoginService loginService,
             IOptions<RimionshipOptions> options)
         {
+            this.db = db;
             this.configurationService = configurationService;
             this.scoreService = scoreService;
             this.dataService = dataService;
@@ -154,6 +157,7 @@ namespace RimionshipServer.API
             // PARTIALLY implemented - at least, we keep the scores in-memory
             await this.scoreService.AddOrUpdateScoreAsync(request.Id, user.UserName, user.AvatarUrl, request.Wealth, ct);
 
+            await db.AddOrUpdateStatsAsync(user, request);
             return new StatsResponse { Interval = 10 };
         }
 

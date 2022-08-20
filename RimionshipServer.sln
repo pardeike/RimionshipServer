@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimionshipServer", "RimionshipServer\RimionshipServer.csproj", "{98E21AF1-10EA-416A-A1B3-1473952BFBE4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimionshipServer.Analyzers", "Rimionshipserver.Analyzers\RimionshipServer.Analyzers.csproj", "{135D84D2-5E8E-49CC-A0EA-F7076F42917A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{98E21AF1-10EA-416A-A1B3-1473952BFBE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98E21AF1-10EA-416A-A1B3-1473952BFBE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98E21AF1-10EA-416A-A1B3-1473952BFBE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{135D84D2-5E8E-49CC-A0EA-F7076F42917A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{135D84D2-5E8E-49CC-A0EA-F7076F42917A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{135D84D2-5E8E-49CC-A0EA-F7076F42917A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{135D84D2-5E8E-49CC-A0EA-F7076F42917A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

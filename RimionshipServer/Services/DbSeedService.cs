@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RimionshipServer.API;
 using RimionshipServer.Data;
+using RimionshipServer.Users;
 
 namespace RimionshipServer.Services
 {
@@ -10,16 +12,32 @@ namespace RimionshipServer.Services
     public class DbSeedService
     {
         private readonly RimionDbContext db;
+        private readonly IHostEnvironment env;
+        private readonly UserManager userManager;
 
-        public DbSeedService(RimionDbContext db)
+        public DbSeedService(
+            RimionDbContext db,
+            IHostEnvironment env,
+            UserManager userManager)
         {
             this.db = db;
+            this.env = env;
+            this.userManager = userManager;
         }
 
         public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
             await SeedAllowedModsAsync(cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
+
+            if (env.IsDevelopment())
+            {
+                if (Environment.GetCommandLineArgs().Contains("--fillMeUp"))
+                {
+                    await CreateBotUsersAsync();
+                    await PopulateDataAsync();
+                }
+            }
         }
 
         private async Task SeedAllowedModsAsync(CancellationToken cancellationToken = default)
@@ -56,6 +74,88 @@ namespace RimionshipServer.Services
                 new AllowedMod { PackageId = "odeum.wmbp", SteamId = 2314407956 },
                 new AllowedMod { PackageId = "com.github.alandariva.moreplanning", SteamId = 2551225702 },
                 new AllowedMod { PackageId = "showhair.kv.rw", SteamId = 1180826364 });
+        }
+
+
+        private IEnumerable<string> GetBotIds() => Enumerable.Range(0, 100).Select(i => $"BOT-{i:000}");
+
+        private async Task CreateBotUsersAsync()
+        {
+            foreach (var id in GetBotIds())
+            {
+                if (await userManager.FindByIdAsync(id) == null)
+                {
+                    var user = new RimionUser
+                    {
+                        Id = id,
+                        UserName = id,
+                        AvatarUrl = "http://localhost/404.png",
+                    };
+
+                    var result = await userManager.CreateAsync(user);
+                    if (!result.Succeeded)
+                        throw new NotImplementedException();
+
+                    await userManager.AddPlayerIdAsync(user, id);
+                }
+            }
+        }
+
+        private async Task PopulateDataAsync()
+        {
+            await db.Database.ExecuteSqlRawAsync("DELETE FROM HistoryStats");
+
+            var duration = TimeSpan.FromHours(11);
+            var interval = TimeSpan.FromSeconds(10);
+            var end = DateTimeOffset.UtcNow;
+            var rng = new Random();
+            foreach (var id in GetBotIds())
+                CreateTestDataAsync(
+                    id, 
+                    end.Subtract(duration).Add(TimeSpan.FromSeconds(rng.Next(0, 3600))), 
+                    end.Subtract(TimeSpan.FromSeconds(rng.Next(0, 360))),
+                    interval);
+
+            await db.SaveChangesAsync();
+        }
+
+        private void CreateTestDataAsync(string userId, DateTimeOffset start, DateTimeOffset end, TimeSpan interval)
+        {
+            var rng = new Random();
+
+            var resetCounter = -rng.Next();
+            var stats = new StatsRequest();
+            var props = stats.GetType().GetProperties().Where(c => c.PropertyType == typeof(int) || c.PropertyType == typeof(float)).ToList();
+
+            for (var now = start; now < end; now += interval + TimeSpan.FromSeconds(rng.NextDouble() - 0.5))
+            {
+                resetCounter += rng.Next(0, 100);
+                if (resetCounter > 0)
+                {
+                    stats = new StatsRequest();
+                    resetCounter = -rng.Next();
+                }
+
+                foreach (var prop in props)
+                {
+                    var val = prop.GetValue(stats);
+                    prop.SetValue(stats, val switch
+                    {
+                        float f => (object)(float)(f + (rng.NextDouble() - 0.4) * 10),
+                        int i => (object)(int)(i + rng.Next(-100, 100)),
+                        _ => throw new Exception()
+                    });
+                }
+
+                var historyStats = new HistoryStats
+                {
+                    UserId = userId,
+                    Timestamp = now
+                };
+
+                historyStats.UpdateFromRequest(stats);
+                db.HistoryStats.Add(historyStats);
+            }
         }
     }
 }
