@@ -74,7 +74,7 @@ namespace RimionshipServer.Data
                 {
                     builder.Entity(entityType.Name)
                         .Property(property.Name)
-                        .HasConversion(new DateTimeOffsetToBinaryConverter());
+                        .HasConversion(new DateTimeOffsetConverter());
                 }
             }
         }

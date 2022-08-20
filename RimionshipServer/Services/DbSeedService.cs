@@ -36,6 +36,9 @@ namespace RimionshipServer.Services
                 {
                     await CreateBotUsersAsync();
                     await PopulateDataAsync();
+                    await db.SaveChangesAsync();
+                    Environment.Exit(0);
+                    return;
                 }
             }
         }
@@ -115,8 +118,6 @@ namespace RimionshipServer.Services
                     end.Subtract(duration).Add(TimeSpan.FromSeconds(rng.Next(0, 3600))), 
                     end.Subtract(TimeSpan.FromSeconds(rng.Next(0, 360))),
                     interval);
-
-            await db.SaveChangesAsync();
         }
 
         private void CreateTestDataAsync(string userId, DateTimeOffset start, DateTimeOffset end, TimeSpan interval)
