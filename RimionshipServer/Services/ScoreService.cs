@@ -68,7 +68,7 @@ namespace RimionshipServer.Services
 
         private IEnumerable<RelativeScoreEntry> GetScoreEntriesForPlayer(ImmutableList<ScoreEntry> scores, int index)
         {
-            const int returnedRange = 1;
+            const int returnedRange = 2;
 
             int start = index - returnedRange;
             if (start < 0)
