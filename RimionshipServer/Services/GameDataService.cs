@@ -59,20 +59,16 @@ public class GameDataService
             {
                 secondsDiffAdjusted += PollingRate;
             }
-            var nowToUse = now
-                          .Subtract(TimeSpan.FromSeconds(now.Second))
-                          .AddSeconds(secondsDiffAdjusted)
-                          .Subtract(TimeSpan.FromMilliseconds(now.Millisecond));
+            var nowToUse = CleanDateTime(now).AddSeconds(secondsDiffAdjusted);
             return nowToUse;
         }
         else
         {
-            var secondsDiff         = now.Second;
-            var secondsDiffAdjusted = RoundToNearestMultipleOfFactor(secondsDiff, PollingRate);
-            lastRequestTime = now
-                             .Subtract(TimeSpan.FromSeconds(now.Second))
-                             .AddSeconds(secondsDiffAdjusted)
-                             .Subtract(TimeSpan.FromMilliseconds(now.Millisecond));
+            var         secondsDiff         = now.Second;
+            var         secondsDiffAdjusted = RoundToNearestMultipleOfFactor(secondsDiff, PollingRate);
+            var cleanedTime                = CleanDateTime(now);
+           
+            lastRequestTime = cleanedTime.AddSeconds(secondsDiffAdjusted);
             try
             {
                 _lock.EnterWriteLock();
@@ -85,6 +81,12 @@ public class GameDataService
             }
             return lastRequestTime;
         }
+    }
+
+    private static DateTime CleanDateTime(DateTime dateTime)
+    {
+        var cleanedTime = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, 0, DateTimeKind.Unspecified);
+        return cleanedTime;
     }
 
     public async Task ProcessStatsRequestAsync(StatsRequest request, CancellationToken cancellationToken)
@@ -208,18 +210,22 @@ public class GameDataService
         await Context.SaveChangesAsync(cancellationToken);
     }
 
-    private static IEnumerable<DateTime> GetTimePointsForTimeSpan(DateTime begin, DateTime end, TimeSpan stepsize)
+    private static ICollection<DateTime> GetTimePointsForTimeSpan(DateTime begin, DateTime end, TimeSpan stepsize)
     {
+        var span = new List<DateTime>{
+                                         begin
+                                     };
         while (begin <= end)
-            yield return begin += stepsize;
+            span.Add(begin += stepsize);
+        return span;
     }
 
-    private async Task<IEnumerable<DateTime>> GetTimePointsForUser(string playerId, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
+    private async Task<ICollection<DateTime>> GetTimePointsForUser(string playerId, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
     {
         /*
          * SQLite does not support Dates or Times. -_-
          */
-        var  ticks = start.Ticks;
+        var  ticks = CleanDateTime(start).Ticks;
         long dbTicks;
         try
         {
@@ -235,23 +241,23 @@ public class GameDataService
             return ArraySegment<DateTime>.Empty;
         }
         var timing = new DateTime(dbTicks);
-        return GetTimePointsForTimeSpan(timing, end, stepsize);
+        return GetTimePointsForTimeSpan(timing, CleanDateTime(end), stepsize);
     }
 
-    public Task<ILookup<DateTime, int>> GetIntDataForTimeSpan(string playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
+    public async Task<ILookup<DateTime, int>> GetIntDataForTimeSpan(string playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
     {
         var type = stat.GetDbType();
-        return (Task<ILookup<DateTime, int>>) _getIntDataForTimeSpanMethodInfo
+        return await (Task<ILookup<DateTime, int>>) _getIntDataForTimeSpanMethodInfo
                                              .MakeGenericMethod(type)
                                              .Invoke(this, new object[]{playerId, stat, start, end, stepsize, cancellationToken})!;
     }
 
-    public Task<ILookup<DateTime, float>> GetFloatDataForTimeSpan(string playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
+    public async Task<ILookup<DateTime, float>> GetFloatDataForTimeSpan(string playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
     {
         var type = stat.GetDbType();
-        return (Task<ILookup<DateTime, float>>) _getFloatDataForTimeSpanMethodInfo
-                                               .MakeGenericMethod(type)
-                                               .Invoke(this, new object[]{playerId, stat, start, end, stepsize, cancellationToken})!;
+        return await (Task<ILookup<DateTime, float>>) _getFloatDataForTimeSpanMethodInfo
+                                                     .MakeGenericMethod(type)
+                                                     .Invoke(this, new object[]{playerId, stat, start, end, stepsize, cancellationToken})!;
     }
 
 
@@ -303,20 +309,20 @@ public class GameDataService
         }
     }
     
-    public Task<ILookup<string, TimeIntValue>> GetIntDataForTimeSpanAndPlayers(ICollection<string> playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
+    public async Task<ILookup<string, TimeIntValue>> GetIntDataForTimeSpanAndPlayers(ICollection<string> playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
     {
         var type = stat.GetDbType();
-        return (Task<ILookup<string, TimeIntValue>>) _getIntDataForTimeSpanAndPlayersGenericMethodInfo
-                                                    .MakeGenericMethod(type)
-                                                    .Invoke(this, new object[]{playerId, stat, start, end, stepsize, cancellationToken})!;
+        return await (Task<ILookup<string, TimeIntValue>>) _getIntDataForTimeSpanAndPlayersGenericMethodInfo
+                                                          .MakeGenericMethod(type)
+                                                          .Invoke(this, new object[]{playerId, stat, start, end, stepsize, cancellationToken})!;
     }
 
-    public Task<ILookup<string, TimeFloatValue>> GetFloatDataForTimeSpanAndPlayers(ICollection<string> playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
+    public async Task<ILookup<string, TimeFloatValue>> GetFloatDataForTimeSpanAndPlayers(ICollection<string> playerId, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize, CancellationToken cancellationToken)
     {
         var type = stat.GetDbType();
-        return (Task<ILookup<string, TimeFloatValue>>) _getFloatDataForTimeSpanAndPlayersGenericMethodInfo
-                                                      .MakeGenericMethod(type)
-                                                      .Invoke(this, new object[]{playerId, stat, start, end, stepsize, cancellationToken})!;
+        return await (Task<ILookup<string, TimeFloatValue>>) _getFloatDataForTimeSpanAndPlayersGenericMethodInfo
+                                                            .MakeGenericMethod(type)
+                                                            .Invoke(this, new object[]{playerId, stat, start, end, stepsize, cancellationToken})!;
     }
 
     public async Task<ILookup<string, TimeIntValue>> GetIntDataForTimeSpanAndPlayersGeneric<T>(ICollection<string> playerIds, ColonyStat stat, DateTime start, DateTime end, TimeSpan stepsize,
