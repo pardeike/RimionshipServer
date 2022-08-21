@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Text;
 
 namespace RimionshipServer.Data
 {
@@ -43,6 +44,45 @@ namespace RimionshipServer.Data
             Add(historyStats);
 
             await SaveChangesAsync();
+        }
+
+        public async Task<List<(float Timestamp, object[] Values)>> FetchDataAsync(DateTimeOffset startTime, DateTimeOffset endTime, int intervalSeconds, ICollection<string> columns, string userId)
+        {
+            if (columns.Except(Stats.FieldNames).Any())
+                throw new ArgumentException("Unknown fields in list", nameof(columns));
+            if (intervalSeconds <= 0)
+                throw new ArgumentOutOfRangeException(nameof(intervalSeconds));
+
+            var bucketString = $"Timestamp / {intervalSeconds * 10_000_000}";
+            var sb = new StringBuilder();
+
+            sb.AppendLine(@$"
+SELECT DISTINCT 
+    {bucketString} AS TimestampBucket,");
+
+            sb.Append(string.Join(",\n", columns.Select(column => $"LAST_VALUE({column}) OVER (PARTITION BY {bucketString}) AS {column}")));
+
+            sb.AppendLine(@"
+FROM HistoryStats
+WHERE Timestamp >= @startTime AND Timestamp <= @endTime AND UserId = @userId
+ORDER BY TimestampBucket ASC, UserId ASC");
+
+            using (var cmd = this.Database.GetDbConnection().CreateCommand())
+            {
+                await Database.OpenConnectionAsync();
+                cmd.CommandText = sb.ToString();
+                cmd.CommandType = System.Data.CommandType.Text;
+
+                cmd.Parameters.Add(new SqliteParameter("startTime", startTime.UtcTicks));
+                cmd.Parameters.Add(new SqliteParameter("endTime", endTime.Ticks));
+                cmd.Parameters.Add(new SqliteParameter("userId", userId));
+                var reader = await cmd.ExecuteReaderAsync();
+                List<(float Timestamp, object[] Values)> result = new();
+                while (await reader.ReadAsync())
+                    result.Add((Timestamp: reader.GetInt64(0), Values: Enumerable.Range(1, reader.FieldCount - 1).Select(reader.GetValue).ToArray()));
+
+                return result;
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

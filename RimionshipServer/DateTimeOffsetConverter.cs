@@ -6,7 +6,7 @@ namespace RimionshipServer
     {
         public DateTimeOffsetConverter(ConverterMappingHints? mappingHints = null)
             : base(
-                value => value.UtcDateTime.Ticks,
+                value => value.UtcTicks,
                 value => new DateTimeOffset(value, TimeSpan.Zero),
                 mappingHints)
         {

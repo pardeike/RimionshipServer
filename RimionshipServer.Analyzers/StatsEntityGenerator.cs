@@ -12,6 +12,8 @@ namespace Rimionshipserver.Analyzers
         {
             var sourceBuilder = new StringBuilder(@"
 // Auto-generated code
+using System.Collections.Immutable;
+
 namespace RimionshipServer.Data
 {
     public partial class Stats
@@ -43,8 +45,13 @@ namespace RimionshipServer.Data
             foreach (var property in properties)
                 sourceBuilder.AppendLine($"this.{property.Name} = stats.{property.Name};");
 
-            sourceBuilder.AppendLine(@"
+            sourceBuilder.Append(@"
         }
+
+        public static ImmutableArray<string> FieldNames { get; } = ImmutableArray.CreateRange(new[] { ");
+
+            sourceBuilder.Append(string.Join(", ", properties.Select(s => string.Concat('"', s.Name, '"'))));
+            sourceBuilder.AppendLine(@" });
     }
 }");
             context.AddSource("Stats.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
