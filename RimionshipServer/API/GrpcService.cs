@@ -1,4 +1,4 @@
-﻿using Grpc.Core;
+using Grpc.Core;
 using Microsoft.Extensions.Options;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
@@ -118,8 +118,8 @@ namespace RimionshipServer.API
             Rising = new()
             {
                 MaxFreeColonistCount = 5,
-                RisingCooldown = 120_000,
-                RisingInterval = 2400_000,
+                RisingCooldown = 0,
+                RisingInterval = 1200_000,
                 RisingIntervalMinimum = 120_000,
                 RisingReductionPerColonist = 240_000
             },
