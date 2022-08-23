@@ -156,9 +156,8 @@ message StatsRequest {
 	float damageDealt = 30;
 	int32 animalMeatCreated = 31;
 	int32 amountBloodCleaned = 32;
-	int32 totalColonistDeaths = 33;
-	int32 ticksLowColonistMood = 34;
-	int32 ticksIgnoringBloodGod = 35;
+	int32 ticksLowColonistMood = 33;
+	int32 ticksIgnoringBloodGod = 34;
 }
 
 message StatsResponse {
