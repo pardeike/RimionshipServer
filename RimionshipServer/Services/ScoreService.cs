@@ -68,18 +68,21 @@ namespace RimionshipServer.Services
 
 		private IEnumerable<RelativeScoreEntry> GetScoreEntriesForPlayer(ImmutableList<ScoreEntry> scores, int index)
 		{
-			const int returnedRange = 2;
-
-			int start = index - returnedRange;
+			var start = index - 1;
 			if (start < 0)
 				start = 0;
 
-			int end = index + returnedRange;
+			var end = start + 2;
 			if (end >= scores.Count)
 				end = scores.Count - 1;
 
-			for (int i = start; i <= end; ++i)
+			while (start > 0 && end - start < 2)
+				start--;
+
+			for (var i = start; i <= end; ++i)
 				yield return new RelativeScoreEntry(i + 1, scores[i].Name, scores[i].Score);
+			for (var i = 0; i < 2 - end - start; i++)
+				yield return new RelativeScoreEntry(0, "", 0);
 		}
 	}
 }

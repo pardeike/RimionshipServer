@@ -14,6 +14,7 @@ namespace RimionshipServer.API
         private readonly DataService dataService;
         private readonly LoginService loginService;
         private readonly IOptions<RimionshipOptions> options;
+        private readonly AttentionService _attention;
 
         public GrpcService(
             RimionDbContext db,
@@ -21,7 +22,8 @@ namespace RimionshipServer.API
             ScoreService scoreService,
             DataService dataService,
             LoginService loginService,
-            IOptions<RimionshipOptions> options)
+            IOptions<RimionshipOptions> options,
+            AttentionService attention)
         {
             this.db = db;
             this.configurationService = configurationService;
@@ -29,6 +31,16 @@ namespace RimionshipServer.API
             this.dataService = dataService;
             this.loginService = loginService;
             this.options = options;
+            _attention = attention;
+        }
+        /**
+         * Increases the Attention Score for player X by Y amount
+         */
+        public override Task<AttentionResponse> Attention(AttentionRequest request, ServerCallContext context)
+        {
+            VerifyId(request.Id);
+            _attention.IncreaseAttentionScore(request.Id, request.Delta);
+            return Task.FromResult(new AttentionResponse());
         }
 
         /// <summary>
