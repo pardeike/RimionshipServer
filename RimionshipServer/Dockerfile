@@ -5,8 +5,9 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
+COPY ["RimionshipServer.Analyzers/RimionshipServer.Analyzers.csproj", "RimionshipServer.Analyzers/"]
 COPY ["RimionshipServer/RimionshipServer.csproj", "RimionshipServer/"]
-RUN dotnet restore "RimionshipServer/RimionshipServer.csproj"
+RUN dotnet restore "RimionshipServer.Analyzers/RimionshipServer.Analyzers.csproj" && dotnet restore "RimionshipServer/RimionshipServer.csproj"
 COPY . .
 WORKDIR "/src/RimionshipServer"
 RUN dotnet build "RimionshipServer.csproj" -c Release -o /app/build
