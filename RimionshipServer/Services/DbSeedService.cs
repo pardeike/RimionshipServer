@@ -14,19 +14,23 @@ namespace RimionshipServer.Services
         private readonly RimionDbContext db;
         private readonly IHostEnvironment env;
         private readonly UserManager userManager;
+        private readonly RoleManager roleManager;
 
         public DbSeedService(
             RimionDbContext db,
             IHostEnvironment env,
-            UserManager userManager)
+            UserManager userManager,
+            RoleManager roleManager)
         {
             this.db = db;
             this.env = env;
             this.userManager = userManager;
+            this.roleManager = roleManager;
         }
 
         public async Task SeedAsync(CancellationToken cancellationToken = default)
         {
+            await SeedUserDataAsync();
             await SeedAllowedModsAsync(cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
 
@@ -40,6 +44,20 @@ namespace RimionshipServer.Services
                     Environment.Exit(0);
                     return;
                 }
+            }
+        }
+
+        private async Task SeedUserDataAsync()
+        {
+            if (!await roleManager.RoleExistsAsync(Roles.Admin))
+            {
+                var result = await roleManager.CreateAsync(new Microsoft.AspNetCore.Identity.IdentityRole
+                {
+                    Name = Roles.Admin
+                });
+
+                if (!result.Succeeded)
+                    throw new Exception($"Cannot seed roles: {string.Join("\n", result.Errors)}");
             }
         }
 

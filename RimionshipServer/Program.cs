@@ -23,7 +23,8 @@ void ConfigureServices(IServiceCollection services)
 
     services.AddIdentity<RimionUser, IdentityRole>()
          .AddEntityFrameworkStores<RimionDbContext>()
-         .AddUserManager<UserManager>();
+         .AddUserManager<UserManager>()
+         .AddRoleManager<RoleManager>();
 
     services.AddTransient<DbSeedService>()
         .AddScoped<IUserStore, UserStore>()

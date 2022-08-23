@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Data;
@@ -7,6 +7,7 @@ namespace RimionshipServer.API
 {
     [Route("api/stats")]
     [ApiController]
+    [Authorize(Roles = "admin")]
     public class StatsController : ControllerBase
     {
         private readonly RimionDbContext db;
