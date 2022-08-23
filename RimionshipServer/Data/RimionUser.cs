@@ -2,10 +2,10 @@
 
 namespace RimionshipServer.Data
 {
-    public class RimionUser : IdentityUser
-    {
-        public string? AvatarUrl { get; set; }
+	public class RimionUser : IdentityUser
+	{
+		public string? AvatarUrl { get; set; }
 
-        public virtual LatestStats? LatestStats { get; set; }
-    }
+		public virtual LatestStats? LatestStats { get; set; }
+	}
 }

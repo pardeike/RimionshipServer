@@ -1,22 +1,22 @@
 {
-  "profiles": {
-    "RimionshipServer": {
-      "commandName": "Project",
-      "launchBrowser": false,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:5062",
-      "externalUrlConfiguration": true,
-      "dotnetRunMessages": true
-    },
-    "Docker": {
-      "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "publishAllPorts": true,
-      "externalUrlConfiguration": true,
-      "useSSL": true
-    }
-  }
+	"profiles": {
+		"RimionshipServer": {
+			"commandName": "Project",
+			"launchBrowser": false,
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development"
+			},
+			"applicationUrl": "http://localhost:5062",
+			"externalUrlConfiguration": true,
+			"dotnetRunMessages": true
+		},
+		"Docker": {
+			"commandName": "Docker",
+			"launchBrowser": true,
+			"launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+			"publishAllPorts": true,
+			"externalUrlConfiguration": true,
+			"useSSL": true
+		}
+	}
 }

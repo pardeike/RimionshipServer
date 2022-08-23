@@ -1,6 +1,6 @@
 ﻿namespace RimionshipServer.Data
 {
-    public class LatestStats : Stats
-    {
-    }
+	public class LatestStats : Stats
+	{
+	}
 }

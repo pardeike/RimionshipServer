@@ -3,7 +3,7 @@ using RimionshipServer.Data;
 
 namespace RimionshipServer.Users
 {
-    public interface IUserStore : IUserStore<RimionUser>, IUserLoginStore<RimionUser>
-    {
-    }
+	public interface IUserStore : IUserStore<RimionUser>, IUserLoginStore<RimionUser>
+	{
+	}
 }
