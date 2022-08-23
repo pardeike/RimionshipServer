@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimionshipServer", "RimionshipServer\RimionshipServer.csproj", "{98E21AF1-10EA-416A-A1B3-1473952BFBE4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimionshipServer.Analyzers", "Rimionshipserver.Analyzers\RimionshipServer.Analyzers.csproj", "{135D84D2-5E8E-49CC-A0EA-F7076F42917A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimionshipServer.Analyzers", "RimionshipServer.Analyzers\RimionshipServer.Analyzers.csproj", "{135D84D2-5E8E-49CC-A0EA-F7076F42917A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8951458B-C5BF-463B-BC08-773E5C274527}"
 	ProjectSection(SolutionItems) = preProject
