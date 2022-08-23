@@ -7,27 +7,39 @@ namespace RimionshipServer.API
 {
     public class GrpcService : API.APIBase
     {
-        private const int ApiVersion = 1;
-        private readonly ConfigurationService configurationService;
-        private readonly ScoreService scoreService;
-        private readonly DataService dataService;
-        private readonly LoginService loginService;
+        private const    int                         ApiVersion = 1;
+        private readonly ConfigurationService        configurationService;
+        private readonly ScoreService                scoreService;
+        private readonly DataService                 dataService;
+        private readonly LoginService                loginService;
         private readonly IOptions<RimionshipOptions> options;
-
+        private readonly AttentionService            _attention;
+        
         public GrpcService(
-            ConfigurationService configurationService,
-            ScoreService scoreService,
-            DataService dataService,
-            LoginService loginService,
-            IOptions<RimionshipOptions> options)
+            ConfigurationService        configurationService,
+            ScoreService                scoreService,
+            DataService                 dataService,
+            LoginService                loginService,
+            IOptions<RimionshipOptions> options,
+            AttentionService            attention)
         {
             this.configurationService = configurationService;
-            this.scoreService = scoreService;
-            this.dataService = dataService;
-            this.loginService = loginService;
-            this.options = options;
+            this.scoreService         = scoreService;
+            this.dataService          = dataService;
+            this.loginService         = loginService;
+            this.options              = options;
+            _attention           = attention;
         }
-
+        /**
+         * Increases the Attention Score for player X by Y amount
+         */
+        public override Task<AttentionResponse> Attention(AttentionRequest request, ServerCallContext context)
+        {
+            VerifyId(request.Id);
+            _attention.IncreaseAttentionScore(request.Id, request.Delta);
+            return Task.FromResult(new AttentionResponse());
+        }
+        
         /// <summary>
         /// Handles the initial handshake with the client. A call has three possible outcomes:
         /// 1) An exception in case something went wrong, including invalid parameters

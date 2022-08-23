@@ -5,6 +5,10 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimionshipServer", "RimionshipServer\RimionshipServer.csproj", "{98E21AF1-10EA-416A-A1B3-1473952BFBE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimionshipServer.Tests", "RimionshipServer.Tests\RimionshipServer.Tests.csproj", "{C64C1F9F-167E-46E5-A096-01BB5BFDF354}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimionshipServer.Benchmark", "RimionshipServer.Benchmark\RimionshipServer.Benchmark.csproj", "{DCEC0E52-0F81-4E73-BFC0-57BD78C2A32E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{98E21AF1-10EA-416A-A1B3-1473952BFBE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98E21AF1-10EA-416A-A1B3-1473952BFBE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98E21AF1-10EA-416A-A1B3-1473952BFBE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C64C1F9F-167E-46E5-A096-01BB5BFDF354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64C1F9F-167E-46E5-A096-01BB5BFDF354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64C1F9F-167E-46E5-A096-01BB5BFDF354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64C1F9F-167E-46E5-A096-01BB5BFDF354}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCEC0E52-0F81-4E73-BFC0-57BD78C2A32E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCEC0E52-0F81-4E73-BFC0-57BD78C2A32E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCEC0E52-0F81-4E73-BFC0-57BD78C2A32E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCEC0E52-0F81-4E73-BFC0-57BD78C2A32E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
