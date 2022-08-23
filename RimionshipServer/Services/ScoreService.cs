@@ -8,7 +8,7 @@ namespace RimionshipServer.Services
 
 	public class ScoreService
 	{
-		private SemaphoreSlim updateSemaphore = new(1);
+		private readonly SemaphoreSlim updateSemaphore = new(1);
 
 		public ImmutableList<ScoreEntry> Scores { get; private set; } = ImmutableList.Create<ScoreEntry>();
 

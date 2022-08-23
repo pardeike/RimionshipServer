@@ -125,7 +125,7 @@ namespace RimionshipServer.API
 			};
 		}
 
-		private Settings DefaultSettings => new Settings()
+		private Settings DefaultSettings => new()
 		{
 			Rising = new()
 			{

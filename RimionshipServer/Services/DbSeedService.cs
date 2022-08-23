@@ -40,7 +40,7 @@ namespace RimionshipServer.Services
 				{
 					await CreateBotUsersAsync();
 					await PopulateDataAsync();
-					await db.SaveChangesAsync();
+					await db.SaveChangesAsync(cancellationToken);
 					Environment.Exit(0);
 					return;
 				}

@@ -67,22 +67,20 @@ FROM HistoryStats
 WHERE Timestamp >= @startTime AND Timestamp <= @endTime AND UserId = @userId
 ORDER BY TimestampBucket ASC, UserId ASC");
 
-			using (var cmd = this.Database.GetDbConnection().CreateCommand())
-			{
-				await Database.OpenConnectionAsync();
-				cmd.CommandText = sb.ToString();
-				cmd.CommandType = System.Data.CommandType.Text;
+			using var cmd = this.Database.GetDbConnection().CreateCommand();
+			await Database.OpenConnectionAsync();
+			cmd.CommandText = sb.ToString();
+			cmd.CommandType = System.Data.CommandType.Text;
 
-				cmd.Parameters.Add(new SqliteParameter("startTime", startTime.UtcTicks));
-				cmd.Parameters.Add(new SqliteParameter("endTime", endTime.Ticks));
-				cmd.Parameters.Add(new SqliteParameter("userId", userId));
-				var reader = await cmd.ExecuteReaderAsync();
-				List<(float Timestamp, object[] Values)> result = new();
-				while (await reader.ReadAsync())
-					result.Add((Timestamp: reader.GetInt64(0), Values: Enumerable.Range(1, reader.FieldCount - 1).Select(reader.GetValue).ToArray()));
+			cmd.Parameters.Add(new SqliteParameter("startTime", startTime.UtcTicks));
+			cmd.Parameters.Add(new SqliteParameter("endTime", endTime.Ticks));
+			cmd.Parameters.Add(new SqliteParameter("userId", userId));
+			var reader = await cmd.ExecuteReaderAsync();
+			List<(float Timestamp, object[] Values)> result = new();
+			while (await reader.ReadAsync())
+				result.Add((Timestamp: reader.GetInt64(0), Values: Enumerable.Range(1, reader.FieldCount - 1).Select(reader.GetValue).ToArray()));
 
-				return result;
-			}
+			return result;
 		}
 
 		protected override void OnModelCreating(ModelBuilder builder)

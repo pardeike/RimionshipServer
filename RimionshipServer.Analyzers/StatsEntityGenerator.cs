@@ -28,21 +28,21 @@ namespace RimionshipServer.Data
 				return;
 
 			var properties = type.GetMembers().OfType<IPropertySymbol>()
-				 .Select(ps => (DisplayType: ps.Type.ToDisplayString(), Name: ps.Name))
+				 .Select(ps => (DisplayType: ps.Type.ToDisplayString(), ps.Name))
 				 .Where(ps => ps.DisplayType is "float" or "int")
 				 .ToList();
 
-			foreach (var property in properties)
+			foreach (var (DisplayType, Name) in properties)
 			{
 				sourceBuilder.AppendLine($@"
-        public {property.DisplayType} {property.Name} {{ get; set; }}");
+        public {DisplayType} {Name} {{ get; set; }}");
 			}
 
 			sourceBuilder.AppendLine(@"
         public void UpdateFromRequest(API.StatsRequest stats)
         {");
-			foreach (var property in properties)
-				sourceBuilder.AppendLine($"this.{property.Name} = stats.{property.Name};");
+			foreach (var (DisplayType, Name) in properties)
+				sourceBuilder.AppendLine($"this.{Name} = stats.{Name};");
 
 			sourceBuilder.Append(@"
         }
