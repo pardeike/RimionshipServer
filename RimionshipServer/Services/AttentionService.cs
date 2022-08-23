@@ -38,8 +38,7 @@ public class AttentionService : IAsyncDisposable, IDisposable
 											 {
 												 while (Interlocked.Read(ref _shouldStop) == 0L)
 												 {
-													 int count;
-													 count = (int)Interlocked.Read(ref _currentIndex);
+                                                     var count = (int)Interlocked.Read(ref _currentIndex);
 													 for (int i = 0; i < count; i++)
 													 {
 														 if (Interlocked.Read(ref _attentionValues[i]) > 0L)
@@ -94,9 +93,12 @@ public class AttentionService : IAsyncDisposable, IDisposable
 	private void ExpandUserAttentionArray()
 	{
 		var length = (int)Interlocked.Read(ref _currentIndex);
-		if (_attentionValues.Length > length)
-			return;
-		var needReturn = Environment.Is64BitProcess ? length > 512 : length > 128;
+        if (_attentionValues.Length > length)
+        {
+            _attentionValues[length] = 0;
+            return;
+        }
+        var needReturn = Environment.Is64BitProcess ? length > 512 : length > 128;
 		//Can stackalloc up to              4kB on 64bit | 1kB on 32Bit
 		//Maximum Values for stackalloc are 4MB on 64bit | 1MB on 32Bit
 		if (needReturn)
@@ -124,8 +126,9 @@ public class AttentionService : IAsyncDisposable, IDisposable
 		_attentionValues.AsSpan(0, length).CopyTo(tmp);
 		ArrayPool<long>.Shared.Return(_attentionValues);
 		_attentionValues = ArrayPool<long>.Shared.Rent(length + 1);
-		tmp.CopyTo(_attentionValues);
-	}
+        tmp.CopyTo(_attentionValues);
+        _attentionValues[length] = 0;
+    }
 
 	private void AddUserReference(string user, out int index)
 	{
