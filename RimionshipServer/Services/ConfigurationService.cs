@@ -27,15 +27,56 @@ namespace RimionshipServer.Services
 			this.options = options;
 		}
 
-		/// <summary>
+        public async Task EditModOrder(byte modOrder, byte originalLoadOrder)
+        {
+            var newPlace = await db.AllowedMods.FirstAsync(x => x.LoadOrder == originalLoadOrder);
+            newPlace.LoadOrder = modOrder;
+            var oldPlace = await db.AllowedMods.FirstAsync(x => x.LoadOrder == modOrder);
+            oldPlace.LoadOrder = originalLoadOrder;
+            db.AllowedMods.Update(newPlace);
+            db.AllowedMods.Update(oldPlace);
+            await SaveChanges();
+        }
+        
+        public async Task SaveChanges()
+        {
+            await db.SaveChangesAsync();
+            FlushAllowedModsAsync();
+        }
+
+        public async Task AddAllowedMod(AllowedMod mod)
+        {
+            db.AllowedMods.Add(mod);
+            await SaveChanges();
+        }
+        
+        public async Task RemoveAllowedModAsync(string PackageId, ulong SteamId)
+        {
+            var mod = await db.AllowedMods.FirstAsync(x => x.PackageId == PackageId && x.SteamId == SteamId);
+            db.AllowedMods.Remove(mod);
+            await db.AllowedMods
+                    .Where(x => x.LoadOrder > mod.LoadOrder)
+                    .ForEachAsync(x => x.LoadOrder--);
+            await SaveChanges();
+        }
+
+        public IQueryable<AllowedMod> GetAllowedModsWithOrderAsync()
+        {
+            return db.AllowedMods.AsNoTracking();
+        }
+
+        /// <summary>
 		/// Returns (and caches for a bit) the list of allowed mods
 		/// </summary>
 		public async Task<IEnumerable<Mod>> GetAllowedModsAsync()
 		{
-			return await memoryCache.GetOrCreateAsync(ModListCacheKey, async (entry) =>
+			return await memoryCache.GetOrCreateAsync(ModListCacheKey, async entry =>
 			{
 				entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-				return await db.AllowedMods.AsNoTracking().Select(m => new Mod { SteamId = m.SteamId, PackageId = m.PackageId }).ToListAsync();
+				return await db.AllowedMods.AsNoTracking()
+                                       .OrderBy(x => x.LoadOrder)
+                                       .Select(m => new Mod { SteamId = m.SteamId, PackageId = m.PackageId })
+                                       .ToListAsync();
 			});
 		}
 
@@ -45,7 +86,7 @@ namespace RimionshipServer.Services
 		public void FlushAllowedModsAsync()
 			 => memoryCache.Remove(ModListCacheKey);
 
-		private record LoginToken(string Id, string PlayerId);
+        private record LoginToken(string Id, string PlayerId);
 
 		public string GetLoginUrl(string token)
 			 => options.Value.LoginUrl.SetQueryParam("token", token);

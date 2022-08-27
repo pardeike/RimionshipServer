@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
+using System.Net;
 
 namespace RimionshipServer.Pages
 {
@@ -8,6 +9,10 @@ namespace RimionshipServer.Pages
 	[IgnoreAntiforgeryToken]
 	public class ErrorModel : PageModel
 	{
+        
+        [BindProperty(SupportsGet = true)]
+        public HttpStatusCode Id { get; set; }
+        
 		public string? RequestId { get; set; }
 
 		public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
