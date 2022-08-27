@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using RimionshipServer.Services;
 using System.Threading.Tasks;
 namespace RimionshipServer.Tests;
@@ -51,4 +52,23 @@ public class AttentionTests
 										 Assert.That(service.GetAttentionScore(usr) <= 2L, "Error @ " + i);
 									 });
 	}
+    
+    [Test]
+    public async Task TestGetAllUsers()
+    {
+        await using var service = new AttentionService();
+        const string    user    = "User";
+        Parallel.For(0, 8192, i =>
+                              {
+                                  var usr = user + i;
+                                  service.IncreaseAttentionScore(usr, 800);
+                              });
+        Assert.That(service.GetAttentionScores().Count()                                == 8192);
+        Assert.That(service.GetAttentionScores().Select(x => x.Name).Distinct().Count() == 8192);
+        foreach (long l in service.GetAttentionScores().Select(x => x.Score))
+        {
+            Assert.That(l > 795);
+            Assert.That(l < 801);
+        }
+    }
 }
