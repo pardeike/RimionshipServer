@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 namespace RimionshipServer.Services;
 
@@ -50,6 +51,26 @@ public class AttentionService : IAsyncDisposable, IDisposable
 											);
 	}
 
+    public record AttentionScoreWrapper(string Name, long Score);
+    public IEnumerable<AttentionScoreWrapper> GetAttentionScores()
+    {
+        IImmutableDictionary<string, int> users;
+        try
+        {
+            _userReferenceLock.EnterReadLock();
+            users = _users.ToImmutableDictionary();
+        }
+        finally
+        {
+            if (_userReferenceLock.IsReadLockHeld)
+                _userReferenceLock.ExitReadLock();
+        }
+        foreach ((string name, int userID) in users)
+        {
+           yield return new AttentionScoreWrapper(name, Interlocked.Read(ref _attentionValues[userID]));
+        }
+    }
+    
 	public long GetAttentionScore(string user)
 	{
 		var index = GetUserReference(user, out var needCreation);
