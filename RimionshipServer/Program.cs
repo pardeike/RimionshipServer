@@ -72,7 +72,12 @@ void ConfigureServices(IServiceCollection services)
                                   options.AddPolicy(Roles.Admin, 
                                                     policyBuilder =>
                                                     {
-                                                        policyBuilder.AddRequirements(new CustomRoleAuth());
+                                                        policyBuilder.AddRequirements(new CustomRoleAuth(Roles.Admin));
+                                                    });
+                                  options.AddPolicy(Roles.Moderator, 
+                                                    policyBuilder =>
+                                                    {
+                                                        policyBuilder.AddRequirements(new CustomRoleAuth(Roles.Moderator));
                                                     });
                               });
     services.Configure<RouteOptions>(options =>

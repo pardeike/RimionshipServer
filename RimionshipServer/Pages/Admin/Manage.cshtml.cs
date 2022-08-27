@@ -86,6 +86,7 @@ namespace RimionshipServer.Pages.Admin
             Users = await Task.WhenAll((await _userManager.Users
                                                           .AsNoTrackingWithIdentityResolution()
                                                           .Where(x => EF.Functions.Like(x.UserName, $"%{searchKey}%"))
+                                                          .Take(ElementsPerSite)
                                                           .ToListAsync(HttpContext.RequestAborted))
                                               .Select(async x => new UsersDTO(x.WasBanned, x.IsSuspicious, x.UserName, x.Id, await _userManager.GetRolesAsync(x))));
             return Page();

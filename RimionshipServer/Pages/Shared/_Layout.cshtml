@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - Rimionship 2022 Anmeldung</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/RimionshipServer.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Css", required: false)
 </head>
 <body>
     <header>

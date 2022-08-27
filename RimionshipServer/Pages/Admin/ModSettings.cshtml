@@ -1,0 +1,26 @@
+﻿@page
+@model RimionshipServer.Pages.Admin.ModSettings
+
+@{
+    ViewData["Title"] = "Mod Settings";
+}
+@section Css{
+    <link rel="stylesheet" href="/css/admin.css">
+}
+<div class="text-center">
+    
+    <h1>Mod Settings</h1>
+    <div>
+        <h3>Message of the Day</h3>
+        <form asp-page-handler="Motd" method="post">
+            <div class="input-group mb-3">
+                <input name="motd" type="text" style="margin-right: 0.5rem"/>
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-dark form-control" type="submit">Set MOTD</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <h3>Allowed Mods</h3>
+    <partial name="_ModList" model=Model></partial>
+</div>
