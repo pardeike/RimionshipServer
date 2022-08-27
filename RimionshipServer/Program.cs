@@ -34,7 +34,8 @@ void ConfigureServices(IServiceCollection services)
          .AddScoped<ConfigurationService>()
          .AddScoped<LoginService>()
          .AddSingleton<ScoreService>()
-         .AddSingleton<AttentionService>();
+         .AddSingleton<AttentionService>()
+         .AddSingleton<DirectionService>();
 
     services.AddGrpc();
 

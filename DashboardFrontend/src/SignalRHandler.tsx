@@ -1,9 +1,9 @@
 import { batch, createEffect, onCleanup, onMount, VoidComponent } from "solid-js";
-import { reconcile } from 'solid-js/store';
+import { produce, reconcile } from 'solid-js/store';
 import * as signalR from '@microsoft/signalr';
 import * as signalRm from '@microsoft/signalr-protocol-msgpack';
 import { useRimionship } from "./RimionshipContext";
-import { AttentionUpdate, UserInfo } from "./MessageDTOs";
+import { AttentionUpdate, DirectionInstruction, UserInfo } from "./MessageDTOs";
 import { LatestStats } from "./Stats";
 
 export const CreateSignalRConnection = () => {
@@ -21,7 +21,8 @@ export const SignalRHandler: VoidComponent = () => {
     setUsers,
     connected, setConnected,
     disconnectReason, setDisconnectReason,
-    setAttentionList
+    setAttentionList,
+    setDirectionList
   } = useRimionship();
 
   let updateTimer: ReturnType<typeof setInterval>;
@@ -42,7 +43,7 @@ export const SignalRHandler: VoidComponent = () => {
 
         for (let p of order)
           data[p[0]].Place = p[1] + 1;
-          
+
         setLatestStats(reconcile(data));
 
         const attention = await connection.invoke<AttentionUpdate[]>('GetAttentionList');
@@ -64,15 +65,34 @@ export const SignalRHandler: VoidComponent = () => {
       setUsers(user.Id, user);
     });
 
+    connection.on('SetDirectionInstruction', (inst: DirectionInstruction) => {
+      if (!inst.Comment) {
+        setDirectionList(list => list.filter(f => f.UserId !== inst.UserId));
+      }
+      else {
+        setDirectionList(produce(list => {
+          const idx = list.findIndex(p => p.UserId === inst.UserId);
+          if (idx === -1)
+            list.push(inst);
+          else
+            list[idx].Comment = inst.Comment;
+
+          return list;
+        }));
+      }
+    });
+
     while (true) {
       try {
         await connection.start();
         const users = await connection.invoke<UserInfo[]>('GetUsers');
-
+        const directions = await connection.invoke<DirectionInstruction[]>('GetDirectionInstructions');
+        
         batch(() => {
           for (let user of users)
             setUsers(user.Id, user);
 
+          setDirectionList(directions);
           setConnected(true);
           setDisconnectReason(undefined);
         });

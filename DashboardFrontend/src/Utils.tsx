@@ -1,6 +1,6 @@
 import { formatDistance } from "date-fns";
 import { de } from "date-fns/locale";
-import { JSX } from "solid-js";
+import { Accessor, createRenderEffect, JSX, Signal } from "solid-js";
 import { PlayerLink } from "./PlayerLink";
 import { LatestStats } from "./Stats";
 
@@ -29,4 +29,5 @@ export const CC = (id: ColumnId, displayName: string, sortable: boolean = true) 
     sortable
   };
 }
+
 export type ColumnDef = ReturnType<typeof CC>;

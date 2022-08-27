@@ -21,7 +21,7 @@ const DefaultColumns = [
   CC('Timestamp', '🔁')
 ];
 
-export const LatestTable: VoidComponent<{ sortable: boolean, columns: ColumnDef[] }> = (props) => {
+export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDef[] }> = (props) => {
   props = mergeProps({ sortable: true, columns: DefaultColumns }, props);
   const { latestStats } = useRimionship();
   const [sortKey, setSortKey] = createSignal<ColumnId | undefined>('Place');

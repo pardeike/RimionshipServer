@@ -12,7 +12,9 @@ namespace RimionshipServer.Services
         private readonly UserManager userManager;
         private readonly IMemoryCache memoryCache;
 
-        public DataService(UserManager userManager, IMemoryCache memoryCache)
+        public DataService(
+            UserManager userManager,
+            IMemoryCache memoryCache)
         {
             this.userManager = userManager;
             this.memoryCache = memoryCache;
