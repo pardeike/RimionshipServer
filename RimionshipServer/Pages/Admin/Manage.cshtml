@@ -1,0 +1,143 @@
+﻿@page "{pageNo?}"
+@model RimionshipServer.Pages.Admin.Manage
+
+@{
+    ViewData["Title"] = "Manage";
+}
+
+@section Css{
+    <link rel="stylesheet" href="/css/admin.css">
+}
+
+<div class="text-center">
+    <table class="table table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th scope="col">@(nameof(RimionUser.UserName))</th>
+            <th scope="col">@(nameof(RimionUser.Id))</th>
+            <th scope="col">@(nameof(RimionUser.WasBanned))</th>
+            <th scope="col">Ban</th>
+            <th scope="col">Pardon</th>
+            <th scope="col">Promote</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model.Users)
+        {
+            var classs = "";
+            @if (user.IsSuspicious)
+            {
+                classs = "bg-yellow";
+            }
+            else if (user.Role.Contains(Roles.Admin))
+            {
+                classs = "bg-blue";
+            }
+            else if (user.Role.Contains(Roles.Moderator))
+            {
+                classs = "bg-light-blue";
+            }
+            <tr class="@classs">
+                <td>
+                    @user.UserName
+                </td>
+                <td>
+                    @user.Id    
+                </td>
+                @{
+                    classs = user.WasBanned ? "bg-red" : "bg-green";
+                }
+                <td class="@classs">
+                    @user.WasBanned
+                </td>
+                <td>
+                    @if (user.Role.Count == 0)
+                    {
+                        <form asp-page-handler="Ban" method="post" style="fill: darkred">
+                            <input hidden="" name="id" value="@user.Id">
+                            <input hidden="" name="ban" value="true">
+                            <button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to ban @user.UserName?`)">
+                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
+                                    <path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm4.5 6c0 .9-.3 1.8-.8 2.5L5.5 4.3a4.5 4.5 0 0 1 7 3.7zm-9 0c0-.9.3-1.8.8-2.5l6.2 6.2a4.5 4.5 0 0 1-7-3.7z"/>
+                                </svg>
+                            </button>
+                        </form>
+                    }
+                </td>
+                <td>
+                    @if (user.Role.Count == 0)
+                    {
+                        <form asp-page-handler="Ban" method="post" style="fill: darkgreen">
+                            <input hidden="" name="id" value="@user.Id">
+                            <input hidden="" name="ban" value="false">
+                            <button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to unban @user.UserName and mark as non suspicious?`)">
+                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
+                                    <g>
+                                        <path d="m12.1 5.3-.4-.3a.3.3 0 0 0-.4 0L6.6 9.8l-2-2a.3.3 0 0 0-.4 0l-.3.4c-.1.1-.1.3 0 .4L6 10.7l.4.3c.1.1.3.1.4 0l.4-.4 4.9-4.9c.1-.1.1-.3 0-.4z"/>
+                                        <path d="M8 2c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6 2.7-6 6-6m0-1C4.1 1 1 4.1 1 8s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7z"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </form>
+                    }
+                </td>
+                <td>
+                    @if (!user.Role.Contains(Roles.Admin))
+                    {
+                        var confirmText = !user.Role.Contains(Roles.Moderator) ? $"Do you really want to promote {user.UserName} to moderator?" : $"Do you really want to remove {user.UserName} from moderators?";
+                        <form asp-page-handler="Promote" method="post">
+                            <input hidden="" name="id" value="@user.Id">
+                            <button type="submit" class="btn" value="submit request" onclick="return window.confirm('@confirmText')">
+                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
+                                    <g>
+                                        <path d="M13 2v6c0 3-3.7 5.2-5 5.9C6.7 13.2 3 11 3 8V2h10m1-1H2v7c0 4.4 6 7 6 7s6-2.6 6-7V1z"/>
+                                        <path d="M10.7 6H9l-.7-1.9c0-.2-.3-.2-.4 0L7.1 6H5.3c-.3 0-.4.3-.2.4l1.4 1.4-.7 2c0 .1.2.4.4.2L8 9l1.8 1c.2.1.5 0 .4-.3l-.7-2 1.4-1.3c.2-.1 0-.4-.2-.4z"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <div class="row">
+                        @for (var i = 0; i < Model.Pages; i++)
+                        {
+                            <div class="col flex-grow-0" style="padding: unset;">
+                                <a class="btn" href="~/Admin/Manage?pageNo=@i" style="padding: unset;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
+                                        <path d="M13 2c.6 0 1 .4 1 1v10c0 .6-.4 1-1 1H3c-.6 0-1-.4-1-1V3c0-.6.4-1 1-1h10m0-1H3a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z"/>
+                                        <foreignObject x="0" width="16" height="20" y="-6.5">
+                                            <text style="font-size: 0.5rem;">
+                                                @i
+                                            </text>
+                                        </foreignobject>
+                                    </svg>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <form asp-page-handler="Search" method="post">
+                    <div class="input-group mb-3">
+                        <input name="searchKey" type="text" style="margin-right: 0.5rem"/>
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-dark form-control" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</footer>

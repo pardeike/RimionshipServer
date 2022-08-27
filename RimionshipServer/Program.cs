@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer;
 using RimionshipServer.API;
@@ -33,6 +35,7 @@ void ConfigureServices(IServiceCollection services)
          .AddScoped<DataService>()
          .AddScoped<ConfigurationService>()
          .AddScoped<LoginService>()
+         .AddScoped<IAuthorizationHandler, CustomRoleAuthHandler>()    
          .AddSingleton<ScoreService>()
          .AddSingleton<AttentionService>()
          .AddSingleton<DirectionService>();
@@ -46,9 +49,14 @@ void ConfigureServices(IServiceCollection services)
         options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
     });
 
-    services.AddRazorPages()
+    services.AddRazorPages(options => 
+                           {
+                               options.RootDirectory = "/Pages";
+                               options.Conventions.AuthorizeFolder("/Admin", Roles.Admin);
+                           }
+                          )
 #if DEBUG
-         //.AddRazorRuntimeCompilation()
+            .AddRazorRuntimeCompilation()
 #endif
           ;
 
@@ -63,6 +71,25 @@ void ConfigureServices(IServiceCollection services)
 
     services.AddSignalR()
         .AddMessagePackProtocol();
+    services.AddAuthorization(options =>
+                              {
+                                  options.AddPolicy(Roles.Admin, 
+                                                    policyBuilder =>
+                                                    {
+                                                        policyBuilder.AddRequirements(new CustomRoleAuth(Roles.Admin));
+                                                    });
+                                  options.AddPolicy(Roles.Moderator, 
+                                                    policyBuilder =>
+                                                    {
+                                                        policyBuilder.AddRequirements(new CustomRoleAuth(Roles.Moderator));
+                                                    });
+                              });
+    services.Configure<RouteOptions>(options =>
+                                             {
+                                                 options.LowercaseUrls         = true;
+                                                 options.LowercaseQueryStrings = true;
+                                                 options.AppendTrailingSlash   = true;
+                                             });
 }
 
 ConfigureServices(builder.Services);
@@ -88,13 +115,13 @@ void Configure(WebApplication app)
 
     app.UseRouting();
 
-    app.UseAuthentication();
-    app.UseAuthorization();
-
-    app.MapRazorPages();
-    app.MapControllers();
+	app.UseAuthentication();
+	app.UseAuthorization();
+    app.UseStatusCodePagesWithRedirects("~/Error/{0}");
+	app.MapRazorPages();
+	app.MapControllers();
     app.MapHub<DashboardHub>("/api/dashboard");
-    app.MapGrpcService<GrpcService>();
+	app.MapGrpcService<GrpcService>();
 }
 
 var app = builder.Build();

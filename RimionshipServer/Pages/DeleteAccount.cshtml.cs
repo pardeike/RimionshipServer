@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
 using RimionshipServer.Users;
+using Serilog;
 
 namespace RimionshipServer.Pages
 {
@@ -34,7 +36,14 @@ namespace RimionshipServer.Pages
 			if (user == null)
 				return NotFound("Kein Benutzerkonto vorhanden.");
 
-			var playerId = await userManager.GetPlayerIdAsync(user);
+            if (user.WasBanned)
+            {
+                Log.Warning("Banned User {User} tried to delete his account. Rejecting!", User.GetTwitchName());
+                await signInManager.SignOutAsync();
+                return RedirectToPage("/Index");
+            }
+            
+            var playerId = await userManager.GetPlayerIdAsync(user);
 			await userManager.DeleteAsync(user);
 			if (playerId != null)
 				dataService.InvalidatePlayerCache(playerId);
