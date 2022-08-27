@@ -132,22 +132,37 @@ svg {
 <footer>
     <div class="container">
         <div class="row">
-            @for (var i = 0; i < Model.Pages; i++)
-            {
-                <div class="col flex-grow-0" style="padding: unset;">
-                    <a class="btn" href="~/Admin/Manage?pageNo=@i" style="padding: unset;">
-                        <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
-                            <path d="M13 2c.6 0 1 .4 1 1v10c0 .6-.4 1-1 1H3c-.6 0-1-.4-1-1V3c0-.6.4-1 1-1h10m0-1H3a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z"/>
-                            <foreignObject x="0" width="16" height="20" y="-6.5">
-                                <text style="font-size: 0.5rem;">
-                                    @i
-                                </text>
-                            </foreignobject>
-                        </svg>
-                    </a>
+            <div class="col">
+                <div class="container">
+                    <div class="row">
+                        @for (var i = 0; i < Model.Pages; i++)
+                        {
+                            <div class="col flex-grow-0" style="padding: unset;">
+                                <a class="btn" href="~/Admin/Manage?pageNo=@i" style="padding: unset;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
+                                        <path d="M13 2c.6 0 1 .4 1 1v10c0 .6-.4 1-1 1H3c-.6 0-1-.4-1-1V3c0-.6.4-1 1-1h10m0-1H3a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h10a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z"/>
+                                        <foreignObject x="0" width="16" height="20" y="-6.5">
+                                            <text style="font-size: 0.5rem;">
+                                                @i
+                                            </text>
+                                        </foreignobject>
+                                    </svg>
+                                </a>
+                            </div>
+                        }
+                    </div>
                 </div>
-            }
+            </div>
+            <div class="col-3">
+                <form asp-page-handler="Search" method="post">
+                    <div class="input-group mb-3">
+                        <input name="searchKey" type="text" style="margin-right: 0.5rem"/>
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-dark form-control" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    
 </footer>

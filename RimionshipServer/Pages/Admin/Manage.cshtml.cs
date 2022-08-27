@@ -80,5 +80,15 @@ namespace RimionshipServer.Pages.Admin
 
             return RedirectToPage("/Admin/Manage", pageNo);
         }
+
+        public async Task<IActionResult> OnPostSearchAsync(string searchKey)
+        {
+            Users = await Task.WhenAll((await _userManager.Users
+                                                          .AsNoTrackingWithIdentityResolution()
+                                                          .Where(x => EF.Functions.Like(x.UserName, $"%{searchKey}%"))
+                                                          .ToListAsync(HttpContext.RequestAborted))
+                                              .Select(async x => new UsersDTO(x.WasBanned, x.IsSuspicious, x.UserName, x.Id, await _userManager.GetRolesAsync(x))));
+            return Page();
+        }
     }
 }
