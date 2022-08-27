@@ -97,7 +97,7 @@ namespace RimionshipServer.Pages.Account
 			}
 
 			// Sign in the user with this external login provider if the user already has a login.
-			var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+			var result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true, bypassTwoFactor: true);
 			if (result.Succeeded)
 			{
 				logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
@@ -142,7 +142,7 @@ namespace RimionshipServer.Pages.Account
 					if (result.Succeeded)
 					{
 						logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
-						await signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+						await signInManager.SignInAsync(user, isPersistent: true, info.LoginProvider);
 
 						return LocalRedirect(returnUrl);
 					}
