@@ -110,7 +110,7 @@ namespace RimionshipServer.Services
 					{
 						Id = id,
 						UserName = id,
-						AvatarUrl = "http://localhost/404.png",
+						AvatarUrl = null,
 					};
 
 					var result = await userManager.CreateAsync(user);

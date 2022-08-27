@@ -5,3 +5,8 @@
 .table-stoppable.table-secondary {
     cursor: wait;
 }
+
+.mini-avatar {
+    width: 16px;
+    height: 16px;
+}

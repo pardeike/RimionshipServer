@@ -57,7 +57,7 @@ namespace RimionshipServer.API
 			VerifyId(request.Id);
 
 			var allowedModsTask = configurationService.GetAllowedModsAsync();
-			var user = await dataService.GetCachedUserAsync(request.Id);
+			var user = await dataService.GetCachedUserByPlayerIdAsync(request.Id);
 
 			HelloResponse response;
 			if (user == null)
@@ -207,7 +207,7 @@ namespace RimionshipServer.API
 		{
 			VerifyId(clientId);
 
-			return await dataService.GetCachedUserAsync(clientId) ?? throw new RpcException(new Status(StatusCode.Unauthenticated, "User not found"));
+			return await dataService.GetCachedUserByPlayerIdAsync(clientId) ?? throw new RpcException(new Status(StatusCode.Unauthenticated, "User not found"));
 		}
 	}
 }

@@ -1,6 +1,6 @@
 import { formatDistance } from "date-fns";
-import { batch, createMemo, createSignal, For, Show, VoidComponent } from "solid-js";
-import { useRimionship } from "./SignalR";
+import { batch, createMemo, createSignal, For, JSX, Show, VoidComponent } from "solid-js";
+import { useRimionship } from "./RimionshipContext";
 import { LatestStats } from "./Stats";
 import { de } from "date-fns/locale";
 
@@ -15,7 +15,7 @@ const CC = (id: ColumnId, displayName: string, sortable: boolean = true) => {
 }
 
 const Columns = [
-  CC('UserName', 'Spieler'),
+  CC('UserId', 'Spieler'),
   CC('AmountBloodCleaned', '🩸🧹'),
   CC('AnimalMeatCreated', '🐑🥩'),
   CC('Caravans', '🚌'),
@@ -31,7 +31,7 @@ const Columns = [
 ];
 
 export const LatestTable: VoidComponent = (props) => {
-  const { latestStats } = useRimionship();
+  const { users, latestStats } = useRimionship();
   const [sortKey, setSortKey] = createSignal<ColumnId | undefined>(undefined);
   const [sortDir, setSortDir] = createSignal<-1 | 1>(1);
   const [stopUpdating, setStopUpdating] = createSignal(false);
@@ -81,7 +81,12 @@ export const LatestTable: VoidComponent = (props) => {
     return 0;
   };
 
-  const displayValue = (value: any): string => {
+  const displayValue = (value: any, col: string): JSX.Element => {
+    if (col === 'UserId') {
+      const user = users[value];
+      return <><img src={user.AvatarUrl} class="mini-avatar" /> {user.UserName}</>
+    }
+
     if (value instanceof Array && value[0] instanceof Date) {
       return formatDistance(value[0], new Date(), { locale: de, includeSeconds: true });
     }
@@ -120,7 +125,7 @@ export const LatestTable: VoidComponent = (props) => {
     <tbody onMouseEnter={() => setStopUpdating(true)} onMouseLeave={() => setStopUpdating(false)}>
       <For each={rows()}>{(row) =>
         <tr>
-          <For each={Columns}>{(col) => <td>{displayValue(row[col.id])}</td>}</For>
+          <For each={Columns}>{(col) => <td>{displayValue(row[col.id], col.id)}</td>}</For>
         </tr>
       }</For>
     </tbody>

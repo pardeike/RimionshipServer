@@ -3,7 +3,7 @@ import { render } from 'solid-js/web';
 
 // import './index.css';
 import App from './App';
-import { RimionshipContextProvider } from './SignalR';
+import { RimionshipContextProvider } from './RimionshipContext';
 import { SignalRHandler } from './SignalRHandler';
 
 render(() => 

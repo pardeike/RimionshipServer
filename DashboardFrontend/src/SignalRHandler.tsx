@@ -1,22 +1,24 @@
 import { batch, createEffect, onCleanup, onMount, VoidComponent } from "solid-js";
 import * as signalR from '@microsoft/signalr';
 import * as signalRm from '@microsoft/signalr-protocol-msgpack';
-import { useRimionship } from "./SignalR";
+import { useRimionship } from "./RimionshipContext";
+import { UserInfo } from "./PlayerInfo";
 
 export const CreateSignalRConnection = () => {
   return new signalR.HubConnectionBuilder()
-  .withUrl("api/dashboard")
-  .withHubProtocol(new signalRm.MessagePackHubProtocol())
-  .withAutomaticReconnect({ nextRetryDelayInMilliseconds: (ctx) => Math.min(ctx.previousRetryCount, 5) * 1000 })
-  .build();
+    .withUrl("api/dashboard")
+    .withHubProtocol(new signalRm.MessagePackHubProtocol())
+    .withAutomaticReconnect({ nextRetryDelayInMilliseconds: (ctx) => Math.min(ctx.previousRetryCount, 5) * 1000 })
+    .build();
 };
 
 export const SignalRHandler: VoidComponent = () => {
-  const { 
+  const {
     connection,
     setLatestStats,
+    setUsers,
     connected, setConnected,
-    disconnectReason, setDisconnectReason 
+    disconnectReason, setDisconnectReason
   } = useRimionship();
 
   let updateTimer: ReturnType<typeof setInterval>;
@@ -40,10 +42,18 @@ export const SignalRHandler: VoidComponent = () => {
   };
 
   onMount(async () => {
+    connection.on('AddUser', (user: UserInfo) => {
+      setUsers(user.Id, user);
+    });
+
     while (true) {
       try {
         await connection.start();
+        const users = await connection.invoke<UserInfo[]>('GetUsers');
         batch(() => {
+          for (let user of users)
+            setUsers(user.Id, user);
+
           setConnected(true);
           setDisconnectReason(undefined);
         });

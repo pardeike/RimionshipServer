@@ -1,6 +1,6 @@
 import { Accessor, Component, Show, VoidComponent } from 'solid-js';
 import { LatestTable } from './LatestTable';
-import { useRimionship } from './SignalR';
+import { useRimionship } from './RimionshipContext';
 
 import './App.css';
 

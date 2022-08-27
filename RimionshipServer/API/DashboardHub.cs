@@ -6,8 +6,11 @@ using RimionshipServer.Services;
 
 namespace RimionshipServer.API
 {
+    public record UserInfo(string Id, string UserName, string? AvatarUrl);
+
     public interface IDashboardClient
     {
+        Task AddUser(UserInfo userInfo);
     }
 
     [Authorize(Roles = Roles.Admin)]
@@ -23,34 +26,21 @@ namespace RimionshipServer.API
             this.attentionService = attentionService;
         }
 
-        public class LatestSignalRStats : Stats
+        public async Task<List<UserInfo>> GetUsers()
         {
-            public string UserName { get; set; } = null!;
-
-            public LatestSignalRStats()
-            {
-            }
-
-            public LatestSignalRStats(Stats stats, string userName)
-                : base(stats)
-            {
-                this.Timestamp = stats.Timestamp;
-                this.UserId = stats.UserId;
-                this.UserName = userName;
-            }
-        }
-
-        public async Task<List<LatestSignalRStats>> GetLatestStats()
-        {
-            var result = await db.LatestStats
-                .AsNoTracking()
-                .Select(u => new { UserName = u.User.UserName, Stats = u })
+            return await db.Users
+                .Select(u => new UserInfo(u.Id, u.UserName, u.AvatarUrl))
                 .ToListAsync();
-
-            return result.Select(p => new LatestSignalRStats(p.Stats, p.UserName)).ToList();
         }
 
-        public record UserAttention(string UserId, string UserName, long Score, bool Sticky, string Comment);
+        public async Task<List<LatestStats>> GetLatestStats()
+        {
+            return await db.LatestStats
+                .AsNoTracking()
+                .ToListAsync();
+        }
+
+        public record UserAttention(string UserId, long Score, bool Sticky, string Comment);
 
         public async Task<List<UserAttention>> GetAttentionList()
         {
