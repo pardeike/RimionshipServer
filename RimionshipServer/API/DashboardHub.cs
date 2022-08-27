@@ -34,6 +34,8 @@ namespace RimionshipServer.API
             public LatestSignalRStats(Stats stats, string userName)
                 : base(stats)
             {
+                this.Timestamp = stats.Timestamp;
+                this.UserId = stats.UserId;
                 this.UserName = userName;
             }
         }

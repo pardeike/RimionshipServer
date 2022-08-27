@@ -1,0 +1,7 @@
+.sortable th {
+    user-select: none;
+}
+
+.table-stoppable.table-secondary {
+    cursor: wait;
+}
