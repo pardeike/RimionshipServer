@@ -1,4 +1,5 @@
 /* @refresh reload */
+import { hashIntegration, Router } from '@solidjs/router';
 import { render } from 'solid-js/web';
 
 // import './index.css';
@@ -6,8 +7,10 @@ import App from './App';
 import { RimionshipContextProvider } from './RimionshipContext';
 import { SignalRHandler } from './SignalRHandler';
 
-render(() => 
-<RimionshipContextProvider>
+render(() =>
+  <RimionshipContextProvider>
     <SignalRHandler />
-    <App />
-</RimionshipContextProvider>, document.getElementById('root') as HTMLElement);
+    <Router source={hashIntegration()}>
+      <App />
+    </Router>
+  </RimionshipContextProvider>, document.getElementById('root') as HTMLElement);

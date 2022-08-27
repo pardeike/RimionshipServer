@@ -2,7 +2,7 @@ import { VoidComponent } from "solid-js";
 
 export const DirectionTable: VoidComponent = () => {
   return <>
-    <h2>Regie-Liste</h2>
+    <h3>Regie-Liste</h3>
     <table class="table">
       <thead>
         <tr class="table-info">

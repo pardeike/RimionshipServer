@@ -1,21 +1,9 @@
-import { formatDistance } from "date-fns";
-import { batch, createMemo, createSignal, For, JSX, Show, VoidComponent } from "solid-js";
+import { batch, createMemo, createSignal, For, mergeProps, Show, VoidComponent } from "solid-js";
 import { useRimionship } from "./RimionshipContext";
 import { LatestStats } from "./Stats";
-import { de } from "date-fns/locale";
-import { PlayerLink } from "./PlayerLink";
+import { CC, ColumnDef, ColumnId, displayValue } from "./Utils";
 
-type ColumnId = keyof LatestStats;
-
-const CC = (id: ColumnId, displayName: string, sortable: boolean = true) => {
-  return {
-    id,
-    displayName,
-    sortable
-  };
-}
-
-const Columns = [
+const DefaultColumns = [
   CC('Place', '#'),
   CC('UserId', 'Spieler'),
   CC('AmountBloodCleaned', '🩸🧹'),
@@ -33,13 +21,17 @@ const Columns = [
   CC('Timestamp', '🔁')
 ];
 
-export const LatestTable: VoidComponent = (props) => {
+export const LatestTable: VoidComponent<{ sortable: boolean, columns: ColumnDef[] }> = (props) => {
+  props = mergeProps({ sortable: true, columns: DefaultColumns }, props);
   const { latestStats } = useRimionship();
-  const [sortKey, setSortKey] = createSignal<ColumnId | undefined>(undefined);
-  const [sortDir, setSortDir] = createSignal<-1 | 1>(1);
+  const [sortKey, setSortKey] = createSignal<ColumnId | undefined>('Place');
+  const [sortDir, setSortDir] = createSignal<-1 | 1>(-1);
   const [stopUpdating, setStopUpdating] = createSignal(false);
 
   const changeSort = (col: ColumnId) => {
+    if (!props.sortable)
+      return;
+
     if (sortKey() === col) {
       if (sortDir() === 1)
         setSortDir(-1);
@@ -84,22 +76,6 @@ export const LatestTable: VoidComponent = (props) => {
     return 0;
   };
 
-  const displayValue = (value: any, col: string): JSX.Element => {
-    if (col === 'UserId') {
-      return <PlayerLink id={value} />
-    }
-
-    if (value instanceof Array && value[0] instanceof Date) {
-      return formatDistance(value[0], new Date(), { locale: de, includeSeconds: true });
-    }
-
-    if (typeof value === 'number') {
-      return value.toFixed(0);
-    }
-
-    return value;
-  }
-
   const rows = createMemo<LatestStats[]>((prev) => {
     if (stopUpdating())
       return prev ?? latestStats;
@@ -115,10 +91,10 @@ export const LatestTable: VoidComponent = (props) => {
   return <table class="table table-striped table-hover table-stoppable" classList={{ "table-secondary": stopUpdating() }}>
     <thead>
       <tr class="table-dark sortable">
-        <For each={Columns}>{(col) =>
+        <For each={props.columns}>{(col) =>
           <th onClick={() => changeSort(col.id)} title={col.id}>
             {col.displayName}
-            <Show when={col.sortable}>
+            <Show when={col.sortable && props.sortable}>
               <span classList={arrowState(col.id, 1)}>&#9660;</span><span classList={arrowState(col.id, -1)}>&#9650;</span>
             </Show></th>
         }</For>
@@ -127,7 +103,7 @@ export const LatestTable: VoidComponent = (props) => {
     <tbody onMouseEnter={() => setStopUpdating(true)} onMouseLeave={() => setStopUpdating(false)}>
       <For each={rows()}>{(row) =>
         <tr>
-          <For each={Columns}>{(col) => <td>{displayValue(row[col.id], col.id)}</td>}</For>
+          <For each={props.columns}>{(col) => <td>{displayValue(row[col.id], col.id)}</td>}</For>
         </tr>
       }</For>
     </tbody>
