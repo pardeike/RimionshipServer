@@ -47,19 +47,27 @@ namespace RimionshipServer.Services
 			}
 		}
 
-		private async Task SeedUserDataAsync()
+		private async Task CreateRoleAsync(string name)
 		{
-			if (!await roleManager.RoleExistsAsync(Roles.Admin))
+			if (!await roleManager.RoleExistsAsync(name))
 			{
 				var result = await roleManager.CreateAsync(new Microsoft.AspNetCore.Identity.IdentityRole
 				{
-					Name = Roles.Admin
+                    Name = name
 				});
 
 				if (!result.Succeeded)
-					throw new Exception($"Cannot seed roles: {string.Join("\n", result.Errors)}");
+                    throw new Exception($"Cannot seed roles: {string.Join("\n", result.Errors)}");
 			}
 		}
+        
+		private Task SeedUserDataAsync()
+        {
+            return Task.WhenAll(
+                         CreateRoleAsync(Roles.Admin),
+                         CreateRoleAsync(Roles.Moderator)
+                         );
+        }
 
 		private async Task SeedAllowedModsAsync(CancellationToken cancellationToken = default)
 		{
@@ -100,6 +108,11 @@ namespace RimionshipServer.Services
 
 		private IEnumerable<string> GetBotIds() => Enumerable.Range(0, 100).Select(i => $"BOT-{i:000}");
 
+        public Task AdminEveryone()
+        {
+            return userManager.Users.ForEachAsync(x => userManager.AddToRoleAsync(x, Roles.Admin));
+        }
+        
 		private async Task CreateBotUsersAsync()
 		{
 			foreach (var id in GetBotIds())

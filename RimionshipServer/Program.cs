@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer;
 using RimionshipServer.API;
@@ -32,8 +34,9 @@ void ConfigureServices(IServiceCollection services)
 		 .AddScoped<DataService>()
 		 .AddScoped<ConfigurationService>()
 		 .AddScoped<LoginService>()
+         .AddScoped<IAuthorizationHandler, CustomRoleAuthHandler>()    
 		 .AddSingleton<ScoreService>()
-		 .AddSingleton<AttentionService>();
+         .AddSingleton<AttentionService>();
 
 	services.AddGrpc();
 
@@ -43,8 +46,13 @@ void ConfigureServices(IServiceCollection services)
 		options.KnownNetworks.Clear();
 		options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
 	});
-
-	services.AddRazorPages()
+   
+	services.AddRazorPages(options => 
+                           {
+                               options.RootDirectory = "/Pages";
+                               options.Conventions.AuthorizeFolder("/Admin", Roles.Admin);
+                           }
+                           )
 #if DEBUG
 		 .AddRazorRuntimeCompilation()
 #endif
@@ -59,6 +67,20 @@ void ConfigureServices(IServiceCollection services)
 			  configuration.GetSection("Twitch").Bind(options);
 		  });
 
+    services.AddAuthorization(options =>
+                              {
+                                  options.AddPolicy(Roles.Admin, 
+                                                    policyBuilder =>
+                                                    {
+                                                        policyBuilder.AddRequirements(new CustomRoleAuth());
+                                                    });
+                              });
+    services.Configure<RouteOptions>(options =>
+                                             {
+                                                 options.LowercaseUrls         = true;
+                                                 options.LowercaseQueryStrings = true;
+                                                 options.AppendTrailingSlash   = true;
+                                             });
 }
 
 ConfigureServices(builder.Services);
@@ -86,7 +108,7 @@ void Configure(WebApplication app)
 
 	app.UseAuthentication();
 	app.UseAuthorization();
-
+    app.UseStatusCodePagesWithRedirects("~/Error/{0}");
 	app.MapRazorPages();
 	app.MapControllers();
 	app.MapGrpcService<GrpcService>();

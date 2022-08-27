@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 RimionshipServer/Rimionship.db*
+
+/**/.idea/
+appsettings.Development.json
