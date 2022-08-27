@@ -10,7 +10,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         name: Check out code
-
+        
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          cache: yarn
+          cache-dependency-path: DashboardFrontend/yarn.lock
+      - name: Restore NPM Packages
+        run: yarn install --frozen-lockfile
+        working-directory: DashboardFrontend
+        
+      - name: Build Frontend
+        run: yarn build
+        working-directory: DashboardFrontend
+        
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
