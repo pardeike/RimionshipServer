@@ -40,11 +40,13 @@ namespace RimionshipServer.API
                 .ToListAsync();
         }
 
-        public record UserAttention(string UserId, long Score, bool Sticky, string Comment);
+        public record UserAttention(string UserId, long Score);
 
-        public async Task<List<UserAttention>> GetAttentionList()
+        public List<UserAttention> GetAttentionList()
         {
-            return new List<UserAttention>();
+            return attentionService.GetAttentionScores()
+                .Select(u => new UserAttention(u.Name, u.Score))
+                .ToList();
         }
     }
 }

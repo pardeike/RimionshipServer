@@ -2,13 +2,14 @@ import { createContext, createSignal, ParentComponent, useContext } from "solid-
 import { createStore } from "solid-js/store";
 import { LatestStats } from "./Stats";
 import { CreateSignalRConnection } from "./SignalRHandler";
-import { UserInfo } from "./PlayerInfo";
+import { AttentionUpdate, UserInfo } from "./MessageDTOs";
 
 function create() {
   const [connected, setConnected] = createSignal(false);
   const [disconnectReason, setDisconnectReason] = createSignal<Error | undefined>(new Error('Noch kein Verbindungsaufbau versucht'));
   const [users, setUsers] = createStore<{ [userId: string]: UserInfo }>({});
   const [latestStats, setLatestStats] = createStore<LatestStats[]>([]);
+  const [attentionList, setAttentionList] = createStore<AttentionUpdate[]>([]);
 
   const connection = CreateSignalRConnection();
 
@@ -17,6 +18,7 @@ function create() {
     disconnectReason, setDisconnectReason,
     users, setUsers,
     latestStats, setLatestStats,
+    attentionList, setAttentionList,
     connection
   } as const;
 }

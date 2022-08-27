@@ -3,6 +3,8 @@ import { LatestTable } from './LatestTable';
 import { useRimionship } from './RimionshipContext';
 
 import './App.css';
+import { DirectionTable } from './DirectionTable';
+import { AttentionTable } from './AttentionTable';
 
 interface Player {
   name: string;
@@ -25,7 +27,17 @@ const App: Component = () => {
     <>
       <Show when={connected()} fallback={<DisconnectAlert disconnectReason={disconnectReason()!} />}>
         <div class="row">
-          <div class="col-10">
+          <div class="col-xl-1"></div>
+          <div class="col-xl-5 col-lg-6">
+            <DirectionTable />
+          </div>
+          <div class="col-xl-5 col-lg-6">
+            <AttentionTable />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-1"></div>
+          <div class="col-xl-10 col-lg-12">
             <LatestTable />
           </div>
         </div>

@@ -3,6 +3,7 @@ import { batch, createMemo, createSignal, For, JSX, Show, VoidComponent } from "
 import { useRimionship } from "./RimionshipContext";
 import { LatestStats } from "./Stats";
 import { de } from "date-fns/locale";
+import { PlayerLink } from "./PlayerLink";
 
 type ColumnId = keyof LatestStats;
 
@@ -15,6 +16,7 @@ const CC = (id: ColumnId, displayName: string, sortable: boolean = true) => {
 }
 
 const Columns = [
+  CC('Place', '#'),
   CC('UserId', 'Spieler'),
   CC('AmountBloodCleaned', '🩸🧹'),
   CC('AnimalMeatCreated', '🐑🥩'),
@@ -27,11 +29,12 @@ const Columns = [
   CC('DamageTakenPawns', '🤕🔢'),
   CC('Fire', '🔥'),
   CC('InGameHours', '⌚'),
+  CC('Wealth', '💲'),
   CC('Timestamp', '🔁')
 ];
 
 export const LatestTable: VoidComponent = (props) => {
-  const { users, latestStats } = useRimionship();
+  const { latestStats } = useRimionship();
   const [sortKey, setSortKey] = createSignal<ColumnId | undefined>(undefined);
   const [sortDir, setSortDir] = createSignal<-1 | 1>(1);
   const [stopUpdating, setStopUpdating] = createSignal(false);
@@ -83,8 +86,7 @@ export const LatestTable: VoidComponent = (props) => {
 
   const displayValue = (value: any, col: string): JSX.Element => {
     if (col === 'UserId') {
-      const user = users[value];
-      return <><img src={user.AvatarUrl} class="mini-avatar" /> {user.UserName}</>
+      return <PlayerLink id={value} />
     }
 
     if (value instanceof Array && value[0] instanceof Date) {

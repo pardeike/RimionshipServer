@@ -1,8 +1,10 @@
 import { batch, createEffect, onCleanup, onMount, VoidComponent } from "solid-js";
+import { reconcile } from 'solid-js/store';
 import * as signalR from '@microsoft/signalr';
 import * as signalRm from '@microsoft/signalr-protocol-msgpack';
 import { useRimionship } from "./RimionshipContext";
-import { UserInfo } from "./PlayerInfo";
+import { AttentionUpdate, UserInfo } from "./MessageDTOs";
+import { LatestStats } from "./Stats";
 
 export const CreateSignalRConnection = () => {
   return new signalR.HubConnectionBuilder()
@@ -18,7 +20,8 @@ export const SignalRHandler: VoidComponent = () => {
     setLatestStats,
     setUsers,
     connected, setConnected,
-    disconnectReason, setDisconnectReason
+    disconnectReason, setDisconnectReason,
+    setAttentionList
   } = useRimionship();
 
   let updateTimer: ReturnType<typeof setInterval>;
@@ -28,8 +31,23 @@ export const SignalRHandler: VoidComponent = () => {
   const updateData = async () => {
     try {
       if (connected()) {
-        const data = await connection.invoke('GetLatestStats');
-        setLatestStats(data);
+        const data = await connection.invoke<LatestStats[]>('GetLatestStats');
+        data.sort((a, b) => a.UserId.localeCompare(b.UserId));
+
+        // This is super funky and I kinda miss Linq.
+        const order = data
+          .map((v, i) => [v.Wealth, i])
+          .sort((a, b) => b[0] - a[0])
+          .map((v, i) => [v[1], i]);
+
+        for (let p of order)
+          data[p[0]].Place = p[1] + 1;
+          
+        setLatestStats(reconcile(data));
+
+        const attention = await connection.invoke<AttentionUpdate[]>('GetAttentionList');
+        attention.sort((a, b) => b.Score - a.Score);
+        setAttentionList(reconcile(attention));
       }
     }
     catch (err) {
@@ -50,6 +68,7 @@ export const SignalRHandler: VoidComponent = () => {
       try {
         await connection.start();
         const users = await connection.invoke<UserInfo[]>('GetUsers');
+
         batch(() => {
           for (let user of users)
             setUsers(user.Id, user);

@@ -4,10 +4,7 @@ export interface UserInfo {
   AvatarUrl: string;
 }
 
-export interface PlayerInfo {
+export interface AttentionUpdate {
   UserId: string;
-  UserName: string;
   Score: number;
-  AttentionScore: number;
-  Comment: string;
 }
