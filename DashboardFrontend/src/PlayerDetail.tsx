@@ -49,7 +49,7 @@ export const PlayerDetail: VoidComponent = () => {
     </div>
     <div class="col">
       <iframe
-        src={`https://player.twitch.tv/?channel=${user().UserName}&parent=${encodeURIComponent(window.location.host)}}`}
+        src={`https://player.twitch.tv/?channel=${user().UserName}&parent=${encodeURIComponent(window.location.host)}`}
         width="640"
         height="480"
         class="border border-1 border-primary"
