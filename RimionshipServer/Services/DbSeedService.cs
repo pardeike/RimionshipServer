@@ -30,7 +30,7 @@ namespace RimionshipServer.Services
 
 		public async Task SeedAsync(CancellationToken cancellationToken = default)
 		{
-			await SeedUserDataAsync();
+			await CreateRoleAsync(Roles.Admin);
 			await SeedAllowedModsAsync(cancellationToken);
             await SeedSettings(cancellationToken);
             await db.SeedMotd();
@@ -93,14 +93,6 @@ namespace RimionshipServer.Services
                     throw new Exception($"Cannot seed roles: {string.Join("\n", result.Errors)}");
 			}
 		}
-        
-		private Task SeedUserDataAsync()
-        {
-            return Task.WhenAll(
-                         CreateRoleAsync(Roles.Admin),
-                         CreateRoleAsync(Roles.Moderator)
-                         );
-        }
 
         private async Task SeedAllowedModsAsync(CancellationToken cancellationToken = default)
         {

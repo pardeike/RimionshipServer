@@ -65,17 +65,11 @@ namespace RimionshipServer.Pages.Admin
             var roles = await _userManager.GetRolesAsync(user);
             if (roles.Contains(Roles.Admin))
             {
-                Log.Warning("User {User} tried to remove Admin role for {Admin}", User.GetTwitchName(), user.UserName);
-                return RedirectToPage("/Admin/Manage", pageNo);
-            }
-            
-            if (roles.Contains(Roles.Moderator))
-            {
-                await _userManager.RemoveFromRoleAsync(user, Roles.Moderator);
+                await _userManager.RemoveFromRoleAsync(user, Roles.Admin);
             }
             else
             {
-                await _userManager.AddToRoleAsync(user, Roles.Moderator);
+                await _userManager.AddToRoleAsync(user, Roles.Admin);
             }
 
             return RedirectToPage("/Admin/Manage", pageNo);
