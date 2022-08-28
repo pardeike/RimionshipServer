@@ -10,19 +10,19 @@ namespace RimionshipServer.Data
 		public  DbSet<AllowedMod>                    AllowedMods  { get; set; } = null!;
 		public  DbSet<LatestStats>                   LatestStats  { get; set; } = null!;
 		public  DbSet<HistoryStats>                  HistoryStats { get; set; } = null!;
-        private DbSet<MiscSettings.BroadcastMessage> MotdSet         { get; set; } = null!;
+        private DbSet<MiscSettings.BroadcastMessage> MotdSet      { get; set; } = null!;
         
         public async Task SeedMotd()
         {
             if (await MotdSet.AnyAsync())
                 return;
-            MotdSet.Add(new MiscSettings.BroadcastMessage{Text = "foo"});
+            MotdSet.Add(new MiscSettings.BroadcastMessage{Text = String.Empty});
         }
         
-        public async Task SetMotdAsync(string newText)
+        public async Task SetMotdAsync(string? newText)
         {
             var toUpdate = await MotdSet.FirstAsync();
-            toUpdate.Text = newText;
+            toUpdate.Text = newText ?? string.Empty;
             MotdSet.Update(toUpdate);
             await SaveChangesAsync();
         }

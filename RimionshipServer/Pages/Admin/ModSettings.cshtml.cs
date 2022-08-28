@@ -55,7 +55,7 @@ namespace RimionshipServer.Pages.Admin
             return Page();
         }
 
-        public async Task<IActionResult> OnPostMotdAsync(string motd)
+        public async Task<IActionResult> OnPostMotdAsync(string? motd)
         {
             await _dbContext.SetMotdAsync(motd);
             return RedirectToPage("/Admin/ModSettings");
