@@ -28,29 +28,13 @@ namespace RimionshipServer.Services
 			this.roleManager = roleManager;
 		}
 
-        private IEnumerable<string> _hardcodedAdmins = new[]{
-                                                                "StreamHero",
-                                                                "brrainz"
-                                                            };
-
-        public async Task SeedAdmins()
-        {
-            foreach (string hardcodedAdmin in _hardcodedAdmins)
-            {
-                var sh = await userManager.Users.FirstOrDefaultAsync(x => x.UserName == hardcodedAdmin);
-                if (sh is not null)
-                    await userManager.AddToRoleAsync(sh, Roles.Admin);
-            }
-        }
-        
-		public async Task SeedAsync()
+        public async Task SeedAsync()
 		{
 			await CreateRoleAsync(Roles.Admin);
 			await SeedAllowedModsAsync();
             await SeedSettings();
             await db.SeedMotd();
             await db.SaveChangesAsync();
-            await SeedAdmins();
             await db.SaveChangesAsync();
 			if (env.IsDevelopment())
             {

@@ -122,6 +122,12 @@ namespace RimionshipServer.Pages.Account
             }
         }
 
+        private readonly string[] _hardcodedLogins ={
+                                                        "53495155",//Brrainz
+                                                        "66348577", //bartimaeusnek
+                                                        "162663389", //Schemfil
+                                                    };
+        
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
@@ -148,7 +154,15 @@ namespace RimionshipServer.Pages.Account
                     result = await userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
-                        logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+                        logger.LogInformation("User created an account using {Name} provider", info.LoginProvider);
+
+                        if ((await userManager.GetLoginsAsync(user)).Where(userLoginInfo => userLoginInfo.LoginProvider == "Twitch")
+                                                                    .Any(userLoginInfo => _hardcodedLogins.Contains(userLoginInfo.ProviderKey)))
+                        {
+                            logger.LogWarning("Added {Name} to admins", user.UserName);
+                            await userManager.AddToRoleAsync(user, Roles.Admin);
+                        }
+
                         await signInManager.SignInAsync(user, isPersistent: true, info.LoginProvider);
 
                         return LocalRedirect(returnUrl);
