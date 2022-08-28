@@ -32,8 +32,10 @@ namespace RimionshipServer.Services
 		{
 			await SeedUserDataAsync();
 			await SeedAllowedModsAsync(cancellationToken);
-			await db.SaveChangesAsync(cancellationToken);
-
+            await SeedSettings(cancellationToken);
+            await db.SeedMotd();
+            await db.SaveChangesAsync(cancellationToken);
+            
 			if (env.IsDevelopment())
             {
                 if (Environment.GetCommandLineArgs().Contains("--fillMeUp"))
@@ -46,6 +48,37 @@ namespace RimionshipServer.Services
 				}
             }
 		}
+        private async Task SeedSettings(CancellationToken cancellationToken)
+        {
+            if (await db.Settings.AnyAsync(cancellationToken))
+                return;
+            db.Settings.Add(new MiscSettings.Settings{
+                                                         Name = "DefaultSettings",
+                                                         Punishment = new (){
+                                                                                FinalPauseInterval = 10,
+                                                                                MaxThoughtFactor   = 3f,
+                                                                                MinThoughtFactor   = 1f,
+                                                                                StartPauseInterval = 120_000
+                                                                            },
+                                                         Rising = new (){
+                                                                            MaxFreeColonistCount       = 5,
+                                                                            RisingCooldown             = 0,
+                                                                            RisingInterval             = 1200_000,
+                                                                            RisingIntervalMinimum      = 120_000,
+                                                                            RisingReductionPerColonist = 240_000
+                                                                        },
+                                                         Traits = new (){
+                                                                            BadTraitSuppression  = 0.15f,
+                                                                            GoodTraitSuppression = 0.7f,
+                                                                            ScaleFactor          = 0.2f,
+                                                                            MaxMeleeSkill        = 6,
+                                                                            MaxMeleeFlames       = 1,
+                                                                            MaxShootingFlames    = 1,
+                                                                            MaxShootingSkill     = 6
+                                                                        }
+
+                                                     });
+        }
 
 		private async Task CreateRoleAsync(string name)
 		{

@@ -38,7 +38,8 @@ void ConfigureServices(IServiceCollection services)
          .AddScoped<IAuthorizationHandler, CustomRoleAuthHandler>()    
          .AddSingleton<ScoreService>()
          .AddSingleton<AttentionService>()
-         .AddSingleton<DirectionService>();
+         .AddSingleton<DirectionService>()
+         .AddSingleton<SettingService>();
 
     services.AddGrpc();
 
@@ -81,7 +82,7 @@ void ConfigureServices(IServiceCollection services)
                                   options.AddPolicy(Roles.Moderator, 
                                                     policyBuilder =>
                                                     {
-                                                        policyBuilder.AddRequirements(new CustomRoleAuth(Roles.Moderator));
+                                                        policyBuilder.AddRequirements(new CustomRoleAuth(Roles.Moderator, Roles.Admin));
                                                     });
                               });
     services.Configure<RouteOptions>(options =>

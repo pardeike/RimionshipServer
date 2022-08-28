@@ -1,0 +1,64 @@
+﻿@page "{SettingId?}"
+@model RimionshipServer.Pages.Admin.CreateNewSetting
+
+@{
+    ViewData["Title"] = "Create new Setting";
+}
+
+<div class="text-center">
+    <form method="post">
+        <h2>@nameof(MiscSettings.Settings)</h2><br/>
+        @Html.Label(nameof(MiscSettings.Settings.Name)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Name) <br/>
+        <br/> <h3>@nameof(MiscSettings.Punishment)</h3><br/>
+        @Html.Label(nameof(MiscSettings.Punishment.StartPauseInterval)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Punishment.StartPauseInterval) <br/>
+        @Html.Label(nameof(MiscSettings.Punishment.FinalPauseInterval)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Punishment.FinalPauseInterval) <br/>
+        @Html.Label(nameof(MiscSettings.Punishment.MinThoughtFactor)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Punishment.MinThoughtFactor) <br/>
+        @Html.Label(nameof(MiscSettings.Punishment.MaxThoughtFactor)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Punishment.MaxThoughtFactor) <br/>
+        
+        <br/> <h3>@nameof(MiscSettings.Rising)</h3><br/>
+        @Html.Label(nameof(MiscSettings.Rising.RisingCooldown)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Rising.RisingCooldown) <br/>
+        @Html.Label(nameof(MiscSettings.Rising.RisingInterval)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Rising.RisingInterval) <br/>
+        @Html.Label(nameof(MiscSettings.Rising.RisingIntervalMinimum)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Rising.RisingIntervalMinimum) <br/>
+        @Html.Label(nameof(MiscSettings.Rising.MaxFreeColonistCount)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Rising.MaxFreeColonistCount) <br/>
+        @Html.Label(nameof(MiscSettings.Rising.RisingReductionPerColonist)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Rising.RisingReductionPerColonist) <br/>
+        
+         <br/><h3>@nameof(MiscSettings.Traits)</h3><br/>
+        @Html.Label(nameof(MiscSettings.Traits.ScaleFactor)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Traits.ScaleFactor) <br/>
+        @Html.Label(nameof(MiscSettings.Traits.BadTraitSuppression)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Traits.BadTraitSuppression) <br/>
+        @Html.Label(nameof(MiscSettings.Traits.GoodTraitSuppression)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Traits.GoodTraitSuppression) <br/>
+        @Html.Label(nameof(MiscSettings.Traits.MaxMeleeFlames)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Traits.MaxMeleeFlames) <br/>
+        @Html.Label(nameof(MiscSettings.Traits.MaxMeleeSkill)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Traits.MaxMeleeSkill) <br/>
+        @Html.Label(nameof(MiscSettings.Traits.MaxShootingFlames)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Traits.MaxShootingFlames) <br/>
+        @Html.Label(nameof(MiscSettings.Traits.MaxShootingSkill)) <br/>
+        @Html.TextBoxFor(x => x.Settings.Traits.MaxShootingSkill) <br/>
+        
+        <button asp-page-handler="Create" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">
+            @(string.IsNullOrWhiteSpace(Model.Settings.Name) ? "Add Setting" : "Update Setting")
+        </button>
+        @if (!string.IsNullOrWhiteSpace(Model.Settings.Name) && Model.Settings.Id != 1)
+        {
+            <button asp-page-handler="Delete" class="btn btn-outline-dark" onclick="return window.confirm(`Do you really want to delete @Model.Settings.Name?`); " type="submit" style="margin-top: 1%">Delete Setting</button>
+        }
+        
+        @Html.HiddenFor(x => x.Settings.Id)
+        @Html.HiddenFor(x => x.Settings.Punishment.Id)
+        @Html.HiddenFor(x => x.Settings.Traits.Id)
+        @Html.HiddenFor(x => x.Settings.Rising.Id)
+    </form>
+</div>

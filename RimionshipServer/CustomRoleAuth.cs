@@ -4,11 +4,11 @@ namespace RimionshipServer
 {
     public class CustomRoleAuth : IAuthorizationRequirement
     {
-        public CustomRoleAuth(string role)
+        public CustomRoleAuth(params string[] role)
         {
             Role = role;
         }
-        public string Role { get; set; }
+        public string[] Role { get; set; }
     }
     public class CustomRoleAuthHandler : AuthorizationHandler<CustomRoleAuth>
     {
@@ -38,7 +38,7 @@ namespace RimionshipServer
                 context.Fail();
                 return;
             }
-            if (roles.Contains(requirement.Role))
+            if (requirement.Role.Intersect(roles).Any())
             {
                 context.Succeed(requirement);
                 return;
