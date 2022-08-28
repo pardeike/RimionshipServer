@@ -13,7 +13,6 @@ service API {
 	rpc Stats (StatsRequest) returns (StatsResponse) {}
 	rpc FutureEvents (FutureEventsRequest) returns (FutureEventsResponse) {}
 	rpc Attention (AttentionRequest) returns (AttentionResponse) {}
-	rpc Broadcast (BroadcastRequest) returns (BroadcastResponse) {}
 }
 
 message HelloRequest {
@@ -190,11 +189,4 @@ message AttentionRequest {
 }
 
 message AttentionResponse {
-}
-
-message BroadcastRequest {
-}
-
-message BroadcastResponse {
-	string text = 1;
 }

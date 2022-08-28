@@ -38,16 +38,6 @@ namespace RimionshipServer.API
         }
 
         /**
-         * Sends Broadcast in-game
-         */
-        public override async Task<BroadcastResponse> Broadcast(BroadcastRequest request, ServerCallContext context)
-        {
-            return new BroadcastResponse{
-                                            Text = await db.GetMotdAsync()
-                                        };
-        }
-
-        /**
 		 * Increases the Attention Score for player X by Y amount
 		 */
         public override async Task<AttentionResponse> Attention(AttentionRequest request, ServerCallContext context)
@@ -170,7 +160,7 @@ namespace RimionshipServer.API
 
             return new SyncResponse
             {
-                Message = options.Value.SyncMessage,
+                Message = await db.GetMotdAsync(),
                 State = new State
                 {
                     Game = State.Types.Game.Training,
