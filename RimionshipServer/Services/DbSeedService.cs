@@ -28,29 +28,45 @@ namespace RimionshipServer.Services
 			this.roleManager = roleManager;
 		}
 
-		public async Task SeedAsync(CancellationToken cancellationToken = default)
+        private IEnumerable<string> _hardcodedAdmins = new[]{
+                                                                "StreamHero",
+                                                                "brrainz"
+                                                            };
+
+        public async Task SeedAdmins()
+        {
+            foreach (string hardcodedAdmin in _hardcodedAdmins)
+            {
+                var sh = await userManager.Users.FirstOrDefaultAsync(x => x.UserName == hardcodedAdmin);
+                if (sh is not null)
+                    await userManager.AddToRoleAsync(sh, Roles.Admin);
+            }
+        }
+        
+		public async Task SeedAsync()
 		{
 			await CreateRoleAsync(Roles.Admin);
-			await SeedAllowedModsAsync(cancellationToken);
-            await SeedSettings(cancellationToken);
+			await SeedAllowedModsAsync();
+            await SeedSettings();
             await db.SeedMotd();
-            await db.SaveChangesAsync(cancellationToken);
-            
+            await db.SaveChangesAsync();
+            await SeedAdmins();
+            await db.SaveChangesAsync();
 			if (env.IsDevelopment())
             {
                 if (Environment.GetCommandLineArgs().Contains("--fillMeUp"))
 				{
 					await CreateBotUsersAsync();
 					await PopulateDataAsync();
-					await db.SaveChangesAsync(cancellationToken);
+					await db.SaveChangesAsync();
 					Environment.Exit(0);
 					return;
 				}
             }
 		}
-        private async Task SeedSettings(CancellationToken cancellationToken)
+        private async Task SeedSettings()
         {
-            if (await db.Settings.AnyAsync(cancellationToken))
+            if (await db.Settings.AnyAsync())
                 return;
             db.Settings.Add(new MiscSettings.Settings{
                                                          Name = "DefaultSettings",
