@@ -123,9 +123,10 @@ namespace RimionshipServer.Pages.Account
         }
 
         private readonly string[] _hardcodedLogins ={
-                                                        "53495155",//Brrainz
-                                                        "66348577", //bartimaeusnek
+                                                         "53495155", //Brrainz
+                                                         "66348577", //bartimaeusnek
                                                         "162663389", //Schemfil
+                                                        "504622351", //Bambus_Bjoern_
                                                     };
         
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
