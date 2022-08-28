@@ -52,6 +52,8 @@ namespace RimionshipServer.Pages.Admin
         
         public async Task<IActionResult> OnPostDeleteAsync()
         {
+            if (Settings.Id == 1)
+                return RedirectToPage("/Admin/ModSettings");
             _dbContext.Settings.Remove(Settings);
             await _dbContext.SaveChangesAsync();
             return RedirectToPage("/Admin/ModSettings");
