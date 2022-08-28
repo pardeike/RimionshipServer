@@ -34,6 +34,9 @@
     <Content Update="appsettings.Development.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
+    <Content Update="Pages\Admin\_ModList.cshtml">
+      <DependentUpon>ModSettings.cshtml</DependentUpon>
+    </Content>
   </ItemGroup>
   
 </Project>

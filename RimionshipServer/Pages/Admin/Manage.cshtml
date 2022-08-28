@@ -33,16 +33,12 @@
             {
                 classs = "bg-blue";
             }
-            else if (user.Role.Contains(Roles.Moderator))
-            {
-                classs = "bg-light-blue";
-            }
             <tr class="@classs">
                 <td>
                     @user.UserName
                 </td>
                 <td>
-                    @user.Id    
+                    @user.Id
                 </td>
                 @{
                     classs = user.WasBanned ? "bg-red" : "bg-green";
@@ -82,21 +78,20 @@
                     }
                 </td>
                 <td>
-                    @if (!user.Role.Contains(Roles.Admin))
-                    {
-                        var confirmText = !user.Role.Contains(Roles.Moderator) ? $"Do you really want to promote {user.UserName} to moderator?" : $"Do you really want to remove {user.UserName} from moderators?";
-                        <form asp-page-handler="Promote" method="post">
-                            <input hidden="" name="id" value="@user.Id">
-                            <button type="submit" class="btn" value="submit request" onclick="return window.confirm('@confirmText')">
-                                <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
-                                    <g>
-                                        <path d="M13 2v6c0 3-3.7 5.2-5 5.9C6.7 13.2 3 11 3 8V2h10m1-1H2v7c0 4.4 6 7 6 7s6-2.6 6-7V1z"/>
-                                        <path d="M10.7 6H9l-.7-1.9c0-.2-.3-.2-.4 0L7.1 6H5.3c-.3 0-.4.3-.2.4l1.4 1.4-.7 2c0 .1.2.4.4.2L8 9l1.8 1c.2.1.5 0 .4-.3l-.7-2 1.4-1.3c.2-.1 0-.4-.2-.4z"/>
-                                    </g>
-                                </svg>
-                            </button>
-                        </form>
-                    }
+                    @{
+                        var confirmText = user.Role.Contains(Roles.Admin) ? $"Do you really want to remove {user.UserName} from moderators?" : $"Do you really want to promote {user.UserName} to moderator?";
+                     }
+                    <form asp-page-handler="Promote" method="post">
+                        <input hidden="" name="id" value="@user.Id">
+                        <button type="submit" class="btn" value="submit request" onclick="return window.confirm('@confirmText')">
+                            <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
+                                <g>
+                                    <path d="M13 2v6c0 3-3.7 5.2-5 5.9C6.7 13.2 3 11 3 8V2h10m1-1H2v7c0 4.4 6 7 6 7s6-2.6 6-7V1z"/>
+                                    <path d="M10.7 6H9l-.7-1.9c0-.2-.3-.2-.4 0L7.1 6H5.3c-.3 0-.4.3-.2.4l1.4 1.4-.7 2c0 .1.2.4.4.2L8 9l1.8 1c.2.1.5 0 .4-.3l-.7-2 1.4-1.3c.2-.1 0-.4-.2-.4z"/>
+                                </g>
+                            </svg>
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

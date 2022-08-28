@@ -15,7 +15,8 @@ namespace RimionshipServer.API
         private readonly LoginService loginService;
         private readonly IOptions<RimionshipOptions> options;
         private readonly AttentionService _attention;
-
+        private readonly SettingService _settingService;
+        
         public GrpcService(
              RimionDbContext db,
              ConfigurationService configurationService,
@@ -23,7 +24,8 @@ namespace RimionshipServer.API
              DataService dataService,
              LoginService loginService,
              IOptions<RimionshipOptions> options,
-             AttentionService attention)
+             AttentionService attention,
+             SettingService settingService)
         {
             this.db = db;
             this.configurationService = configurationService;
@@ -32,7 +34,9 @@ namespace RimionshipServer.API
             this.loginService = loginService;
             this.options = options;
             _attention = attention;
+            _settingService = settingService;
         }
+
         /**
 		 * Increases the Attention Score for player X by Y amount
 		 */
@@ -118,43 +122,14 @@ namespace RimionshipServer.API
             var user = await GetCachedUserAsync(request.Id);
 
             // NYI
-            return new StartResponse()
+            return new StartResponse
             {
                 GameFileHash = options.Value.GameFileHash,
                 GameFileUrl = options.Value.GameFileUrl,
                 StartingPawnCount = 5,
-                Settings = DefaultSettings
+                Settings = await _settingService.GetActiveSetting(db)
             };
         }
-
-        private Settings DefaultSettings => new()
-        {
-            Rising = new()
-            {
-                MaxFreeColonistCount = 5,
-                RisingCooldown = 0,
-                RisingInterval = 1200_000,
-                RisingIntervalMinimum = 120_000,
-                RisingReductionPerColonist = 240_000
-            },
-            Punishment = new()
-            {
-                FinalPauseInterval = 10,
-                MaxThoughtFactor = 3f,
-                MinThoughtFactor = 1f,
-                StartPauseInterval = 120_000
-            },
-            Traits = new()
-            {
-                BadTraitSuppression = 0.15f,
-                GoodTraitSuppression = 0.7f,
-                ScaleFactor = 0.2f,
-                MaxMeleeSkill = 6,
-                MaxMeleeFlames = 1,
-                MaxShootingFlames = 1,
-                MaxShootingSkill = 6
-            }
-        };
 
         public override async Task<FutureEventsResponse> FutureEvents(FutureEventsRequest request, ServerCallContext context)
         {
@@ -183,16 +158,16 @@ namespace RimionshipServer.API
             if (request.WaitForChange)
                 await Task.Delay(-1, context.CancellationToken);
 
-            return new SyncResponse()
+            return new SyncResponse
             {
-                Message = options.Value.SyncMessage,
+                Message = await db.GetMotdAsync(),
                 State = new State
                 {
                     Game = State.Types.Game.Training,
                     PlannedStartHour = 0,
                     PlannedStartMinute = 0
                 },
-                Settings = DefaultSettings
+                Settings = await _settingService.GetActiveSetting(db)
             };
         }
 

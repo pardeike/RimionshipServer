@@ -7,10 +7,32 @@ namespace RimionshipServer.Data
 {
 	public class RimionDbContext : IdentityDbContext<RimionUser>
 	{
-		public DbSet<AllowedMod> AllowedMods { get; set; } = null!;
-		public DbSet<LatestStats> LatestStats { get; set; } = null!;
-		public DbSet<HistoryStats> HistoryStats { get; set; } = null!;
-
+		public  DbSet<AllowedMod>                    AllowedMods  { get; set; } = null!;
+		public  DbSet<LatestStats>                   LatestStats  { get; set; } = null!;
+		public  DbSet<HistoryStats>                  HistoryStats { get; set; } = null!;
+        private DbSet<MiscSettings.BroadcastMessage> MotdSet         { get; set; } = null!;
+        
+        public async Task SeedMotd()
+        {
+            if (await MotdSet.AnyAsync())
+                return;
+            MotdSet.Add(new MiscSettings.BroadcastMessage{Text = "foo"});
+        }
+        
+        public async Task SetMotdAsync(string newText)
+        {
+            var toUpdate = await MotdSet.FirstAsync();
+            toUpdate.Text = newText;
+            MotdSet.Update(toUpdate);
+            await SaveChangesAsync();
+        }
+        
+        public async Task<string> GetMotdAsync()
+        {
+            return (await MotdSet.FirstAsync()).Text;
+        }
+        
+        public DbSet<MiscSettings.Settings> Settings         { get; set; } = null!;
 		public RimionDbContext(DbContextOptions<RimionDbContext> options)
 			 : base(options)
 		{
@@ -101,6 +123,50 @@ ORDER BY TimestampBucket ASC, UserId ASC");
 						 .HasForeignKey<LatestStats>(u => u.UserId);
 			});
 
+            builder.Entity<MiscSettings.BroadcastMessage>(entity =>
+                                                          {
+                                                              entity.HasKey(x => x.Id);
+                                                              entity.ToTable(nameof(MiscSettings.BroadcastMessage));
+                                                          });
+            builder.Entity<MiscSettings.Settings>(entity =>
+                                                  {
+                                                      entity.HasIndex(x => x.Name).IsUnique();
+                                                      entity.Property(x => x.Id)
+                                                            .ValueGeneratedOnAdd()
+                                                            .HasAnnotation("Sqlite", "Autoincrement");
+                                                      entity.HasKey(x => x.Id);
+                                                      entity.HasOne(x => x.Punishment)
+                                                            .WithOne()
+                                                            .HasForeignKey<MiscSettings.Punishment>("fk_Settings");
+                                                      entity.HasOne(x => x.Rising)
+                                                            .WithOne()
+                                                            .HasForeignKey<MiscSettings.Rising>("fk_Settings");
+                                                      entity.HasOne(x => x.Traits)
+                                                            .WithOne()
+                                                            .HasForeignKey<MiscSettings.Traits>("fk_Settings");
+                                                  });
+            builder.Entity<MiscSettings.Punishment>(entity =>
+                                                    {
+                                                        entity.Property(x => x.Id)
+                                                              .ValueGeneratedOnAdd()
+                                                              .HasAnnotation("Sqlite", "Autoincrement");
+                                                        entity.HasKey(x => x.Id);
+                                                    });
+            builder.Entity<MiscSettings.Rising>(entity =>
+                                                {
+                                                    entity.Property(x => x.Id)
+                                                          .ValueGeneratedOnAdd()
+                                                          .HasAnnotation("Sqlite", "Autoincrement");
+                                                    entity.HasKey(x => x.Id);
+                                                });
+            builder.Entity<MiscSettings.Traits>(entity =>
+                                                {
+                                                    entity.Property(x => x.Id)
+                                                          .ValueGeneratedOnAdd()
+                                                          .HasAnnotation("Sqlite", "Autoincrement");
+                                                    entity.HasKey(x => x.Id);
+                                                });
+            
 			foreach (var entityType in builder.Model.GetEntityTypes())
 			{
 				var properties = entityType.ClrType
