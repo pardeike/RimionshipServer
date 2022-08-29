@@ -12,10 +12,7 @@
         <title>Graph @Model.GraphName</title>
     </head>
     <body>
-        <h1 id="Loading">Loading Graph, please wait!</h1>
-        <canvas id="myChart" hidden=""></canvas>
-        <img src="" hidden="" id="myImg" alt=""/>
-   
+        <canvas id="myChart"></canvas>
 @{
 #if DEBUG
 }
@@ -38,22 +35,30 @@
            type: 'line',
            data: data,
            options: {
-                animation: {
-                    onComplete: onCompleteHandler
-                    }
-                },
-               bezierCurve : false,
-           };
+               animation: false,
+               plugins: {
+                   legend:{
+                       position: 'right',
+                       labels: {
+                                font: {
+                                    size: 45
+                                    }
+                               }
+                       }
+               },
+               scales: {
+                           y: {
+                                 ticks: {
+                                         display: false
+                                         }
+                               }
+                       }
+           }
+         };
          const myChart = new Chart(
              document.getElementById('myChart'),
              config
            );
-         function onCompleteHandler(){
-             document.getElementById('Loading').hidden = true;
-             const myImg = document.getElementById('myImg');
-             myImg.src = myChart.toBase64Image();
-             myImg.hidden = false;
-         }
     </script>
     </body>
 </html>
