@@ -1,0 +1,41 @@
+﻿@page "{id}/{secret}"
+@model RimionshipServer.Pages.Api.SimpleGraph
+
+@{
+    ViewData["Title"] = "Graph";
+}
+@section Scripts
+{
+@{
+#if DEBUG
+}
+    <script src="~/lib/chart-js/dist/chart.js"></script>
+@{
+#else
+}
+    <script src="~/lib/chart-js/dist/chart.min.js"></script>
+@{
+#endif
+}
+<script>
+         const labels = JSON.parse('@Html.Raw(Json.Serialize(Model.Labels))');
+         const datasets = JSON.parse('@Html.Raw(Json.Serialize(Model.Datasets))');
+         const data = {
+           labels: labels,
+           datasets: datasets
+         };
+         const config = {
+           type: 'line',
+           data: data,
+           options: {}
+         };
+          const myChart = new Chart(
+             document.getElementById('myChart'),
+             config
+           );
+    </script>
+}
+
+<div>
+  <canvas id="myChart"></canvas>
+</div>
