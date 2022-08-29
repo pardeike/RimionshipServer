@@ -15,7 +15,7 @@
         <h1 id="Loading">Loading Graph, please wait!</h1>
         <canvas id="myChart" hidden=""></canvas>
         <img src="" hidden="" id="myImg" alt=""/>
-    </body>
+   
 @{
 #if DEBUG
 }
@@ -39,10 +39,7 @@
            data: data,
            options: {
                 animation: {
-                    onComplete: () => {
-                        document.getElementById('Loading').hidden = true;
-                        document.getElementById('myImg').src = myChart.toBase64Image()
-                    }
+                    onComplete: onCompleteHandler
                     }
                 },
                bezierCurve : false,
@@ -51,5 +48,12 @@
              document.getElementById('myChart'),
              config
            );
+         function onCompleteHandler(){
+             document.getElementById('Loading').hidden = true;
+             const myImg = document.getElementById('myImg');
+             myImg.src = myChart.toBase64Image();
+             myImg.hidden = false;
+         }
     </script>
+    </body>
 </html>
