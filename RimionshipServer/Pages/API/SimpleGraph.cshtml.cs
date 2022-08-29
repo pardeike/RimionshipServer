@@ -13,6 +13,9 @@ public class SimpleGraph : PageModel
     }
 
     [BindProperty(SupportsGet = true)]
+    public string GraphName { get; set; }
+    
+    [BindProperty(SupportsGet = true)]
     public string[] Labels { get; set; }
         
     [BindProperty(SupportsGet = true)]
@@ -34,7 +37,8 @@ public class SimpleGraph : PageModel
                           "May",
                           "June"
                       };
-        Datasets = new[]{new Dataset("My First dataset", "rgb(255, 99, 132)", "rgb(255, 99, 132)", new float[]{0, 10, 5, 2, 20, 30, 45})};
+        Datasets  = new[]{new Dataset("My First dataset", "rgb(255, 99, 132)", "rgb(255, 99, 132)", new float[]{0, 10, 5, 2, 20, 30, 45})};
+        GraphName = "Test";
         return Page();
     }
 }

@@ -2,10 +2,20 @@
 @model RimionshipServer.Pages.Api.SimpleGraph
 
 @{
-    ViewData["Title"] = "Graph";
+    Layout = null;
 }
-@section Scripts
-{
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Graph @Model.GraphName</title>
+    </head>
+    <body>
+        <h1 id="Loading">Loading Graph, please wait!</h1>
+        <canvas id="myChart" hidden=""></canvas>
+        <img src="" hidden="" id="myImg" alt=""/>
+    </body>
 @{
 #if DEBUG
 }
@@ -17,7 +27,7 @@
 @{
 #endif
 }
-<script>
+    <script>
          const labels = JSON.parse('@Html.Raw(Json.Serialize(Model.Labels))');
          const datasets = JSON.parse('@Html.Raw(Json.Serialize(Model.Datasets))');
          const data = {
@@ -27,15 +37,19 @@
          const config = {
            type: 'line',
            data: data,
-           options: {}
-         };
-          const myChart = new Chart(
+           options: {
+                animation: {
+                    onComplete: () => {
+                        document.getElementById('Loading').hidden = true;
+                        document.getElementById('myImg').src = myChart.toBase64Image()
+                    }
+                    }
+                },
+               bezierCurve : false,
+           };
+         const myChart = new Chart(
              document.getElementById('myChart'),
              config
            );
     </script>
-}
-
-<div>
-  <canvas id="myChart"></canvas>
-</div>
+</html>
