@@ -149,26 +149,38 @@ namespace RimionshipServer.API
             await db.AddOrUpdateStatsAsync(user, request);
             return new StatsResponse { Interval = 10 };
         }
+        
+        private static readonly ManualResetEventSlim _mres = new ();
+
+        public static Task ToggleResetEvent()
+        {
+            return Task.Factory.StartNew(() =>
+                                         {
+                                             _mres.Set();
+                                             Thread.Sleep(1000);
+                                             _mres.Reset();
+                                         }, CancellationToken.None, TaskCreationOptions.None, PriorityScheduler.LowestSingleCore);
+        }
 
         public override async Task<SyncResponse> Sync(SyncRequest request, ServerCallContext context)
         {
-            // Authentication required?
-            // var user = await GetCachedUserAsync(request.Id);
-
             if (request.WaitForChange)
-                await Task.Delay(-1, context.CancellationToken);
-
-            return new SyncResponse
-            {
-                Message = await db.GetMotdAsync(),
-                State = new State
-                {
-                    Game = State.Types.Game.Training,
-                    PlannedStartHour = 0,
-                    PlannedStartMinute = 0
-                },
-                Settings = await _settingService.GetActiveSetting(db)
-            };
+                await Task.Factory.StartNew(() =>
+                                        {
+                                            _mres.Wait(context.CancellationToken);
+                                        }, context.CancellationToken, TaskCreationOptions.LongRunning, PriorityScheduler.Lowest);
+            
+            context.CancellationToken.ThrowIfCancellationRequested();
+            
+            return new SyncResponse{
+                                       Message = await db.GetMotdAsync(context.CancellationToken),
+                                       State = new State{
+                                                            Game               = State.Types.Game.Training,
+                                                            PlannedStartHour   = 0,
+                                                            PlannedStartMinute = 0
+                                                        },
+                                       Settings = await _settingService.GetActiveSetting(db, context.CancellationToken)
+                                   };
         }
 
         private void VerifyId(string id)

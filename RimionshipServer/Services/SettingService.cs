@@ -6,7 +6,7 @@ namespace RimionshipServer.Services
     {
         private MiscSettings.Settings?         _activeSetting;
 
-        public async Task<MiscSettings.Settings> GetActiveSetting(RimionDbContext dbContext)
+        public async Task<MiscSettings.Settings> GetActiveSetting(RimionDbContext dbContext, CancellationToken cancellationToken = default)
         {
             if (_activeSetting is not null)
                 return _activeSetting;
@@ -15,7 +15,7 @@ namespace RimionshipServer.Services
                                   .Include(x => x.Punishment)
                                   .Include(x => x.Rising)
                                   .Include(x => x.Traits)
-                                  .FirstAsync(x => x.Id == 1);
+                                  .FirstAsync(x => x.Id == 1, cancellationToken);
         }
         
         public async Task SelectActiveSetting(RimionDbContext dbContext, int settingId)

@@ -27,7 +27,7 @@ namespace RimionshipServer.Data
             await SaveChangesAsync();
         }
         
-        public async Task<string> GetMotdAsync()
+        public async Task<string> GetMotdAsync(CancellationToken cancellationToken = default)
         {
             return (await MotdSet.FirstAsync()).Text;
         }

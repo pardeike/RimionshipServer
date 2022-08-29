@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using RimionshipServer.API;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
 namespace RimionshipServer.Pages.Admin
@@ -31,7 +32,7 @@ namespace RimionshipServer.Pages.Admin
         {
             _configurationService = configurationService;
             _dbContext            = dbContext;
-            _settingService  = settingService;
+            _settingService       = settingService;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -39,25 +40,26 @@ namespace RimionshipServer.Pages.Admin
             await _configurationService.GetAllowedModsAsync();
             AllowedMods = await _configurationService.GetAllowedModsWithOrderAsync()
                                                      .OrderBy(x => x.LoadOrder)
-                                                     .ToListAsync();
+                                                     .ToListAsync(HttpContext.RequestAborted);
 
             MaximumLoadOrder = Math.Max((byte) 1, AllowedMods.Max(x => x.LoadOrder));
 
-            var settings = await _dbContext.Settings.AsNoTrackingWithIdentityResolution().ToListAsync();
+            var settings = await _dbContext.Settings.AsNoTrackingWithIdentityResolution().ToListAsync(HttpContext.RequestAborted);
 
             SettingsSelect = settings
                             .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
                             .ToList();
             
-            ActiveSetting  = (await _settingService.GetActiveSetting(_dbContext)).Name;
+            ActiveSetting  = (await _settingService.GetActiveSetting(_dbContext, HttpContext.RequestAborted)).Name;
             SettingsSelect = SettingsSelect.Append(new SelectListItem("Create New", "cn"));
-            Motd           = await _dbContext.GetMotdAsync();
+            Motd           = await _dbContext.GetMotdAsync(HttpContext.RequestAborted);
             return Page();
         }
 
         public async Task<IActionResult> OnPostMotdAsync(string? motd)
         {
             await _dbContext.SetMotdAsync(motd);
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
 
@@ -90,6 +92,7 @@ namespace RimionshipServer.Pages.Admin
                 return RedirectToPage("/Admin/CreateNewSetting");
             }
             await _settingService.SelectActiveSetting(_dbContext,int.Parse(ActiveSetting));
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
     }
