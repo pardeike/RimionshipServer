@@ -8,6 +8,7 @@
         <th scope="col">@(nameof(GraphData.Start))</th>
         <th scope="col">@(nameof(GraphData.End))</th>
         <th scope="col">@(nameof(GraphData.IntervalSeconds))</th>
+        <th scope="col">@(nameof(GraphData.Autorefresh))</th>
         <th scope="col">@(nameof(GraphData.Users))</th>
         <th scope="col">Link</th>
         <th scope="col">Remove</th>
@@ -31,6 +32,9 @@
             </td>
             <td>
                 @modelAllowedMod.IntervalSeconds
+            </td>
+            <td>
+                @modelAllowedMod.Autorefresh
             </td>
             <td>
                 @foreach (var user in modelAllowedMod.Users)

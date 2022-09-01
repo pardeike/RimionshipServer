@@ -79,13 +79,24 @@ public class SimpleGraph : PageModel
         }
         _graphData = graphData;
 
-        var diff     = _graphData.End - _graphData.Start;
-        var newStart = DateTime.Now   - diff;
+        DateTimeOffset start;
+        DateTimeOffset end;
+        if (_graphData.Autorefresh)
+        {
+            var diff         = _graphData.End - _graphData.Start;
+            start = DateTime.Now - diff;
+            end   = DateTime.Now;
+        }
+        else
+        {
+            start = _graphData.Start;
+            end   = _graphData.End;
+        }
         
         var tasks = (await Task.WhenAll(
                                         _graphData.UsersReference
                                                   .Select(async userId =>
-                                                              ((await _dbContext.FetchDataVerticalAsync(newStart, DateTime.Now, _graphData.IntervalSeconds, _graphData.Statt, userId.Id)), userId.UserName)
+                                                              ((await _dbContext.FetchDataVerticalAsync(start, end, _graphData.IntervalSeconds, _graphData.Statt, userId.Id)), userId.UserName)
                                                          )
                                        ))
            .ToList();

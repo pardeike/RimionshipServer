@@ -28,13 +28,13 @@ namespace RimionshipServer.Pages.Admin
         public  List<SelectListItem> StattSelectListItems { get; set; }
         public  string               Statt                { get; set; }
         public  List<string>         UserIds              { get; set; } = new ();
-        public  List<SelectListItem> UserSelectListItems { get; set; }
+        public  List<SelectListItem> UserSelectListItems  { get; set; }
         private RimionUser[]         _rimionUser          { get; set; }
         public  DateTime             Start                { get; set; }
         public  DateTime             End                  { get; set; }
         public  int                  IntervalSeconds      { get; set; }
-
-        public List<GraphData> AllGraphs { get; set; }
+        public  bool                 Autorefresh          { get; set; }
+        public  List<GraphData>      AllGraphs            { get; set; }
         public async Task<IActionResult> OnGet()
         {
             StattSelectListItems = Stats.FieldNames.Select(x => new SelectListItem(x, x)).ToList();
@@ -97,7 +97,8 @@ SELECT DISTINCT * FROM (SELECT DISTINCT * FROM (SELECT DISTINCT * FROM HistorySt
         [NonAction]
         public async Task<IActionResult> CreateAsync(GraphData data)
         {
-            data.Accesscode = AccessCode;
+            data.Autorefresh = Autorefresh;
+            data.Accesscode  = AccessCode;
             if (data.Id == 0)
             {
                 _dbContext.GraphData.Add(data);
