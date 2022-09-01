@@ -1,4 +1,4 @@
-﻿@page "{id}/{secret}"
+﻿@page "{secret}"
 @model RimionshipServer.Pages.Api.SimpleGraph
 
 @{
@@ -8,17 +8,23 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!--<meta name="viewport" content="width=device-width, initial-scale=1.0" />-->
         <title>Graph @Model.GraphName</title>
     </head>
     <body>
-        <canvas id="myChart"></canvas>
+        @DateTime.Now
+    <div class="chart-container" style="position: relative; height:400px; width:800px">
+    <canvas id="myChart"></canvas>
+    </div>
+    <script>
+        window.setTimeout(() => window.location = window.location, 5000);
+    </script>
 @{
 #if DEBUG
 }
     <script type="text/javascript" src="~/lib/chart-js/dist/chart.js"></script>
     <script type="text/javascript" src="~/lib/chart-js-adapter-date/chartjs-adapter-date-fns.bundle.min.js"></script>
-@{
+    @{
 #else
 }
     <script type="text/javascript" src="~/lib/chart-js/dist/chart.min.js"></script>
@@ -75,5 +81,6 @@
              config
            );
     </script>
+
     </body>
 </html>

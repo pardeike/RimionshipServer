@@ -1,0 +1,13 @@
+﻿@page
+@model RimionshipServer.Pages.Api.Names
+
+@{
+    ViewData["Title"] = "Create new Setting";
+}
+@for (var i = 0; i < Model.UserNames.Length; i++)
+{
+    var username = Model.UserNames[i];
+    @Html.Label(username)
+    @Html.CheckBoxFor(x => x.BoolUserNames[i])
+    <br/>
+}

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -35,15 +36,15 @@ public class SimpleGraph : PageModel
 
     private static readonly Color[] Colors ={
                                                 ColorTranslator.FromHtml("#00429d"),
-                                                 ColorTranslator.FromHtml("#3c66ad"),
-                                                 ColorTranslator.FromHtml("#5f8bbc"),
-                                                 ColorTranslator.FromHtml("#82b2c9"),
-                                                 ColorTranslator.FromHtml("#abd8d2"),
-                                                 ColorTranslator.FromHtml("#fbc8b7"),
-                                                 ColorTranslator.FromHtml("#f79291"),
-                                                 ColorTranslator.FromHtml("#e45d6f"),
-                                                 ColorTranslator.FromHtml("#c42a51"),
-                                                 ColorTranslator.FromHtml("#93003a")
+                                                ColorTranslator.FromHtml("#3c66ad"),
+                                                ColorTranslator.FromHtml("#5f8bbc"),
+                                                ColorTranslator.FromHtml("#82b2c9"),
+                                                ColorTranslator.FromHtml("#abd8d2"),
+                                                ColorTranslator.FromHtml("#fbc8b7"),
+                                                ColorTranslator.FromHtml("#f79291"),
+                                                ColorTranslator.FromHtml("#e45d6f"),
+                                                ColorTranslator.FromHtml("#c42a51"),
+                                                ColorTranslator.FromHtml("#93003a")
                                              };
 
     public SimpleGraph(RimionDbContext dbContext)
@@ -64,65 +65,52 @@ public class SimpleGraph : PageModel
 
     private readonly RimionDbContext _dbContext;
 
-    public async Task<IActionResult> OnGet(string id, string secret)
+    public async Task<IActionResult> OnGet(string secret)
     {
-        // _graphData = await _dbContext.GraphData
-        //                              .Where(x => x.Accesscode == id)
-        //                              .Where(x => x.Secret     == secret)
-        //                              .FirstOrDefaultAsync();
-        // if (_graphData is null)
-        // {
-        //     return NotFound();
-        // }
-
-        var users = await _dbContext.Users
-                                    .OrderBy(x => x.LatestStats)
-                                    .Select(x => x.Id)
-                                    .Where(x => _dbContext.HistoryStats.Where(y => y.UserId == x).Any(y => y.Wealth > 0))
-                                    .Take(10)
-                                    .ToArrayAsync();
-        
-        _graphData = new GraphData{
-                                      Accesscode      = "foo",
-                                      Start           = new DateTimeOffset(DateTime.Now - TimeSpan.FromDays(30)),
-                                      End             = new DateTimeOffset(DateTime.Now),
-                                      Id              = 0,
-                                      IntervalSeconds = 10,
-                                      Secret          = "bar",
-                                      Statt           = Stats.FieldNames[0],
-                                      Users           = users
-                                  };
-
-        if (_graphData is null)
+        var accessEncoded = secret;
+        var graphData = await _dbContext.GraphData
+                                        .AsNoTrackingWithIdentityResolution()
+                                        .Include(x => x.UsersReference)
+                                        .Where(x => x.Accesscode == accessEncoded)
+                                        .FirstOrDefaultAsync();
+        if (graphData is null)
         {
             return NotFound();
         }
+        _graphData = graphData;
 
+        var diff     = _graphData.End - _graphData.Start;
+        var newStart = DateTime.Now   - diff;
+        
         var tasks = (await Task.WhenAll(
                                         _graphData.Users
-                                                  .Select(userId =>
-                                                              _dbContext.FetchDataVerticalAsync(_graphData.Start, _graphData.End, _graphData.IntervalSeconds, _graphData.Statt, userId)
+                                                  .Select(async userId =>
+                                                              ((await _dbContext.FetchDataVerticalAsync(newStart, DateTime.Now, _graphData.IntervalSeconds, _graphData.Statt, userId)), userId)
                                                          )
                                        ))
            .ToList();
 
-        var datasetRecords = new List<List<Data>>();
+        var datasetRecords = new Dictionary<string, List <Data>>();
         foreach (var perUser in tasks) //per user
         {
             var dataRecords = new List<Data>();
-            for (var index = 0; index < perUser.Timestamp.Count; index++)
+            for (var index = 0; index < perUser.Item1.Timestamp.Count; index++)
             {
-                var f   = perUser.Timestamp[index].ToUnixTimeMilliseconds();
-                var obj = perUser.Values[index].ToString()!;
+                var f   = perUser.Item1.Timestamp[index].ToUnixTimeMilliseconds();
+                var obj = perUser.Item1.Values[index].ToString()!;
                 dataRecords.Add(new Data(f, obj));
             }
-            datasetRecords.Add(dataRecords);
+            datasetRecords.Add(perUser.userId, dataRecords);
         }
         
         var datasets = datasetRecords
-                      .Where(x => x is not null && x.Count > 0)
-                      .OrderByDescending(x => float.Parse(x.Where(d => d.y is not null && d.y != String.Empty).MaxBy(d => d.x)!.y))
-                      .Select(async (datasetRecord, index) => new Dataset(await _dbContext.Users.Where(x => x.Id == _graphData.Users[index]).Select(x => x.UserName).FirstAsync(), Colors[index], datasetRecord));
+                      .Where(x => x.Value is not null && x.Value.Count > 0)
+                      .OrderByDescending(x => float.Parse(x.Value.Where(d => d.y is not null && d.y != String.Empty).MaxBy(d => d.x)!.y))
+                      .Select(async (datasetRecord, index) => 
+                                  new Dataset(await _dbContext.Users.Where(x => x.Id == datasetRecord.Key)
+                                                              .Select(x => x.UserName)
+                                                              .FirstAsync(), Colors[index], datasetRecord.Value)
+                              );
 
         Datasets  = await Task.WhenAll(datasets);
         GraphName = "Test";

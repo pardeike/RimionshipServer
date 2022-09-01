@@ -1,0 +1,115 @@
+﻿@page
+@model RimionshipServer.Pages.Admin.GraphConfigurator
+
+@{
+    ViewData["Title"] = "Graph Configurator";
+}
+@section Css
+{
+      <link rel="stylesheet" href="/css/admin.css">
+      <link rel="stylesheet" href="/css/tabs.css">
+}
+@section Scripts
+{
+    @if (!Model.Done)
+    {
+        <script>
+        //Taken from https://stackoverflow.com/a/27578356
+        window.onmousedown = function (e) {
+            var el = e.target;
+            if (el.tagName.toLowerCase() == 'option' && el.parentNode.hasAttribute('multiple')) {
+                e.preventDefault();
+        
+                // toggle selection
+                if (el.hasAttribute('selected')) el.removeAttribute('selected');
+                else el.setAttribute('selected', '');
+        
+                // hack to correct buggy behavior
+                var select = el.parentNode.cloneNode(true);
+                el.parentNode.parentNode.replaceChild(select, el.parentNode);
+            }
+        }
+        </script>
+    }
+  
+    <script type="text/javascript">
+            const links = document.getElementsByTagName("a");
+            for(let i=0; i<links.length; i++) {
+                if (links[i].innerHTML === "!will be replaced by js!")
+                    links[i].innerHTML = links[i].href;
+            }
+    </script>
+}
+<div class="text-center">
+    <h1>@ViewData["Title"]</h1>
+    @if (Model.Done)
+    {
+        <a id="done" href="/API/SimpleGraph/@Model.AccessCode">!will be replaced by js!</a>
+    }
+    else
+    {
+        <div class="tabbed">
+            <input checked="checked" id="tab1" type="radio" name="tabs"/>
+            <input id="tab2" type="radio" name="tabs"/>
+            <input id="tab3" type="radio" name="tabs"/>
+            <input id="tab4" type="radio" name="tabs"/>
+
+            <nav>
+                <label for="tab1">Top 10 of Statt</label>
+                <label for="tab2">Wealthiest Top 10</label>
+                <label for="tab3">Complex Form</label>
+                <label for="tab4">Delete Graphs</label>
+            </nav>
+            <figure>
+                <div class="tab1">
+                    <form method="post">
+                        <span asp-validation-for="AccessCode" class="text-danger"></span> <br/>
+                        @Html.Label("Name")<br/>
+                        @Html.TextBoxFor(x => x.AccessCode) <br/>
+                        @Html.Label(nameof(GraphData.Statt))<br/>
+                        @Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems) <br/>
+                        @Html.Label("Last X Minutes: ")<br/>
+                        @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) <br/>
+                        <button asp-page-handler="CreateTop10" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Create</button>
+                    </form>
+                </div>
+                <div class="tab2">
+                    <form method="post">
+                        <span asp-validation-for="AccessCode" class="text-danger"></span> <br/>
+                        @Html.Label("Name")<br/>
+                        @Html.TextBoxFor(x => x.AccessCode) <br/>
+                        @Html.Label(nameof(GraphData.Statt))<br/>
+                        @Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems) <br/>
+                        @Html.Label("Last X Minutes: ")<br/>
+                        @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) <br/>
+                        <button asp-page-handler="CreateTop10Wealth" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Create</button>
+                    </form>
+                </div>
+                <div class="tab3">
+                    <form method="post">
+                        <span asp-validation-for="AccessCode" class="text-danger"></span> <br/>
+                        @Html.Label("Name")<br/>
+                        @Html.TextBoxFor(x => x.AccessCode) <br/>
+                        @Html.Label(nameof(GraphData.Statt))<br/>
+                        @Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems) <br/>
+                        @Html.Label(nameof(GraphData.Start))<br/>
+                        <input type="datetime-local" class="text-box single-line" asp-for="Start" value="@DateTime.Now"/><br/>
+                        @Html.Label(nameof(GraphData.End))<br/>
+                        <input type="datetime-local" class="text-box single-line" asp-for="End" value="@DateTime.Now"/><br/>
+
+                        @Html.Label(nameof(GraphData.IntervalSeconds))<br/>
+                        @Html.EditorFor(x => x.IntervalSeconds) <br/>
+
+                        @Html.Label(nameof(GraphData.Users))<br/>
+                        @Html.DropDownListFor(m => m.UserIds, Model.UserSelectListItems, new{multiple = "true"})<br/>
+
+                        <button asp-page-handler="Create" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Create</button>
+                    </form>
+                </div>
+                <div class="tab4">
+                    <partial name="_GraphList" model=Model></partial>
+                </div>
+            </figure>
+        </div>
+    }
+</div>

@@ -11,7 +11,7 @@ namespace RimionshipServer.Data
 		public DbSet<AllowedMod>   AllowedMods  { get; set; } = null!;
 		public DbSet<LatestStats>  LatestStats  { get; set; } = null!;
 		public DbSet<HistoryStats> HistoryStats { get; set; } = null!;
-        // public DbSet<GraphData>    GraphData    { get; set; } = null!;
+        public DbSet<GraphData>    GraphData    { get; set; } = null!;
         
         private DbSet<MiscSettings.BroadcastMessage> MotdSet      { get; set; } = null!;
         
@@ -215,6 +215,17 @@ GROUP BY (Timestamp / @bucketDivisor)";
                                                           .HasAnnotation("Sqlite", "Autoincrement");
                                                     entity.HasKey(x => x.Id);
                                                 });
+
+            builder.Entity<GraphData>(entity =>
+                                      {
+                                        entity.Property(x => x.Id)
+                                            .ValueGeneratedOnAdd()
+                                            .HasAnnotation("Sqlite", "Autoincrement");
+                                        entity.HasKey(x => x.Id);
+                                        entity.HasMany(x => x.UsersReference)
+                                              .WithMany(x => x.InGraphs);
+                                        entity.Ignore(x => x.Users);
+                                      });
             
 			foreach (var entityType in builder.Model.GetEntityTypes())
 			{

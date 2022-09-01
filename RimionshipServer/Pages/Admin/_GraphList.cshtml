@@ -1,0 +1,58 @@
+﻿@model GraphConfigurator
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+    <tr>
+        <th scope="col">@(nameof(GraphData.Accesscode))</th>
+        <th scope="col">@(nameof(GraphData.Statt))</th>
+        <th scope="col">@(nameof(GraphData.Start))</th>
+        <th scope="col">@(nameof(GraphData.End))</th>
+        <th scope="col">@(nameof(GraphData.IntervalSeconds))</th>
+        <th scope="col">@(nameof(GraphData.Users))</th>
+        <th scope="col">Link</th>
+        <th scope="col">Remove</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var modelAllowedMod in Model.AllGraphs)
+    {
+        <tr>
+            <td>
+                @modelAllowedMod.Accesscode
+            </td>
+            <td>
+                @modelAllowedMod.Statt
+            </td>
+            <td>
+                @modelAllowedMod.Start
+            </td>
+            <td>
+                @modelAllowedMod.End
+            </td>
+            <td>
+                @modelAllowedMod.IntervalSeconds
+            </td>
+            <td>
+                @foreach (var user in modelAllowedMod.Users)
+                {
+                    @user
+                    <br/>
+                }
+            </td>
+            <td>
+                <a href="/API/SimpleGraph/@modelAllowedMod.Accesscode">!will be replaced by js!</a>
+            </td>
+            <td>
+                <form asp-page-handler="DeleteGraph" method="Post">
+                    <input hidden="" name="id" value="@modelAllowedMod.Id"/>
+                    <button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to remove the graph?`)">
+                        <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
+                            <path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm4.5 6c0 .9-.3 1.8-.8 2.5L5.5 4.3a4.5 4.5 0 0 1 7 3.7zm-9 0c0-.9.3-1.8.8-2.5l6.2 6.2a4.5 4.5 0 0 1-7-3.7z"/>
+                        </svg>
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

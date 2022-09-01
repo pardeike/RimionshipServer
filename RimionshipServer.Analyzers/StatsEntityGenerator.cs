@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Diagnostics;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
 
@@ -65,6 +66,17 @@ namespace RimionshipServer.Data
 
             sourceBuilder.Append(string.Join(", ", properties.Select(s => string.Concat('"', s.Name, '"'))));
             sourceBuilder.AppendLine(@" });
+
+        public object GetCorrectSelectFromField(string field)
+        {
+            switch(field) 
+            {");
+            foreach (var (DisplayType, Name) in properties)
+                sourceBuilder.AppendLine($"case \"{Name}\": return {Name};");
+            sourceBuilder.Append(@"
+        }
+            return null;
+        }
     }
 }");
             context.AddSource("Stats.g.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
@@ -72,6 +84,12 @@ namespace RimionshipServer.Data
 
         public void Initialize(GeneratorInitializationContext context)
         {
+        #if DEBUG_GENERATOR
+            if (!Debugger.IsAttached)
+            {
+                Debugger.Launch();
+            }
+        #endif 
         }
 
         private static IEnumerable<INamedTypeSymbol> GetTypes(INamespaceSymbol symbol)
