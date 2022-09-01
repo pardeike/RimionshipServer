@@ -122,9 +122,9 @@ public class SimpleGraph : PageModel
         var datasets = datasetRecords
                       .Where(x => x is not null && x.Count > 0)
                       .OrderByDescending(x => float.Parse(x.Where(d => d.y is not null && d.y != String.Empty).MaxBy(d => d.x)!.y))
-                      .Select((datasetRecord, index) => new Dataset(_graphData.Users[index], Colors[index], datasetRecord)).ToList();
+                      .Select(async (datasetRecord, index) => new Dataset(await _dbContext.Users.Where(x => x.Id == _graphData.Users[index]).Select(x => x.UserName).FirstAsync(), Colors[index], datasetRecord));
 
-        Datasets  = datasets;
+        Datasets  = await Task.WhenAll(datasets);
         GraphName = "Test";
         return Page();
     }
