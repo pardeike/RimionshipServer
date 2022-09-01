@@ -77,6 +77,9 @@ namespace RimionshipServer.Pages.Admin
 
         public async Task<IActionResult> OnPostSearchAsync(string searchKey)
         {
+            if (string.IsNullOrWhiteSpace(searchKey))
+                return RedirectToPage("/Admin/Manage", 0);
+            
             Users = await Task.WhenAll((await _userManager.Users
                                                           .AsNoTrackingWithIdentityResolution()
                                                           .Where(x => EF.Functions.Like(x.UserName, $"%{searchKey}%"))

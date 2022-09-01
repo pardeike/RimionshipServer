@@ -1,15 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using System.Data;
+using System.Text;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System.Text;
-
+using RimionshipServer.API;
 namespace RimionshipServer.Data
 {
 	public class RimionDbContext : IdentityDbContext<RimionUser>
 	{
-		public  DbSet<AllowedMod>                    AllowedMods  { get; set; } = null!;
-		public  DbSet<LatestStats>                   LatestStats  { get; set; } = null!;
-		public  DbSet<HistoryStats>                  HistoryStats { get; set; } = null!;
+		public DbSet<AllowedMod>   AllowedMods  { get; set; } = null!;
+		public DbSet<LatestStats>  LatestStats  { get; set; } = null!;
+		public DbSet<HistoryStats> HistoryStats { get; set; } = null!;
+        // public DbSet<GraphData>    GraphData    { get; set; } = null!;
+        
         private DbSet<MiscSettings.BroadcastMessage> MotdSet      { get; set; } = null!;
         
         public async Task SeedMotd()
@@ -32,14 +35,14 @@ namespace RimionshipServer.Data
             return (await MotdSet.FirstAsync()).Text;
         }
         
-        public DbSet<MiscSettings.Settings> Settings         { get; set; } = null!;
+        public DbSet<MiscSettings.Settings> Settings { get; set; } = null!;
 		public RimionDbContext(DbContextOptions<RimionDbContext> options)
 			 : base(options)
 		{
 			this.ChangeTracker.LazyLoadingEnabled = false;
 		}
 
-		public async Task AddOrUpdateStatsAsync(RimionUser user, API.StatsRequest request)
+		public async Task AddOrUpdateStatsAsync(RimionUser user, StatsRequest request)
 		{
 			var latestStats = await LatestStats.FindAsync(user.Id);
 
@@ -92,7 +95,7 @@ ORDER BY TimestampBucket ASC, UserId ASC");
 			using var cmd = this.Database.GetDbConnection().CreateCommand();
 			await Database.OpenConnectionAsync();
 			cmd.CommandText = sb.ToString();
-			cmd.CommandType = System.Data.CommandType.Text;
+			cmd.CommandType = CommandType.Text;
 
 			cmd.Parameters.Add(new SqliteParameter("startTime", startTime.UtcTicks));
 			cmd.Parameters.Add(new SqliteParameter("endTime", endTime.Ticks));
@@ -104,6 +107,52 @@ ORDER BY TimestampBucket ASC, UserId ASC");
 
 			return result;
 		}
+
+        private const int TicksPerSecond      = 10_000_000;
+
+        public async Task<(List<DateTimeOffset> Timestamp, List<object> Values)> FetchDataVerticalAsync(DateTimeOffset startTime, DateTimeOffset endTime, int intervalSeconds, string column, string userId)
+        {
+            if (!Stats.FieldNames.Contains(column))
+                throw new ArgumentException("Unknown field", nameof(column));
+            if (intervalSeconds <= 0)
+                throw new ArgumentOutOfRangeException(nameof(intervalSeconds));
+
+            var bucketDivisor = intervalSeconds * TicksPerSecond;
+            
+            await using var cmd          = Database
+                                                      .GetDbConnection()
+                                                      .CreateCommand();
+
+            await Database.OpenConnectionAsync();
+
+            cmd.CommandText = 
+@$"SELECT (CAST((Timestamp / @bucketDivisor) as int) * @bucketDivisor) as tme, avg({column}) as Val
+FROM HistoryStats
+WHERE Timestamp >= @startTime AND Timestamp <= @endTime AND UserId = @userId
+GROUP BY (Timestamp / @bucketDivisor)";
+
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddRange(new []{
+                                              new SqliteParameter("startTime",     startTime.UtcTicks),
+                                              new SqliteParameter("endTime",       endTime.UtcTicks),
+                                              new SqliteParameter("userId",        userId),
+                                              new SqliteParameter("bucketDivisor", bucketDivisor)
+                                          });
+           
+            var reader     = await cmd.ExecuteReaderAsync();
+            var timestamps = new List<DateTimeOffset>();
+            var values     = new List<object>();
+
+            while (await reader.ReadAsync())
+            {
+                var timeValue   = reader.GetInt64(0);
+                var objectValue = reader.GetValue(1);
+                timestamps.Add(new DateTimeOffset(timeValue, TimeSpan.Zero));
+                values.Add(objectValue);
+            }
+            
+            return (timestamps, values);
+        }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{

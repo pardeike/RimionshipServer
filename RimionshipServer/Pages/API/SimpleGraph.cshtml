@@ -16,17 +16,20 @@
 @{
 #if DEBUG
 }
-    <script src="~/lib/chart-js/dist/chart.js"></script>
+    <script type="text/javascript" src="~/lib/chart-js/dist/chart.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 @{
 #else
 }
-    <script src="~/lib/chart-js/dist/chart.min.js"></script>
+    <script type="text/javascript" src="~/lib/chart-js/dist/chart.min.js"></script>
 @{
 #endif
 }
-    <script>
+    <script type="text/javascript">
+       
          const labels = JSON.parse('@Html.Raw(Json.Serialize(Model.Labels))');
-         const datasets = JSON.parse('@Html.Raw(Json.Serialize(Model.Datasets))');
+         let datasets = JSON.parse('@Html.Raw(Json.Serialize(Model.Datasets))');
+
          const data = {
            labels: labels,
            datasets: datasets
@@ -36,6 +39,14 @@
            data: data,
            options: {
                animation: false,
+               elements: {
+                   point: {
+                       radius: 0
+                   },
+                   line: {
+                        cubicInterpolationMode: 'monotone'
+                   }
+               },
                plugins: {
                    legend:{
                        position: 'right',
@@ -47,12 +58,15 @@
                        }
                },
                scales: {
+                   x: {
+                           type: 'time'
+                         },
                            y: {
                                  ticks: {
                                          display: false
                                          }
                                }
-                       }
+                   }
            }
          };
          const myChart = new Chart(
