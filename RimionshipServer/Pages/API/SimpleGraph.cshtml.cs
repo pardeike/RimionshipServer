@@ -83,9 +83,9 @@ public class SimpleGraph : PageModel
         var newStart = DateTime.Now   - diff;
         
         var tasks = (await Task.WhenAll(
-                                        _graphData.Users
+                                        _graphData.UsersReference
                                                   .Select(async userId =>
-                                                              ((await _dbContext.FetchDataVerticalAsync(newStart, DateTime.Now, _graphData.IntervalSeconds, _graphData.Statt, userId)), userId)
+                                                              ((await _dbContext.FetchDataVerticalAsync(newStart, DateTime.Now, _graphData.IntervalSeconds, _graphData.Statt, userId.Id)), userId.UserName)
                                                          )
                                        ))
            .ToList();
@@ -100,19 +100,15 @@ public class SimpleGraph : PageModel
                 var obj = perUser.Item1.Values[index].ToString()!;
                 dataRecords.Add(new Data(f, obj));
             }
-            datasetRecords.Add(perUser.userId, dataRecords);
+            datasetRecords.Add(perUser.UserName, dataRecords);
         }
         
         var datasets = datasetRecords
                       .Where(x => x.Value is not null && x.Value.Count > 0)
                       .OrderByDescending(x => float.Parse(x.Value.Where(d => d.y is not null && d.y != String.Empty).MaxBy(d => d.x)!.y))
-                      .Select(async (datasetRecord, index) => 
-                                  new Dataset(await _dbContext.Users.Where(x => x.Id == datasetRecord.Key)
-                                                              .Select(x => x.UserName)
-                                                              .FirstAsync(), Colors[index], datasetRecord.Value)
-                              );
+                      .Select((datasetRecord, index) => new Dataset(datasetRecord.Key, Colors[index], datasetRecord.Value));
 
-        Datasets  = await Task.WhenAll(datasets);
+        Datasets  = datasets;
         GraphName = "Test";
         return Page();
     }
