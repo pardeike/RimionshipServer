@@ -4,36 +4,32 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Rimionship 2022 Anmeldung</title>
+    <link rel="stylesheet" id="google-fonts-1-css" href="https://fonts.googleapis.com/css?family=Roboto%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRoboto+Slab%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7COswald%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRock+Salt%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic&amp;display=auto&amp;ver=6.0.2" media="all">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Css", required: false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Rimionship Anmeldung 2022</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                         @if (User.IsInRole(Roles.Admin))
-                         {
-                             <li class="nav-item">
-                                 <a class="nav-link" asp-page="/Admin/Index">Admin Area</a>
-                             </li>
-                             <li class="nav-item">
-                                 <a class="nav-link" href="~/dashboard.html">Dashboard</a>
-                             </li>
-                         }
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-    </header>
+    <div class="rimtitlebackground" style="height: 320px">
+        <div class="rimmenu" style="height: 50px">
+            <a class="menu" asp-area="" asp-page="/Index">Home</a>
+            @if (User.IsInRole(Roles.Admin))
+            {
+                <a class="menu" asp-page="/Admin/Index">Configuration</a>
+                <a class="menu" href="~/dashboard.html">Dashboard</a>
+            }
+            <div class="menu mmiddle"></div>
+            <partial name="_LoginPartial" />
+        </div>
+        <div class="rimtitle" style="height: 120px">
+            <img src="/img/logo.png" class="menulogo" />
+            <span class="rimtitle1">RIMIONSHIP 2022 - </span>
+            <span class="rimtitle2">Blood God Edition</span>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" height="150px" viewBox="0 0 283.5 27.8">
+            <path style="fill: white" d="M282.7 3.4c-2 3.8-2.2 6.6-1.8 10.8.3 3.3 2 8.5.4 11.6-1.4 2.6-4 2.5-5-.2-1.2-3.4.3-7.6.5-11.1.3-4.3-2.9-6.9-7.4-5.8-3.1.7-4.1 3.3-4.3 6.2-.2 2 1.2 8-.1 9.6-3.1 4.3-2.5-4.5-2.5-5.2.1-4-.1-9.6-4.1-11.6-4.5-2.3-6.1 1-5.5 5 .2 1.4 1.5 10.2-2.7 6.9-2.5-1.9.4-7.5-.9-10.3-.8-1.8-2.6-4.2-4.8-4.1-2.4.1-2.7 2.2-4 3.7-3.3 3.8-2.2-1.2-4.8-2.7-5.5-3.1-2 5.6-2.9 7.3-1.4 2.4-3.1.6-3.3-1.3-.1-1.5.5-3.1.4-4.6-.3-4.3-2.9-5.3-5.2-1.2-3.7 6.7-2.8-1.9-6.5-.4-3 1.1-.9 9.2-.6 11.1.7 4.1-2.2 5.2-2.7.8-.4-3.6 2.8-10.2.8-13.4-2.1-3.3-6.7-.1-7.9 2.4-2.1 4.2-.4 8.7 0 13.1.2 2-.8 8.9-3.8 4.8-3.1-4.3 2.5-11.6.2-16.3-1.1-2.2-5.8-3.5-7.2-1-.8 1.4 1 3.4.3 4.8s-2.2 1.2-2.8-.3c-.8-2.1 2.2-4.8-.1-6.5-1.3-.9-3.5.3-4.9.5-2.4-.1-3.3 0-4.5 2-.7 1.2-.4 3-2.3 2.1-1.9-.8-1.7-4.3-4.1-4.9-2.1-.6-4 1.3-5.1 2.9-.9 1.4-1.3 3-1.3 4.6 0 1.9 1.4 4.2.3 6-2.4 4.2-4.2-2.2-3.8-4.4.5-2.9 2-7.7-2.7-7.5-5.2.3-6.1 5.8-6.4 9.8-.1 1.3 1.5 10.4-2 8.4-1.8-1-.5-7.5-.6-9.1-.1-3.5-1.6-8.3-6.3-7.1-7.6 1.9 2.1 18.2-4.8 18.7-3.7.3-2.3-6.2-2-8.1.5-3.1.5-11.4-5.5-8.5-2.2 1.1-1 2.3-1.3 4.3-.2 1.8-1.3 3.2-2.3.8-1.1-2.5.8-6.7-3.9-6.6-8 .1-.7 16.4-4.8 15.8-2.8-.4-1-9.3-1.3-11.3-.6-3.5-3.5-7.8-7.8-6.9-4.4.9-1.4 6.5-1.4 9.1 0 3.1-3.4 5.9-4.4 1.7-.5-2.2.9-4.4.6-6.6-.3-1.9-1.5-4.1-3.2-5.2-5.3-3.4-4.9 5.2-8.1 4.5-1.4-.3-3-8.1-6.1-4.1-.7.9 2 10.3-2.2 8-2-1.1-.1-6.7-.7-8.9-1.8-6.2-4.7 2.3-6.1 3.1-2.9 1.7-4.6-6.2-6.3-.6-.5 1.7-.4 3.7-.2 5.4.2 1.6 1.5 4.6 1 6.1-.6 1.8-1.7 1.7-2.6.3-1-1.6-.4-4.5-.2-6.2.3-2.5 2.4-8.4-.2-10.3-3.1-2.1-6.8 2.1-7.7 4.5-1.5 4.3.3 8.7.5 13 .1 3.2-3 7.5-4.3 2.4-.6-2.4.2-5.1.6-7.4.4-2.3 1.2-6-.1-8.1-1.2-1.9-5.8-2.7-7-.5-.9 1.6 1.2 5.2-.6 5.6-2.4.6-2-2.3-1.8-3.4.3-1.5 1.1-3.2-.4-4.3-1.2-.9-4.7.3-5.9.5-2.4.5-2.5 1.4-3.6 3.3-1.2 2.1-1.4 1.7-3-.1-1.3-1.5-1.7-3.6-4-3.7-1.8-.1-3.4 1.7-4.2 3-1.4 2.2-1.3 4.1-1 6.5.2 1.4 1 3.8-.5 4.9-3.9 2.9-3.2-4.6-2.9-6.3.8-3.9-.4-8.1-5.4-5.6-3.8 1.9-4.1 6.7-4.1 10.5 0 1.6 1.2 5.8-.1 6.9-.8.7-1.8.3-2.4-.5-1.1-1.5.1-6.7 0-8.5-.1-3.5-.9-6.9-4.9-7.4-3.6-.6-6.7 1.2-6.8 4.9-.1 3.9 2 8.2.6 12-.9 2.4-2.9 2.9-4.6.9-2.4-2.8-.4-9 0-12.3.4-4.2.2-7-1.8-10.8C1.1 2.8.6 2.1 0 1.4v26.4h283.5V2.2c-.3.4-.6.8-.8 1.2z"></path>
+        </svg>
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -42,7 +38,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-         &copy; 2022 - Rimionship - <a href="http://www.rimionship.com/Regeln_zur_Teilnahme.pdf" target="_blank">Teilnahmebedingungen</a> - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2022 - Rimionship - <a href="http://www.rimionship.com/Regeln_zur_Teilnahme.pdf" target="_blank">Teilnahmebedingungen</a> - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
 

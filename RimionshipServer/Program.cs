@@ -20,26 +20,26 @@ void ConfigureServices(IServiceCollection services)
 
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     services.AddDbContext<RimionDbContext>(options =>
-          options.UseSqlite(connectionString));
+        options.UseSqlite(connectionString));
     services.AddDatabaseDeveloperPageExceptionFilter();
 
     services.AddIdentity<RimionUser, IdentityRole>()
-          .AddRoles<IdentityRole>()
-          .AddEntityFrameworkStores<RimionDbContext>()
-          .AddUserManager<UserManager>()
-          .AddRoleManager<RoleManager>();
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<RimionDbContext>()
+        .AddUserManager<UserManager>()
+        .AddRoleManager<RoleManager>();
 
     services.AddTransient<DbSeedService>()
-         .AddScoped<IUserStore, UserStore>()
-         .AddScoped<IUserStore<RimionUser>>(ctx => ctx.GetRequiredService<IUserStore>())
-         .AddScoped<DataService>()
-         .AddScoped<ConfigurationService>()
-         .AddScoped<LoginService>()
-         .AddScoped<IAuthorizationHandler, CustomRoleAuthHandler>()    
-         .AddSingleton<ScoreService>()
-         .AddSingleton<AttentionService>()
-         .AddSingleton<DirectionService>()
-         .AddSingleton<SettingService>();
+        .AddScoped<IUserStore, UserStore>()
+        .AddScoped<IUserStore<RimionUser>>(ctx => ctx.GetRequiredService<IUserStore>())
+        .AddScoped<DataService>()
+        .AddScoped<ConfigurationService>()
+        .AddScoped<LoginService>()
+        .AddScoped<IAuthorizationHandler, CustomRoleAuthHandler>()
+        .AddSingleton<ScoreService>()
+        .AddSingleton<AttentionService>()
+        .AddSingleton<DirectionService>()
+        .AddSingleton<SettingService>();
 
     services.AddGrpc();
 
@@ -50,42 +50,44 @@ void ConfigureServices(IServiceCollection services)
         options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
     });
 
-    services.AddRazorPages(options => 
-                           {
-                               options.RootDirectory = "/Pages";
-                               options.Conventions.AuthorizeFolder("/Admin", Roles.Admin);
-                           }
-                          )
+    services.AddRazorPages(options =>
+    {
+        options.RootDirectory = "/Pages";
+        options.Conventions.AuthorizeFolder("/Admin", Roles.Admin);
+    })
 #if DEBUG
-            .AddRazorRuntimeCompilation()
+        .AddRazorRuntimeCompilation()
 #endif
-          ;
+        ;
 
     services.AddControllers();
 
     services.AddAuthentication()
-          .AddTwitch(options =>
-          {
-              options.Scope.Clear();
-              configuration.GetSection("Twitch").Bind(options);
-          });
+        .AddTwitch(options =>
+        {
+            options.Scope.Clear();
+            if (builder.Environment.IsDevelopment())
+                options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+            configuration.GetSection("Twitch").Bind(options);
+        });
 
     services.AddSignalR()
         .AddMessagePackProtocol();
+
     services.AddAuthorization(options =>
-                              {
-                                  options.AddPolicy(Roles.Admin, 
-                                                    policyBuilder =>
-                                                    {
-                                                        policyBuilder.AddRequirements(new CustomRoleAuth(Roles.Admin));
-                                                    });
-                              });
+    {
+        options.AddPolicy(Roles.Admin, policyBuilder =>
+        {
+            policyBuilder.AddRequirements(new CustomRoleAuth(Roles.Admin));
+        });
+    });
+
     services.Configure<RouteOptions>(options =>
-                                             {
-                                                 options.LowercaseUrls         = true;
-                                                 options.LowercaseQueryStrings = true;
-                                                 options.AppendTrailingSlash   = true;
-                                             });
+    {
+        options.LowercaseUrls = true;
+        options.LowercaseQueryStrings = true;
+        options.AppendTrailingSlash = true;
+    });
 }
 
 ConfigureServices(builder.Services);
@@ -111,13 +113,13 @@ void Configure(WebApplication app)
 
     app.UseRouting();
 
-	app.UseAuthentication();
-	app.UseAuthorization();
+    app.UseAuthentication();
+    app.UseAuthorization();
     app.UseStatusCodePagesWithRedirects("~/Error/{0}");
-	app.MapRazorPages();
-	app.MapControllers();
+    app.MapRazorPages();
+    app.MapControllers();
     app.MapHub<DashboardHub>("/api/dashboard");
-	app.MapGrpcService<GrpcService>();
+    app.MapGrpcService<GrpcService>();
 }
 
 var app = builder.Build();

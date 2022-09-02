@@ -2,32 +2,39 @@
     table-layout: fixed;
     word-wrap: break-word;
 }
+
 svg {
     height: 2rem;
 }
+
 .bg-green {
     background-color: darkgreen !important;
     color: white;
 }
+
 .bg-red {
     background-color: darkred !important;
     color: white;
 }
+
 .bg-yellow {
     background-color: #d5be00 !important;
     color: white;
 }
+
 .bg-blue {
     background-color: darkblue !important;
     color: white;
 }
+
 .bg-light-blue {
     background-color: lightskyblue !important;
     color: white;
 }
+
 .table-create {
     width: 100%;
-    display:inline-block;
+    display: inline-block;
     box-sizing: border-box;
     font-size: xxx-large;
     text-align: center;

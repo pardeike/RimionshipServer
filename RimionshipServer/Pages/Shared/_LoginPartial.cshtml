@@ -2,27 +2,15 @@
 @inject SignInManager<RimionUser> SignInManager
 @inject UserManager<RimionUser> UserManager
 
-<ul class="navbar-nav">
-    @{
-        var user = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
-        if (user != null)
-        {
-            <li class="nav-item">
-                <a class="nav-link">
-                    <img id="header-avatar" src="@(user.AvatarUrl)" /> @User.Identity?.Name!
-                </a>
-            </li>
-            <li class="nav-item">
-                <form class="form-inline" asp-page="/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                    <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-                </form>
-            </li>
-        }
-    }
-    @*    else
+@{
+    var user = SignInManager.IsSignedIn(User) ? await UserManager.GetUserAsync(User) : null;
+    if (user != null)
     {
-    <li class="nav-item">
-    <a class="nav-link" asp-page="/Login">Login</a>
-    </li>
-    }*@
-</ul>
+        <form asp-page="/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+            <button class="menulogout" type="submit">Logout</button>
+        </form>
+        <span class="menu">
+            <img id="header-avatar" src="@(user.AvatarUrl)" /> @User.Identity?.Name
+        </span>
+    }
+}

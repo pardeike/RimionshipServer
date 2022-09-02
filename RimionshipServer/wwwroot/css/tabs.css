@@ -5,22 +5,28 @@
     clear: both;
 }
 
-.tabbed > input,
-.tabbed figure > div { display: none; }
+    .tabbed > input,
+    .tabbed figure > div {
+        display: none;
+    }
 
-.tabbed figure>div {
-    padding: 20px;
-    width: 100%;
-    border: 1px solid silver;
-    background: #fff;
-    line-height: 1.5em;
-    letter-spacing: 0.3px;
-    color: #444;
-}
+    .tabbed figure > div {
+        padding: 20px;
+        width: 100%;
+        border: 1px solid silver;
+        background: #fff;
+        line-height: 1.5em;
+        letter-spacing: 0.3px;
+        color: #444;
+    }
+
 #tab1:checked ~ figure .tab1,
 #tab2:checked ~ figure .tab2,
 #tab3:checked ~ figure .tab3,
-#tab4:checked ~ figure .tab4 { display: block; }
+#tab4:checked ~ figure .tab4 {
+    display: block;
+}
+
 nav label {
     float: left;
     padding: 15px 15px;
@@ -30,9 +36,17 @@ nav label {
     color: #eee;
 }
 
-nav label:nth-child(1) { border-left: 1px solid silver; }
-nav label:hover { background: #212529; }
-nav label:active { background: #ffffff; }
+    nav label:nth-child(1) {
+        border-left: 1px solid silver;
+    }
+
+    nav label:hover {
+        background: #212529;
+    }
+
+    nav label:active {
+        background: #ffffff;
+    }
 
 #tab1:checked ~ nav label[for="tab1"],
 #tab2:checked ~ nav label[for="tab2"],
@@ -44,16 +58,16 @@ nav label:active { background: #ffffff; }
     border-bottom: none;
 }
 
-#tab1:checked ~ nav label[for="tab1"]:after,
-#tab2:checked ~ nav label[for="tab2"]:after,
-#tab3:checked ~ nav label[for="tab3"]:after,
-#tab4:checked ~ nav label[for="tab4"]:after{
-    content: "";
-    display: block;
-    position: absolute;
-    height: 2px;
-    width: 100%;
-    background: white;
-    left: 0;
-    bottom: -1px;
-}
+    #tab1:checked ~ nav label[for="tab1"]:after,
+    #tab2:checked ~ nav label[for="tab2"]:after,
+    #tab3:checked ~ nav label[for="tab3"]:after,
+    #tab4:checked ~ nav label[for="tab4"]:after {
+        content: "";
+        display: block;
+        position: absolute;
+        height: 2px;
+        width: 100%;
+        background: white;
+        left: 0;
+        bottom: -1px;
+    }
