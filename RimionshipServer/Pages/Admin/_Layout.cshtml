@@ -22,7 +22,7 @@
                         @if (User.IsInRole(Roles.Admin))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-page="/Admin/Index">Admin Area</a>
+                                <a class="nav-link" asp-page="/Admin/Index">Configuration</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="~/dashboard.html">Dashboard</a>
@@ -48,8 +48,7 @@
 
     <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -13,6 +13,7 @@
 {
     @if (!Model.Done)
     {
+        <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
         <script>
         //Taken from https://stackoverflow.com/a/27578356
         window.onmousedown = function (e) {
@@ -31,7 +32,6 @@
         }
         </script>
     }
-  
     <script type="text/javascript">
             const links = document.getElementsByTagName("a");
             for(let i=0; i<links.length; i++) {
@@ -44,7 +44,10 @@
     <h1>@ViewData["Title"]</h1>
     @if (Model.Done)
     {
-        <a id="done" href="/API/SimpleGraph/@Model.AccessCode">!will be replaced by js!</a>
+        <a id="done" href="/API/SimpleGraph/@Model.AccessCode">!will be replaced by js!</a> 
+        <br/>
+        <br/>
+        <a class="btn btn-outline-dark" id="back" asp-page="GraphConfigurator">Back to Graph Configurator</a>
     }
     else
     {

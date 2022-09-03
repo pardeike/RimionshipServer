@@ -4,6 +4,13 @@
     ViewData["Title"] = "Logout";
 }
 
+@section Scripts
+{
+    <script>
+        window.setTimeout(() => window.location = "@Url.PageLink("Index")", 3000);
+    </script>
+}
+
 <header>
     <h1>@ViewData["Title"]</h1>
     @{

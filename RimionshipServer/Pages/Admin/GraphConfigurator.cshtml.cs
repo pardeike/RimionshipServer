@@ -80,13 +80,13 @@ namespace RimionshipServer.Pages.Admin
             { 
                 return Forbid();
             }
-            
+
             var seconds = int.Parse(LastTime);
             graphData.Start = DateTime.Now - TimeSpan.FromSeconds(seconds);
             graphData.End   = DateTime.Now;
-            
+
             var users = _dbContext.HistoryStats.FromSqlRaw($@"
-SELECT DISTINCT * FROM (SELECT DISTINCT * FROM (SELECT DISTINCT * FROM HistoryStats ORDER BY Timestamp DESC) GROUP BY UserId) ORDER BY {stat} DESC LIMIT 10
+SELECT * FROM (SELECT * FROM (SELECT * FROM HistoryStats ORDER BY Timestamp DESC) GROUP BY UserId) ORDER BY {stat} DESC LIMIT 10
 ").Select(x => x.UserId);
 
             graphData.UsersReference  = await _dbContext.Users.Where(x => users.Contains(x.Id)).ToListAsync();

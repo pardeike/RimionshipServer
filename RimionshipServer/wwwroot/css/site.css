@@ -23,7 +23,7 @@ body {
 }
 
 .rimtitle1 {
-    font-family: "Oswald", Sans-serif;
+    font-family: "Oswald", sans-serif;
     font-size: 3.5rem;
     font-weight: 500;
     color: white;
@@ -31,7 +31,7 @@ body {
 }
 
 .rimtitle2 {
-    font-family: "Rock Salt", Sans-serif;
+    font-family: "Rock Salt", sans-serif;
     font-size: 2.2rem;
     font-weight: 600;
     position: relative;
@@ -39,9 +39,28 @@ body {
     color: white;
 }
 
+@media only screen and (min-width: 1920px) {
+    .rimtitlebackground {
+        background-image: url("/img/bloodbackground_1080p.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6)) !important;
+    }
+}
+@media only screen and (max-width: 1919px) and (min-width: 1600px) {
+    .rimtitlebackground {
+        background-image: url("/img/bloodbackground_1600x900.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6)) !important;
+    }
+}
+@media only screen and (max-width: 1599px) and (min-width: 1280px) {
+    .rimtitlebackground {
+        background-image: url("/img/bloodbackground_HW_1080p.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6)) !important;
+    }
+}
+@media only screen and (max-width: 1279px) {
+    .rimtitlebackground {
+        background-image: url("/img/bloodbackground_720p.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6)) !important;
+    }
+}
 .rimtitlebackground {
     background-position: center center;
-    background-image: url("/img/bloodbackground.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6));
     background-blend-mode: multiply;
     margin-bottom: 20px;
 }
@@ -63,7 +82,7 @@ body {
 }
 
 .menu {
-    font-family: "Oswald", Sans-serif;
+    font-family: "Oswald", sans-serif;
     text-decoration: none;
     font-size: 1.5rem;
     color: white;
@@ -74,7 +93,7 @@ body {
 }
 
 .menulogout {
-    font-family: "Oswald", Sans-serif;
+    font-family: "Oswald", sans-serif;
     font-size: 1.5rem;
     background-color: transparent;
     border: 0;

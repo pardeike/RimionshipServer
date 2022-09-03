@@ -6,6 +6,13 @@
     ViewData["Title"] = "Teilnahme zurückziehen";
 }
 
+@section Scripts
+{
+    <script>
+        window.setTimeout(() => window.location = "@Url.PageLink("Index")", 3000);
+    </script>
+}
+
 <h1>@ViewData["Title"]</h1>
 @{
     if (SignInManager.IsSignedIn(User) && await UserManager.GetUserAsync(User) != null)
