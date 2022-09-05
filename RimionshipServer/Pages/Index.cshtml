@@ -2,34 +2,31 @@
 @inject SignInManager<RimionUser> SignInManager
 @model IndexModel
 @{
-    ViewData["Title"] = "Startseite";
+	ViewData["Title"] = "Start";
 }
 
 <div class="text-center">
-    @if (SignInManager.IsSignedIn(User))
-    {
-        <h1 class="display-5">Du bist erfolgreich angemeldet!</h1>
+	@if (SignInManager.IsSignedIn(User))
+	{
+		<h1 class="display-5">Du bist angemeldet / You are registered!</h1>
 
-        <p>
-            Weitere Infos folgen.
-        </p>
+		<p></p>
+		<p>
+			Du hast es dir anders überlegt? Du kannst deine Teilnahme <a asp-page="/DeleteAccount">hier</a> zurückziehen<br>Don't want to participate? You can delete your account <a asp-page="/DeleteAccount">here</a>
+		</p>
+	}
+	else
+	{
+		<p>
+			Um dein Interesse zu bekunden, melde dich bitte mit Twitch an<br />Please log in with Twitch account
+		</p>
 
-        <p>
-            Du hast es dir anders überlegt? Du kannst deine Teilnahme <a asp-page="/DeleteAccount">hier</a> zurückziehen.
-        </p>
-    }
-    else
-    {
-        <p>
-            Um dein Interesse zu bekunden, melde dich bitte mit Twitch an.
-        </p>
-
-        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="/" method="post" class="form-horizontal">
-            <div>
-                <p>
-                    <button type="submit" class="btn btn-primary" name="provider" value="Twitch" title="Login mit deinem Twitch Account">Login</button>
-                </p>
-            </div>
-        </form>
-    }
+		<form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="/" method="post" class="form-horizontal">
+			<div>
+				<p>
+					<button type="submit" class="btn btn-primary" name="provider" value="Twitch" title="Twitch Login">Twitch Login</button>
+				</p>
+			</div>
+		</form>
+	}
 </div>

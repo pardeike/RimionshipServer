@@ -3,31 +3,31 @@
 @inject SignInManager<RimionUser> SignInManager
 @inject UserManager<RimionUser> UserManager
 @{
-    ViewData["Title"] = "Teilnahme zurückziehen";
+	ViewData["Title"] = "Teilnahme zurückziehen / Delete account";
 }
 
 @section Scripts
-{
-    <script>
-        window.setTimeout(() => window.location = "@Url.PageLink("Index")", 3000);
-    </script>
+	{
+	<script>
+		window.setTimeout(() => window.location = "@Url.PageLink("Index")", 3000);
+	</script>
 }
 
-<h1>@ViewData["Title"]</h1>
-@{
-    if (SignInManager.IsSignedIn(User) && await UserManager.GetUserAsync(User) != null)
-    {
-        <p>
-        Falls du dich anders entschieden hast, kannst du deine Teilnahme zurückziehen. Du kannst dich später jederzeit wieder anmelden.
-        </p>
+	<h1>@ViewData["Title"]</h1>
+	@{
+	if (SignInManager.IsSignedIn(User) && await UserManager.GetUserAsync(User) != null)
+	{
+		<p>
+			Falls du dich anders entschieden hast, kannst du deine Teilnahme zurückziehen / You can remove yourself from participating by deleting your account
+		</p>
 
-        <form class="form-inline" asp-page="/DeleteAccount" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-            <button type="submit" class="nav-link btn btn-link text-light btn-danger">Klick hier um nicht mehr teilzunehmen.</button>
-        </form>
-    }
-    else
-    {
-        <p>Du nimmst nicht an der Rimionship 2022 teil.</p>
-    }
+		<form class="form-inline" asp-page="/DeleteAccount" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+			<button type="submit" class="nav-link btn btn-link text-light btn-danger">Teilnahme zurückziehen / Delete account</button>
+		</form>
+	}
+	else
+	{
+		<p>Du nimmst nicht an der Rimionship 2022 teil / You no longer participate in the Rimionship 2022</p>
+	}
 }
 

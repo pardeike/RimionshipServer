@@ -1,16 +1,16 @@
 ﻿@page
 @model RimionshipServer.Pages.ModLoginModel
 @{
-    ViewData["Title"] = "Mod Login";
+	ViewData["Title"] = "Mod Login";
 }
 
 <h1>Mod Login</h1>
 
 @if (Model.ErrorMessage != null)
 {
-    <div class="alert alert-danger">@Model.ErrorMessage</div>
+	<div class="alert alert-danger">@Model.ErrorMessage</div>
 }
 else
 {
-    <p>Verknüpfung abgeschlossen! Dein Spiel sollte sich jeden Moment einloggen. Du kannst dieses Fenster schliessen.</p>
+	<p>Verknüpfung abgeschlossen! Dein Spiel sollte sich jeden Moment einloggen. Du kannst dieses Fenster schliessen / You can close this window now</p>
 }
