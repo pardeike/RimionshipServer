@@ -33,7 +33,7 @@ namespace RimionshipServer.Services
 			await CreateRoleAsync(Roles.Admin);
 			await SeedAllowedModsAsync();
             await SeedSettings();
-            await db.SeedMotd();
+            await db.SeedSingeRecordTables();
             await db.SaveChangesAsync();
             await db.SaveChangesAsync();
 			if (env.IsDevelopment())

@@ -8,19 +8,44 @@ namespace RimionshipServer.Data
 {
 	public class RimionDbContext : IdentityDbContext<RimionUser>
 	{
-		public DbSet<AllowedMod>   AllowedMods  { get; set; } = null!;
-		public DbSet<LatestStats>  LatestStats  { get; set; } = null!;
-		public DbSet<HistoryStats> HistoryStats { get; set; } = null!;
-        public DbSet<GraphData>    GraphData    { get; set; } = null!;
-        public DbSet<GraphUser>    GraphUsers   { get; set; } = null!;
+		public  DbSet<AllowedMod>                    AllowedMods  { get; set; } = null!;
+		public  DbSet<LatestStats>                   LatestStats  { get; set; } = null!;
+		public  DbSet<HistoryStats>                  HistoryStats { get; set; } = null!;
+        public  DbSet<GraphData>                     GraphData    { get; set; } = null!;
+        public  DbSet<GraphUser>                     GraphUsers   { get; set; } = null!;
         
-        private DbSet<MiscSettings.BroadcastMessage> MotdSet      { get; set; } = null!;
+        private DbSet<MiscSettings.State>            GameState { get; set; } = null!;
+        private DbSet<MiscSettings.BroadcastMessage> MotdSet   { get; set; } = null!;
         
-        public async Task SeedMotd()
+        public async Task SetGameStateAsync(int gameState, int hour, int minute)
         {
-            if (await MotdSet.AnyAsync())
-                return;
-            MotdSet.Add(new MiscSettings.BroadcastMessage{Text = String.Empty});
+            var toUpdate = await GameState.FirstAsync();
+            toUpdate.GameState          = gameState;
+            toUpdate.PlannedStartHour   = hour;
+            toUpdate.PlannedStartMinute = minute;
+            GameState.Update(toUpdate);
+            await SaveChangesAsync();
+        }
+        
+        public async Task<MiscSettings.State> GetGameStateAsync(CancellationToken cancellationToken = default)
+        {
+            return (await GameState.FirstAsync());
+        }
+        
+        public async Task SeedSingeRecordTables()
+        {
+            if (!await MotdSet.AnyAsync())
+            {
+                MotdSet.Add(new MiscSettings.BroadcastMessage{Text = String.Empty});
+            }
+            if (!await GameState.AnyAsync())
+            {
+                GameState.Add(new MiscSettings.State{
+                                                        GameState = 0,
+                                                        PlannedStartHour = 0,
+                                                        PlannedStartMinute = 0
+                                                    });
+            }
         }
         
         public async Task SetMotdAsync(string? newText)

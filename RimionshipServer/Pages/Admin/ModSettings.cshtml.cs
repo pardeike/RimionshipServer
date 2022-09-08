@@ -28,6 +28,15 @@ namespace RimionshipServer.Pages.Admin
         [BindProperty(SupportsGet = true)]
         public IEnumerable<SelectListItem> SettingsSelect { get; set; }
         
+        [BindProperty(SupportsGet = true)]
+        public byte PlannedStartHour { get; set; }
+        
+        [BindProperty(SupportsGet = true)]
+        public byte PlannedStartMinute { get; set; }
+        
+        [BindProperty(SupportsGet = true)]
+        public byte GameState { get; set; }
+        
         public ModSettings(ConfigurationService configurationService, RimionDbContext dbContext, SettingService settingService)
         {
             _configurationService = configurationService;
@@ -50,9 +59,13 @@ namespace RimionshipServer.Pages.Admin
                             .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
                             .ToList();
             
-            ActiveSetting  = (await _settingService.GetActiveSetting(_dbContext, HttpContext.RequestAborted)).Name;
-            SettingsSelect = SettingsSelect.Append(new SelectListItem("Create New", "cn"));
-            Motd           = await _dbContext.GetMotdAsync(HttpContext.RequestAborted);
+            ActiveSetting    = (await _settingService.GetActiveSetting(_dbContext, HttpContext.RequestAborted)).Name;
+            SettingsSelect   = SettingsSelect.Append(new SelectListItem("Create New", "cn"));
+            Motd             = await _dbContext.GetMotdAsync(HttpContext.RequestAborted);
+            var gameState = await _dbContext.GetGameStateAsync(HttpContext.RequestAborted);
+            PlannedStartHour   = (byte) gameState.PlannedStartHour;
+            PlannedStartMinute = (byte) gameState.PlannedStartMinute;
+            GameState = (byte) gameState.GameState;
             return Page();
         }
 
@@ -75,7 +88,7 @@ namespace RimionshipServer.Pages.Admin
             return RedirectToPage("/Admin/ModSettings");
         }
 
-        public async Task<IActionResult> OnPostMod(string packageId, ulong steamId, byte loadOrder)
+        public async Task<IActionResult> OnPostModAsync(string packageId, ulong steamId, byte loadOrder)
         {
             await _configurationService.AddAllowedMod(new AllowedMod{
                                                                         SteamId   = steamId,
@@ -85,7 +98,7 @@ namespace RimionshipServer.Pages.Admin
             return RedirectToPage("/Admin/ModSettings");
         }
         
-        public async Task<IActionResult> OnPostSetting()
+        public async Task<IActionResult> OnPostSettingAsync()
         {
             if (ActiveSetting == "cn")
             {
@@ -93,6 +106,22 @@ namespace RimionshipServer.Pages.Admin
             }
             await _settingService.SelectActiveSetting(_dbContext,int.Parse(ActiveSetting));
             _ = GrpcService.ToggleResetEvent();
+            return RedirectToPage("/Admin/ModSettings");
+        }
+        
+        public async Task<IActionResult> OnPostGameAsync()
+        {
+            await _dbContext.SetGameStateAsync(GameState, PlannedStartHour, PlannedStartMinute);
+            return RedirectToPage("/Admin/ModSettings");
+        }
+        
+        public async Task<IActionResult> OnPostDeleteAllAsync()
+        {
+            if (((State.Types.Game) (await _dbContext.GetGameStateAsync()).GameState) != State.Types.Game.Completed)
+                return Forbid();
+            
+            _dbContext.HistoryStats.RemoveRange(await _dbContext.HistoryStats.AsNoTrackingWithIdentityResolution().ToArrayAsync());
+            await _dbContext.SaveChangesAsync();
             return RedirectToPage("/Admin/ModSettings");
         }
     }

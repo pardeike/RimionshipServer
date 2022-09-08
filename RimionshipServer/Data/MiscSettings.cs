@@ -74,5 +74,18 @@
                                                                                    MaxShootingSkill   = traits.MaxShootingSkill 
                                                                                };
         }
+
+        public class State
+        {
+            public int Id                 { get; set; }
+            public int PlannedStartHour   { get; set; }
+            public int PlannedStartMinute { get; set; }
+            public int GameState          { get; set; }
+            public static implicit operator API.State(State state) => new (){
+                                                                                PlannedStartHour = state.PlannedStartHour,
+                                                                                PlannedStartMinute = state.PlannedStartMinute,
+                                                                                Game = (API.State.Types.Game) state.GameState
+                                                                            };
+        }
     }
 }

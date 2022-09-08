@@ -45,6 +45,35 @@
                         </div>
                     </div>
                 </form>
+                <form asp-page-handler="Game" method="post">
+                    <div class="justify-content-center">
+                        <div class="input-group justify-content-center align-items-center">
+                            <div>
+                                <div class="input-group">
+                                    <label class="m-2 form-label">@nameof(Model.PlannedStartHour)</label>
+                                    @Html.TextBoxFor(x => x.PlannedStartHour, new{@class = "m-2 form-control"})
+                                </div>
+                                <div class="input-group">
+                                    <label class="m-2 form-label">@nameof(Model.PlannedStartMinute)</label>
+                                    @Html.TextBoxFor(x => x.PlannedStartMinute, new{@class = "m-2 form-control"})
+                                </div>
+                                <div class="input-group">
+                                    <label class="m-2 form-label">@nameof(Model.GameState)</label>
+                                    @Html.DropDownListFor(x => x.GameState, new[]{
+                                                                                     new SelectListItem("STOPPED", "0", Model.GameState == 0),
+                                                                                     new SelectListItem("TRAINING", "1", Model.GameState == 1),
+                                                                                     new SelectListItem("PREPARE", "2", Model.GameState == 2),
+                                                                                     new SelectListItem("STARTED", "3", Model.GameState == 3),
+                                                                                     new SelectListItem("COMPLETED", "4", Model.GameState == 4)
+                                                                                 }, new{@class = "m-2 form-control"})
+                                </div>
+                            </div>
+                            <div class="input-group-prepend justify-content-center align-items-center" style="width: 15%;">
+                                <button class="btn btn-outline-dark form-control" type="submit">Set Game Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="tab2">
                 <partial name="_ModList" model=Model></partial> </div>
@@ -62,6 +91,9 @@
                             </div>
                         </div>
                     </div>
+                </form>
+                <form asp-page-handler="DeleteAll" method="post">
+                    <button class="btn btn-danger form-control" type="submit">DELETE ALL HISTORY DATA</button>
                 </form>
             </div>
         </figure>

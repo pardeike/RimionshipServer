@@ -174,11 +174,7 @@ namespace RimionshipServer.API
             
             return new SyncResponse{
                                        Message = await db.GetMotdAsync(context.CancellationToken),
-                                       State = new State{
-                                                            Game               = State.Types.Game.Training,
-                                                            PlannedStartHour   = 0,
-                                                            PlannedStartMinute = 0
-                                                        },
+                                       State = await db.GetGameStateAsync(),
                                        Settings = await _settingService.GetActiveSetting(db, context.CancellationToken)
                                    };
         }
