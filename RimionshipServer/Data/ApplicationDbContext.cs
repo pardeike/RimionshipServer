@@ -12,6 +12,7 @@ namespace RimionshipServer.Data
 		public DbSet<LatestStats>  LatestStats  { get; set; } = null!;
 		public DbSet<HistoryStats> HistoryStats { get; set; } = null!;
         public DbSet<GraphData>    GraphData    { get; set; } = null!;
+        public DbSet<GraphUser>    GraphUsers   { get; set; } = null!;
         
         private DbSet<MiscSettings.BroadcastMessage> MotdSet      { get; set; } = null!;
         
@@ -154,10 +155,33 @@ GROUP BY (Timestamp / @bucketDivisor)";
             return (timestamps, values);
         }
 
-		protected override void OnModelCreating(ModelBuilder builder)
+        public IQueryable<GraphUser> GetTopXUser(string stat)
+            => GraphUsers.FromSqlRaw(
+         @$"            SELECT UserId, UserName, Value
+            FROM (
+                SELECT UserId, Value FROM (
+                    SELECT UserId, Value FROM (
+                        SELECT UserId, {stat} as Value FROM HistoryStats ORDER BY Timestamp DESC
+                    ) GROUP BY UserId
+                ) ORDER BY Value DESC
+            )
+            INNER JOIN AspNetUsers ON UserId = Id
+            WHERE NOT WasBanned
+            ");
+        
+        protected override void OnModelCreating(ModelBuilder builder)
 		{
 			base.OnModelCreating(builder);
 
+            builder.Entity<GraphUser>(typeBuilder =>
+                                      {
+                                          typeBuilder.HasNoKey();
+                                      });
+            builder.Entity<HistoryStats>(typeBuilder =>
+                                         {
+                                             typeBuilder.HasIndex(x => x.Timestamp);
+                                         });
+            
 			builder.Entity<AllowedMod>(entity =>
 			{
 				entity.HasIndex(e => e.SteamId).IsUnique();
@@ -222,9 +246,6 @@ GROUP BY (Timestamp / @bucketDivisor)";
                                             .ValueGeneratedOnAdd()
                                             .HasAnnotation("Sqlite", "Autoincrement");
                                         entity.HasKey(x => x.Id);
-                                        entity.HasMany(x => x.UsersReference)
-                                              .WithMany(x => x.InGraphs);
-                                        entity.Ignore(x => x.Users);
                                       });
             
 			foreach (var entityType in builder.Model.GetEntityTypes())

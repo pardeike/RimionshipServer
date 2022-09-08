@@ -11,5 +11,6 @@
         public         bool                    Autorefresh     { get; set; }
         public         string[]                Users           { get => UsersReference.Select(x => x.UserName).ToArray(); }
         public virtual IEnumerable<RimionUser> UsersReference  { get; set; } = new List<RimionUser>();
+        public         int?                    CountUser { get; set; }
     }
 }

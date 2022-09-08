@@ -132,7 +132,9 @@ await using (var scope = app.Services.CreateAsyncScope())
     Log.Information("Migration complete! Seeding database...");
     var seeder = scope.ServiceProvider.GetRequiredService<DbSeedService>();
     await seeder.SeedAsync();
-    Log.Information("Seeding complete!");
+    Log.Information("Seeding complete! Fetching persistent inMemory-Data");
+    await Task.WhenAll(Stats.InitStatFromDatabase(db));
+    Log.Information("Fetching Complete!");
 }
 
 Configure(app);

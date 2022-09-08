@@ -58,8 +58,8 @@
             <input id="tab4" type="radio" name="tabs"/>
 
             <nav>
-                <label for="tab1">Top 10 of Statt</label>
-                <label for="tab2">Wealthiest Top 10</label>
+                <label for="tab1">Top X of Statt</label>
+                <label for="tab2">Wealthiest Top X</label>
                 <label for="tab3">Complex Form</label>
                 <label for="tab4">Delete Graphs</label>
             </nav>
@@ -75,20 +75,24 @@
                         @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) <br/>
                         @Html.Label(nameof(GraphData.Autorefresh)) <br/>
                         @Html.CheckBoxFor(x => x.Autorefresh) <br/>
+                        @Html.Label(nameof(GraphData.CountUser)) <br/>
+                        @Html.TextBoxFor(x => x.CountUser) <br/>
                         <button asp-page-handler="CreateTop10" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Create</button>
                     </form>
                 </div>
                 <div class="tab2">
                     <form method="post">
-                        <span asp-validation-for="AccessCode" class="text-danger"></span> <br/>
-                        @Html.Label("Name")<br/>
-                        @Html.TextBoxFor(x => x.AccessCode) <br/>
-                        @Html.Label(nameof(GraphData.Statt))<br/>
-                        @Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems) <br/>
-                        @Html.Label("Last X Minutes: ")<br/>
-                        @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) <br/>
-                        @Html.Label(nameof(GraphData.Autorefresh)) <br/>
-                        @Html.CheckBoxFor(x => x.Autorefresh) <br/>
+                         <span asp-validation-for="AccessCode" class="text-danger"></span> <br/>
+                         @Html.Label("Name")<br/>
+                         @Html.TextBoxFor(x => x.AccessCode) <br/>
+                         @Html.Label(nameof(GraphData.Statt))<br/>
+                         @Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems) <br/>
+                         @Html.Label("Last X Minutes: ")<br/>
+                         @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) <br/>
+                         @Html.Label(nameof(GraphData.Autorefresh)) <br/>
+                         @Html.CheckBoxFor(x => x.Autorefresh) <br/>
+                         @Html.Label(nameof(GraphData.CountUser)) <br/>
+                         @Html.TextBoxFor(x => x.CountUser) <br/>
                         <button asp-page-handler="CreateTop10Wealth" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Create</button>
                     </form>
                 </div>

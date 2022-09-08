@@ -33,6 +33,7 @@ namespace RimionshipServer.Pages.Admin
         public  DateTime             Start                { get; set; }
         public  DateTime             End                  { get; set; }
         public  int                  IntervalSeconds      { get; set; }
+        public  int                  CountUser      { get; set; }
         public  bool                 Autorefresh          { get; set; }
         public  List<GraphData>      AllGraphs            { get; set; }
         public async Task<IActionResult> OnGet()
@@ -48,6 +49,7 @@ namespace RimionshipServer.Pages.Admin
             var stuff = await _dbContext.Users.Select(x => new{x.Id, x.UserName}).ToListAsync();
             UserSelectListItems = stuff.Select(x => new SelectListItem(x.UserName, x.Id)).ToList();
             AllGraphs           = await _dbContext.GraphData.Include(x => x.UsersReference).ToListAsync();
+            CountUser           = 10;
             return Page();
         }
 
@@ -84,13 +86,9 @@ namespace RimionshipServer.Pages.Admin
             var seconds = int.Parse(LastTime);
             graphData.Start = DateTime.Now - TimeSpan.FromSeconds(seconds);
             graphData.End   = DateTime.Now;
-
-            var users = _dbContext.HistoryStats.FromSqlRaw($@"
-SELECT * FROM (SELECT * FROM (SELECT * FROM HistoryStats ORDER BY Timestamp DESC) GROUP BY UserId) ORDER BY {stat} DESC LIMIT 10
-").Select(x => x.UserId);
-
-            graphData.UsersReference  = await _dbContext.Users.Where(x => users.Contains(x.Id)).ToListAsync();
+            
             graphData.IntervalSeconds = 10;
+            graphData.CountUser       = CountUser;
             return await CreateAsync(graphData);
         }
 

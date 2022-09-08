@@ -1,10 +1,10 @@
 ﻿using System.Drawing;
 using System.Runtime.CompilerServices;
-using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Data;
+
 namespace RimionshipServer.Pages.Api;
 
 public class SimpleGraph : PageModel
@@ -46,10 +46,10 @@ public class SimpleGraph : PageModel
                                                 ColorTranslator.FromHtml("#c42a51"),
                                                 ColorTranslator.FromHtml("#93003a")
                                              };
-
+    
     public SimpleGraph(RimionDbContext dbContext)
     {
-        _dbContext = dbContext;
+        _dbContext                 =  dbContext;
     }
 
     [BindProperty(SupportsGet = true)]
@@ -92,14 +92,23 @@ public class SimpleGraph : PageModel
             start = _graphData.Start;
             end   = _graphData.End;
         }
+        ((List<DateTimeOffset> Timestamp, List<object> Values), string UserName)[] tasks;
         
-        var tasks = (await Task.WhenAll(
-                                        _graphData.UsersReference
-                                                  .Select(async userId =>
-                                                              ((await _dbContext.FetchDataVerticalAsync(start, end, _graphData.IntervalSeconds, _graphData.Statt, userId.Id)), userId.UserName)
-                                                         )
-                                       ))
-           .ToList();
+        if (_graphData.CountUser is not null)
+        {
+            tasks = await Task.WhenAll((await Stats.GetTopXNotBannedUserFromDynamicCache(_graphData.Statt, _graphData.CountUser.Value, _dbContext))
+                                      .Select(async userId =>
+                                                  ((await _dbContext.FetchDataVerticalAsync(start, end, _graphData.IntervalSeconds, _graphData.Statt, userId.Id), userId.UserName)
+                                                  )));
+        }
+        else
+        {
+            tasks = await Task.WhenAll(_graphData.UsersReference
+                                                 .Where(x => !x.WasBanned)
+                                                 .Select(async userId =>
+                                                             ((await _dbContext.FetchDataVerticalAsync(start, end, _graphData.IntervalSeconds, _graphData.Statt, userId.Id)), userId.UserName)
+                                                        ));
+        }
 
         var datasetRecords = new Dictionary<string, List <Data>>();
         foreach (var perUser in tasks) //per user
@@ -120,7 +129,7 @@ public class SimpleGraph : PageModel
                       .Select((datasetRecord, index) => new Dataset(datasetRecord.Key, Colors[index], datasetRecord.Value));
 
         Datasets  = datasets;
-        GraphName = "Test";
+        GraphName = _graphData.Accesscode;
         return Page();
     }
 }

@@ -37,10 +37,17 @@
                 @modelAllowedMod.Autorefresh
             </td>
             <td>
-                @foreach (var user in modelAllowedMod.Users)
+                @if (modelAllowedMod.Users.Any())
                 {
-                    @user
-                    <br/>
+                    @foreach (var user in modelAllowedMod.Users)
+                    {
+                        @user
+                        <br/>
+                    }
+                }
+                else
+                {
+                    <span>Top @modelAllowedMod.CountUser</span>
                 }
             </td>
             <td>
