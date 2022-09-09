@@ -118,6 +118,8 @@ public class SimpleGraph : PageModel
             {
                 var f   = perUser.Item1.Timestamp[index].ToUnixTimeMilliseconds();
                 var obj = perUser.Item1.Values[index].ToString()!;
+                if (obj is null or "0" or "")
+                    continue;
                 dataRecords.Add(new Data(f, obj));
             }
             datasetRecords.Add(perUser.UserName, dataRecords);

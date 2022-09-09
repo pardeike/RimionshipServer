@@ -98,7 +98,7 @@ namespace RimionshipServer.API
             VerifyId(request.Id);
             var (secret, token) = loginService.CreateLoginToken(request.Id);
 
-            return Task.FromResult(new LoginResponse()
+            return Task.FromResult(new LoginResponse
             {
                 LoginToken = secret,
                 LoginUrl = configurationService.GetLoginUrl(token)
@@ -119,6 +119,7 @@ namespace RimionshipServer.API
 
         public override async Task<StartResponse> Start(StartRequest request, ServerCallContext context)
         {
+            VerifyId(request.Id);
             var user = await GetCachedUserAsync(request.Id);
 
             // NYI
@@ -133,6 +134,7 @@ namespace RimionshipServer.API
 
         public override async Task<FutureEventsResponse> FutureEvents(FutureEventsRequest request, ServerCallContext context)
         {
+            VerifyId(request.Id);
             var user = await GetCachedUserAsync(request.Id);
             // NYI
             return new FutureEventsResponse();
@@ -140,11 +142,15 @@ namespace RimionshipServer.API
 
         public override async Task<StatsResponse> Stats(StatsRequest request, ServerCallContext context)
         {
-            var ct = context.CancellationToken;
+            VerifyId(request.Id);
+            if ((State.Types.Game)(await db.GetGameStateAsync(context.CancellationToken)).GameState 
+                is not State.Types.Game.Started 
+               and not State.Types.Game.Training)
+                return new StatsResponse{ Interval = 10 };
+            
             var user = await GetCachedUserAsync(request.Id);
-
             // PARTIALLY implemented - at least, we keep the scores in-memory
-            await this.scoreService.AddOrUpdateScoreAsync(request.Id, user.UserName, user.AvatarUrl, request.Wealth, ct);
+            await this.scoreService.AddOrUpdateScoreAsync(request.Id, user.UserName, user.AvatarUrl, request.Wealth, context.CancellationToken);
 
             await db.AddOrUpdateStatsAsync(user, request);
             return new StatsResponse { Interval = 10 };
@@ -164,6 +170,7 @@ namespace RimionshipServer.API
 
         public override async Task<SyncResponse> Sync(SyncRequest request, ServerCallContext context)
         {
+            VerifyId(request.Id);
             if (request.WaitForChange)
                 await Task.Factory.StartNew(() =>
                                         {
@@ -173,8 +180,8 @@ namespace RimionshipServer.API
             context.CancellationToken.ThrowIfCancellationRequested();
             
             return new SyncResponse{
-                                       Message = await db.GetMotdAsync(context.CancellationToken),
-                                       State = await db.GetGameStateAsync(),
+                                       Message  = await db.GetMotdAsync(context.CancellationToken),
+                                       State    = await db.GetGameStateAsync(context.CancellationToken),
                                        Settings = await _settingService.GetActiveSetting(db, context.CancellationToken)
                                    };
         }

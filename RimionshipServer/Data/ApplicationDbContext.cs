@@ -16,6 +16,8 @@ namespace RimionshipServer.Data
         
         private DbSet<MiscSettings.State>            GameState { get; set; } = null!;
         private DbSet<MiscSettings.BroadcastMessage> MotdSet   { get; set; } = null!;
+
+        private MiscSettings.State? _cachedGameState;
         
         public async Task SetGameStateAsync(int gameState, int hour, int minute)
         {
@@ -25,11 +27,12 @@ namespace RimionshipServer.Data
             toUpdate.PlannedStartMinute = minute;
             GameState.Update(toUpdate);
             await SaveChangesAsync();
+            _cachedGameState = toUpdate;
         }
         
         public async Task<MiscSettings.State> GetGameStateAsync(CancellationToken cancellationToken = default)
         {
-            return (await GameState.FirstAsync());
+            return _cachedGameState ??= await GameState.FirstAsync(cancellationToken);
         }
         
         public async Task SeedSingeRecordTables()
@@ -48,17 +51,20 @@ namespace RimionshipServer.Data
             }
         }
         
+        private string? _cachedMotd;
+
         public async Task SetMotdAsync(string? newText)
         {
             var toUpdate = await MotdSet.FirstAsync();
             toUpdate.Text = newText ?? string.Empty;
             MotdSet.Update(toUpdate);
             await SaveChangesAsync();
+            _cachedMotd = newText;
         }
         
         public async Task<string> GetMotdAsync(CancellationToken cancellationToken = default)
         {
-            return (await MotdSet.FirstAsync()).Text;
+            return _cachedMotd ??= (await MotdSet.FirstAsync(cancellationToken)).Text;
         }
         
         public DbSet<MiscSettings.Settings> Settings { get; set; } = null!;

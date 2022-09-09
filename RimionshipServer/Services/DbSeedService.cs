@@ -35,8 +35,7 @@ namespace RimionshipServer.Services
             await SeedSettings();
             await db.SeedSingeRecordTables();
             await db.SaveChangesAsync();
-            await db.SaveChangesAsync();
-			if (env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 if (Environment.GetCommandLineArgs().Contains("--fillMeUp"))
 				{
