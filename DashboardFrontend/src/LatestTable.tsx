@@ -1,102 +1,138 @@
-import { batch, createMemo, createSignal, For, mergeProps, Show, VoidComponent } from "solid-js";
-import { useRimionship } from "./RimionshipContext";
-import { LatestStats } from "./Stats";
-import { CC, ColumnDef, ColumnId, displayValue } from "./Utils";
+import { batch, createMemo, createSignal, For, mergeProps, Show, VoidComponent } from "solid-js"
+import { useRimionship } from "./RimionshipContext"
+import { LatestStats } from "./Stats"
+import { CC, ColumnDef, ColumnId, displayValue } from "./Utils"
 
 const DefaultColumns = [
   CC('Place', '#'),
-  CC('UserId', 'Spieler'),
-  CC('AmountBloodCleaned', '🩸🧹'),
-  CC('AnimalMeatCreated', '🐑🥩'),
-  CC('Caravans', '🚌'),
-  CC('Colonists', '👫'),
-  CC('ColonistsKilled', '👫✝'),
-  CC('ColonistsNeedTending', '👫💉'),
-  CC('Conditions', '🤮'),
-  CC('DamageDealt', '⚔🔢'),
-  CC('DamageTakenPawns', '🤕🔢'),
-  CC('Fire', '🔥'),
-  CC('InGameHours', '⌚'),
-  CC('Wealth', '💲'),
-  CC('Timestamp', '🔁')
-];
+  CC('UserId', 'Player'),
+  CC('Wealth', 'Wealth'),
+  CC('MapCount', 'Map'),
+  CC('Colonists', 'Colonist'),
+  CC('ColonistsNeedTending', 'Injured'),
+  CC('MedicalConditions', 'Med Cond'),
+  CC('Enemies', 'Enemies'),
+  CC('WildAnimals', 'Wild Animal'),
+  CC('TamedAnimals', 'Tame Animal'),
+  CC('Visitors', 'Visitors'),
+  CC('Prisoners', 'Prisoners'),
+  CC('DownedColonists', 'Downed'),
+  CC('MentalColonists', 'Mental'),
+  CC('Rooms', 'Room'),
+  CC('Caravans', 'Caravan'),
+  CC('WeaponDps', 'Weapon'),
+  CC('Electricity', 'Power'),
+  CC('Medicine', 'Med'),
+  CC('Food', 'Food'),
+  CC('Fire', 'Fire'),
+  CC('Conditions', 'Map Cond'),
+  CC('Temperature', 'Temp'),
+  CC('NumRaidsEnemy', 'Raid'),
+  CC('NumThreatBigs', 'Thread'),
+  CC('ColonistsKilled', 'Casualty'),
+  CC('GreatestPopulation', 'Max Pop'),
+  CC('InGameHours', 'Hours'),
+  CC('DamageTakenPawns', 'Dam. Pawn'),
+  CC('DamageTakenThings', 'Dam. Thing'),
+  CC('DamageDealt', 'Dam. Dealt'),
+  CC('AnimalMeatCreated', 'Quest Meat'),
+  CC('AmountBloodCleaned', 'Quest Blood'),
+  CC('TicksLowColonistMood', 'Quest Mood'),
+  CC('TicksIgnoringBloodGod', 'Quest God'),
+  CC('Timestamp', 'Seen Ago')
+]
 
 export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDef[] }> = (props) => {
-  props = mergeProps({ sortable: true, columns: DefaultColumns }, props);
-  const { latestStats } = useRimionship();
-  const [sortKey, setSortKey] = createSignal<ColumnId | undefined>('Place');
-  const [sortDir, setSortDir] = createSignal<-1 | 1>(-1);
-  const [stopUpdating, setStopUpdating] = createSignal(false);
+  props = mergeProps({ sortable: true, columns: DefaultColumns }, props)
+  const { latestStats } = useRimionship()
+  const [sortKey, setSortKey] = createSignal<ColumnId | undefined>('Place')
+  const [sortDir, setSortDir] = createSignal<-1 | 1>(-1)
+  const [stopUpdating, setStopUpdating] = createSignal(false)
 
   const changeSort = (col: ColumnId) => {
     if (!props.sortable)
-      return;
+      return
 
     if (sortKey() === col) {
       if (sortDir() === 1)
-        setSortDir(-1);
+        setSortDir(-1)
       else {
         batch(() => {
-          setSortKey(undefined);
-          setSortDir(1);
-        });
+          setSortKey(undefined)
+          setSortDir(1)
+        })
       }
     }
     else {
       batch(() => {
-        setSortKey(col);
-        setSortDir(1);
+        setSortKey(col)
+        setSortDir(1)
       })
     }
-  };
+  }
 
   const arrowState = (col: ColumnId, dir: -1 | 1) => {
-    const sk = sortKey();
-    const isActive = (sk === col && sortDir() === dir);
+    const sk = sortKey()
+    const isActive = (sk === col && sortDir() === dir)
     return {
       "text-secondary": !isActive,
       "text-light": isActive,
-    };
-  };
+    }
+  }
 
   const sort = (a: any, b: any): number => {
     if (a instanceof Array && a[0] instanceof Date && b instanceof Array && b[0] instanceof Date) {
-      return a[0].getTime() - b[0].getTime();
+      return a[0].getTime() - b[0].getTime()
     }
 
     if (typeof a === 'string' && typeof b === 'string') {
-      return a.localeCompare(b);
+      return a.localeCompare(b)
     }
 
     if (typeof a === 'number' && typeof b === 'number') {
-      return a - b;
+      return a - b
     }
 
-    console.log('cannot sort', typeof a, typeof b);
-    return 0;
-  };
+    console.log('cannot sort', typeof a, typeof b)
+    return 0
+  }
+
+  const selectColor = (col: ColumnDef) => {
+    const sk = sortKey()
+    var c = '#000'
+    if (col.sortable) {
+      if (sk === col.id) {
+        if (sortDir() == -1)
+          c = '#050'
+        else
+          c = '#500'
+      }
+    }
+    return { 'background-color': c }
+  }
 
   const rows = createMemo<LatestStats[]>((prev) => {
     if (stopUpdating())
-      return prev ?? latestStats;
+      return prev ?? latestStats
 
-    const sk = sortKey();
+    const sk = sortKey()
     if (sk === undefined)
-      return latestStats;
+      return latestStats
 
-    const sd = sortDir();
-    return Array.from(latestStats).sort((b, a) => sort(a[sk], b[sk]) * sd);
-  });
+    const sd = sortDir()
+    return Array.from(latestStats).sort((b, a) => sort(a[sk], b[sk]) * sd)
+  })
 
-  return <table class="table table-striped table-hover table-stoppable" classList={{ "table-secondary": stopUpdating() }}>
+  return <table class="table table-striped table-hover table-stoppable stats" classList={{ "table-secondary": stopUpdating() }}>
     <thead>
       <tr class="table-dark sortable">
         <For each={props.columns}>{(col) =>
-          <th onClick={() => changeSort(col.id)} title={col.id}>
+          <th onClick={() => changeSort(col.id)} title={col.id} style={selectColor(col)}>
             {col.displayName}
-            <Show when={col.sortable && props.sortable}>
+            <Show when={false && col.sortable && props.sortable}>
               <span classList={arrowState(col.id, 1)}>&#9660;</span><span classList={arrowState(col.id, -1)}>&#9650;</span>
-            </Show></th>
+            </Show>
+          </th>
         }</For>
       </tr>
     </thead>
@@ -108,4 +144,4 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
       }</For>
     </tbody>
   </table>
-};
+}
