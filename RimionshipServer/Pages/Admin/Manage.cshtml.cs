@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using RimionshipServer.Data;
 using RimionshipServer.Users;
 using Serilog;
 namespace RimionshipServer.Pages.Admin
@@ -20,11 +21,13 @@ namespace RimionshipServer.Pages.Admin
         
         public const int ElementsPerSite = 25;
         
-        private readonly UserManager _userManager;
-
-        public Manage(UserManager userManager)
+        private readonly UserManager     _userManager;
+        private readonly RimionDbContext _db;
+        
+        public Manage(UserManager userManager, RimionDbContext db)
         {
             _userManager = userManager;
+            _db          = db;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -88,6 +91,13 @@ namespace RimionshipServer.Pages.Admin
                                                           .ToListAsync(HttpContext.RequestAborted))
                                               .Select(async x => new UsersDTO(x.WasBanned, x.IsSuspicious, x.UserName, x.Id, await _userManager.GetRolesAsync(x))));
             return Page();
+        }
+        
+        public async Task<IActionResult> OnPostSwitchStreamAsync(string id)
+        {
+            var user = await _userManager.Users.Where(x => x.Id == id).FirstAsync(CancellationToken.None);
+            await _db.SetStreamerAsync(user.UserName);
+            return RedirectToPage("/Admin/Manage", pageNo);
         }
     }
 }

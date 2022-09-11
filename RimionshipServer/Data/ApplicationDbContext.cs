@@ -32,13 +32,21 @@ namespace RimionshipServer.Data
         
         public async Task<MiscSettings.State> GetGameStateAsync(CancellationToken cancellationToken = default)
         {
-            return _cachedGameState ??= await GameState.FirstAsync(cancellationToken);
+            return _cachedGameState ??= await GameState.AsNoTracking().FirstAsync(cancellationToken);
         }
         
         public async Task SeedSingeRecordTables()
         {
-            if (!await MotdSet.AnyAsync())
+            if ((await MotdSet.CountAsync()) != 2)
             {
+                await Database.OpenConnectionAsync();
+                await Database.BeginTransactionAsync();
+                await Database.ExecuteSqlRawAsync("DELETE FROM BroadcastMessage WHERE TRUE");
+                await Database.ExecuteSqlRawAsync("DELETE FROM sqlite_sequence WHERE name == 'BroadcastMessage'");
+                await Database.CommitTransactionAsync();
+                await Database.CloseConnectionAsync();
+                
+                MotdSet.Add(new MiscSettings.BroadcastMessage{Text = String.Empty});
                 MotdSet.Add(new MiscSettings.BroadcastMessage{Text = String.Empty});
             }
             if (!await GameState.AnyAsync())
@@ -64,7 +72,22 @@ namespace RimionshipServer.Data
         
         public async Task<string> GetMotdAsync(CancellationToken cancellationToken = default)
         {
-            return _cachedMotd ??= (await MotdSet.FirstAsync(cancellationToken)).Text;
+            return _cachedMotd ??= (await MotdSet.AsNoTracking().FirstAsync(cancellationToken)).Text;
+        }
+        
+        private string? _cachedStreamer;
+        public async Task SetStreamerAsync(string? newText)
+        {
+            var toUpdate = await MotdSet.FirstAsync(x => x.Id == 2);
+            toUpdate.Text = newText ?? string.Empty;
+            MotdSet.Update(toUpdate);
+            await SaveChangesAsync();
+            _cachedStreamer = newText;
+        }
+        
+        public async Task<string> GetStreamerAsync(CancellationToken cancellationToken = default)
+        {
+            return _cachedStreamer ??= (await MotdSet.AsNoTracking().FirstAsync(x => x.Id == 2, cancellationToken)).Text;
         }
         
         public DbSet<MiscSettings.Settings> Settings { get; set; } = null!;
