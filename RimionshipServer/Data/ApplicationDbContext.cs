@@ -76,13 +76,19 @@ namespace RimionshipServer.Data
         }
         
         private string? _cachedStreamer;
-        public async Task SetStreamerAsync(string? newText)
+        public async Task SetStreamerAsync(string userId)
         {
+            var user = await Users.FirstAsync(x => x.Id == userId);
+            user.WasShownTimes++;
+            Users.Update(user);
+            
             var toUpdate = await MotdSet.FirstAsync(x => x.Id == 2);
-            toUpdate.Text = newText ?? string.Empty;
+            toUpdate.Text = user.UserName ?? string.Empty;
             MotdSet.Update(toUpdate);
+            
             await SaveChangesAsync();
-            _cachedStreamer = newText;
+            
+            _cachedStreamer = user.UserName;
         }
         
         public async Task<string> GetStreamerAsync(CancellationToken cancellationToken = default)
@@ -147,7 +153,7 @@ FROM HistoryStats
 WHERE Timestamp >= @startTime AND Timestamp <= @endTime AND UserId = @userId
 ORDER BY TimestampBucket ASC, UserId ASC");
 
-			using var cmd = this.Database.GetDbConnection().CreateCommand();
+			await using var cmd = this.Database.GetDbConnection().CreateCommand();
 			await Database.OpenConnectionAsync();
 			cmd.CommandText = sb.ToString();
 			cmd.CommandType = CommandType.Text;

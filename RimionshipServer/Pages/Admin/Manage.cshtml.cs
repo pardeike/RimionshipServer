@@ -95,8 +95,7 @@ namespace RimionshipServer.Pages.Admin
         
         public async Task<IActionResult> OnPostSwitchStreamAsync(string id)
         {
-            var user = await _userManager.Users.Where(x => x.Id == id).FirstAsync(CancellationToken.None);
-            await _db.SetStreamerAsync(user.UserName);
+            await _db.SetStreamerAsync(id);
             return RedirectToPage("/Admin/Manage", pageNo);
         }
     }
