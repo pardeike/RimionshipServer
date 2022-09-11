@@ -40,10 +40,13 @@ namespace RimionshipServer.Pages.Admin
         {
             StattSelectListItems = Stats.FieldNames.Select(x => new SelectListItem(x, x)).ToList();
             LastTimeListItems = new List<SelectListItem>{
-                                                            new ("5", (5 * 60).ToString()),
-                                                            new ("10", (10 * 60).ToString()),
-                                                            new ("30", (30  * 60).ToString()),
-                                                            new ("All", (24 * 60 * 60).ToString()),
+                                                            new ("5", (5              * 60).ToString()),
+                                                            new ("10", (10            * 60).ToString()),
+                                                            new ("30", (30            * 60).ToString()),
+                                                            new ("60", (60            * 60).ToString()),
+                                                            new ("120", (120          * 60).ToString()),
+                                                            new ("240", (240            * 60).ToString()),
+                                                            new ("All", (24           * 60 * 60).ToString()),
                                                             new ("DEBUG 1 year", (365 * 24 * 60 * 60).ToString())
                                                         };
             var stuff = await _dbContext.Users.Select(x => new{x.Id, x.UserName}).ToListAsync();
@@ -75,28 +78,28 @@ namespace RimionshipServer.Pages.Admin
             var graphData = await _dbContext.GraphData
                                             .Include(x => x.UsersReference)
                                             .FirstOrDefaultAsync(x => x.Accesscode == AccessCode) 
-                         ?? new GraphData{
-                                             Statt = Statt
-                                         };
+                         ?? new GraphData();
+            
             if (LastTime is null || string.IsNullOrWhiteSpace(LastTime))
             { 
                 return Forbid();
             }
-
-            var seconds = int.Parse(LastTime);
-            graphData.Start = DateTime.Now - TimeSpan.FromSeconds(seconds);
-            graphData.End   = DateTime.Now;
             
-            graphData.IntervalSeconds = 10;
-            graphData.CountUser       = CountUser;
             return await CreateAsync(graphData);
         }
 
         [NonAction]
         public async Task<IActionResult> CreateAsync(GraphData data)
         {
-            data.Autorefresh = Autorefresh;
-            data.Accesscode  = AccessCode;
+            var seconds = int.Parse(LastTime);
+            data.Start = DateTime.Now - TimeSpan.FromSeconds(seconds);
+            data.End   = DateTime.Now;
+
+            data.IntervalSeconds = 10;
+            data.CountUser       = CountUser;
+            data.Statt           = Statt;
+            data.Autorefresh     = Autorefresh;
+            data.Accesscode      = AccessCode;
             if (data.Id == 0)
             {
                 _dbContext.GraphData.Add(data);
