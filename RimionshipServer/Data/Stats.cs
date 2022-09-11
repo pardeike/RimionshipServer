@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 namespace RimionshipServer.Data
 {
 	public abstract partial class Stats
@@ -29,6 +30,7 @@ namespace RimionshipServer.Data
 
 		public virtual RimionUser User                                              { get; set; } = null!;
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public         void       UpdateFromRequest(API.StatsRequest         stats) => UpdateFromRequestInternal(stats);
 
         public static IEnumerable<Task> InitStatFromDatabase(RimionDbContext context)
