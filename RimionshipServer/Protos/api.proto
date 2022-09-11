@@ -10,6 +10,7 @@ service API {
 	rpc LinkAccount (LinkAccountRequest) returns (LinkAccountResponse) {}
 	rpc Sync (SyncRequest) returns (SyncResponse) {}
 	rpc Start (StartRequest) returns (StartResponse) {}
+    rpc Stop (StopRequest) returns (StopResponse) {}
 	rpc Stats (StatsRequest) returns (StatsResponse) {}
 	rpc FutureEvents (FutureEventsRequest) returns (FutureEventsResponse) {}
 	rpc Attention (AttentionRequest) returns (AttentionResponse) {}
@@ -189,4 +190,11 @@ message AttentionRequest {
 }
 
 message AttentionResponse {
+}
+
+message StopRequest {
+    string id = 1;
+}
+
+message StopResponse {
 }
