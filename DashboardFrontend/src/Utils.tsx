@@ -1,6 +1,5 @@
 import { differenceInSeconds, differenceInMinutes, differenceInHours } from "date-fns"
-import { de } from "date-fns/locale"
-import { Accessor, createRenderEffect, JSX, Signal } from "solid-js"
+import { JSX } from "solid-js"
 import { PlayerLink } from "./PlayerLink"
 import { LatestStats } from "./Stats"
 
@@ -10,7 +9,6 @@ export const displayValue = (value: any, col: string): JSX.Element => {
   }
 
   if (value instanceof Array && value[0] instanceof Date) {
-    //return formatDistance(value[0], new Date(), { locale: de, includeSeconds: true })
     var now = new Date()
     var seen = value[0] as Date
     var hours = differenceInHours(now, seen)

@@ -1,40 +1,40 @@
 export interface LatestStats {
   // Calculated
-  Place: number;
+  Place: number
   // Server-Sent
-  UserId: string;
-  Timestamp: [date: Date, offset: number];
-  Wealth: number;
-  MapCount: number;
-  Colonists: number;
-  ColonistsNeedTending: number;
-  MedicalConditions: number;
-  Enemies: number;
-  WildAnimals: number;
-  TamedAnimals: number;
-  Visitors: number;
-  Prisoners: number;
-  DownedColonists: number;
-  MentalColonists: number;
-  Rooms: number;
-  Caravans: number;
-  WeaponDps: number;
-  Electricity: number;
-  Medicine: number;
-  Food: number;
-  Fire: number;
-  Conditions: number;
-  Temperature: number;
-  NumRaidsEnemy: number;
-  NumThreatBigs: number;
-  ColonistsKilled: number;
-  GreatestPopulation: number;
-  InGameHours: number;
-  DamageTakenPawns: number;
-  DamageTakenThings: number;
-  DamageDealt: number;
-  AnimalMeatCreated: number;
-  AmountBloodCleaned: number;
-  TicksLowColonistMood: number;
-  TicksIgnoringBloodGod: number;
+  UserId: string
+  Timestamp: [date: Date, offset: number]
+  Wealth: number
+  MapCount: number
+  Colonists: number
+  ColonistsNeedTending: number
+  MedicalConditions: number
+  Enemies: number
+  WildAnimals: number
+  TamedAnimals: number
+  Visitors: number
+  Prisoners: number
+  DownedColonists: number
+  MentalColonists: number
+  Rooms: number
+  Caravans: number
+  WeaponDps: number
+  Electricity: number
+  Medicine: number
+  Food: number
+  Fire: number
+  Conditions: number
+  Temperature: number
+  NumRaidsEnemy: number
+  NumThreatBigs: number
+  ColonistsKilled: number
+  GreatestPopulation: number
+  InGameHours: number
+  DamageTakenPawns: number
+  DamageTakenThings: number
+  DamageDealt: number
+  AnimalMeatCreated: number
+  AmountBloodCleaned: number
+  TicksLowColonistMood: number
+  TicksIgnoringBloodGod: number
 }

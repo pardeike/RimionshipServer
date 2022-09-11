@@ -1,6 +1,6 @@
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
-import solidPlugin from 'vite-plugin-solid';
+import { resolve } from 'path'
+import { defineConfig } from 'vite'
+import solidPlugin from 'vite-plugin-solid'
 
 export default defineConfig(({ command, mode, ssrBuild }) => ({
   plugins: [solidPlugin()],
@@ -28,4 +28,4 @@ export default defineConfig(({ command, mode, ssrBuild }) => ({
       }
     }
   }
-}));
+}))

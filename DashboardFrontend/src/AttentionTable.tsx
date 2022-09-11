@@ -1,24 +1,24 @@
-import { createMemo, For, VoidComponent } from "solid-js";
-import { PlayerLink } from "./PlayerLink";
-import { useRimionship } from "./RimionshipContext";
+import { createMemo, For, VoidComponent } from "solid-js"
+import { PlayerLink } from "./PlayerLink"
+import { useRimionship } from "./RimionshipContext"
 
-const AttentionRow : VoidComponent<{ id: string, score: number }> = (props) => {
-  const { latestStats } = useRimionship();
+const AttentionRow: VoidComponent<{ id: string, score: number }> = (props) => {
+  const { latestStats } = useRimionship()
 
-  const stats = createMemo(() => latestStats.find(p => p.UserId === props.id) );
+  const stats = createMemo(() => latestStats.find(p => p.UserId === props.id))
 
   return (
-  <tr>
-    <td>{stats()?.Place}</td>
-    <td><PlayerLink id={props.id} /></td>
-    <td>{stats()?.Wealth}</td>
-    <td>{props.score}</td>
-  </tr>
-  );
-};
+    <tr>
+      <td>{stats()?.Place}</td>
+      <td><PlayerLink id={props.id} /></td>
+      <td>{stats()?.Wealth}</td>
+      <td>{props.score}</td>
+    </tr>
+  )
+}
 
 export const AttentionTable: VoidComponent = () => {
-  const { attentionList } = useRimionship();
+  const { attentionList } = useRimionship()
   return <>
     <h3>Interesting Liste</h3>
     <table class="table">
@@ -37,4 +37,4 @@ export const AttentionTable: VoidComponent = () => {
       </tbody>
     </table>
   </>
-};
+}

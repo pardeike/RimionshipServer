@@ -1,33 +1,33 @@
 html,
 body,
 * {
-  font-size: 9pt;
+    font-size: 9pt;
 }
 
 body {
-  margin: 5px;
+    margin: 5px;
 }
 
 .sortable th {
-  user-select: none;
+    user-select: none;
 }
 
 .table-stoppable.table-secondary {
-  cursor: progress;
+    cursor: progress;
 }
 
 .mini-avatar {
-  width: 16px;
-  height: 16px;
+    width: 16px;
+    height: 16px;
 }
 
 .stats th {
-  text-align: center;
+    text-align: center;
 }
 
 .stats tr td {
-  padding-left: 0;
-  padding-right: 0;
-  text-align: center;
-  white-space: nowrap;
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+    white-space: nowrap;
 }
