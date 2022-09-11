@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿#if DEBUG_GENERATOR
+using System.Diagnostics;
+#endif
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Text;
@@ -10,43 +12,40 @@ namespace Rimionshipserver.Analyzers
     {
         public void Execute(GeneratorExecutionContext context)
         {
-            var ns = GetNamespace(context.Compilation.SourceModule.GlobalNamespace, "RimionshipServer", "API");
-            if (ns == null)
-                return;
-
-            var type = ns.GetTypeMembers().FirstOrDefault(t => t.Name == "StatsRequest");
-
-            if (type == null)
+            var ns   = GetNamespace(context.Compilation.SourceModule.GlobalNamespace, "RimionshipServer", "API");
+            var type = ns?.GetTypeMembers().FirstOrDefault(t => t.Name == "StatsRequest");
+            
+            if (type is null)
                 return;
 
             var properties = type.GetMembers().OfType<IPropertySymbol>()
                                  .Select(ps => (DisplayType: ps.Type.ToDisplayString(), ps.Name))
                                  .Where(ps => ps.DisplayType is "float" or "int")
                                  .ToList();
-            var sourceBuilder = new StringBuilder($@"
-// Auto-generated code
+            var sourceBuilder = new StringBuilder(@"// Auto-generated code
 using System.Collections.Immutable;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace RimionshipServer.Data
-{{
+{
     public partial class Stats
-    {{
+    {
         private static ConcurrentDictionary<string, ConcurrentDictionary<string, double>> _StatToUser = new ();
                                                                                                            
         static partial void InitStatToUser() 
-        {{
+        {
 ");
-            foreach (var (DisplayType, Name) in properties)
+            foreach ((_, string Name) in properties)
             {
                 sourceBuilder.AppendLine($"            _StatToUser.TryAdd(\"{Name}\", new());");
             }
-            sourceBuilder.AppendLine(@"        }");
+            sourceBuilder.AppendLine(@"        }
+");
                 
-            foreach (var (DisplayType, Name) in properties)
+            foreach ((string DisplayType, string Name) in properties)
             {
-                sourceBuilder.AppendLine($@"
-        public {DisplayType} {Name} {{ get; set; }}");
+                sourceBuilder.AppendLine($@"        public {DisplayType} {Name} {{ get; set; }}");
             }
 
             sourceBuilder.Append(@"
@@ -54,7 +53,7 @@ namespace RimionshipServer.Data
 		public Stats(Stats other)
 		{");
 
-            foreach (var (DisplayType, Name) in properties)
+            foreach ((_, string Name) in properties)
             {
                 sourceBuilder.Append($@"
             this.{Name} = other.{Name};");
@@ -62,15 +61,22 @@ namespace RimionshipServer.Data
             sourceBuilder.Append(@"
 		}
 
+        public void UpdateFromRequestNoCache(API.StatsRequest stats)
+        {
+");
+            foreach ((_, string Name) in properties)
+                sourceBuilder.AppendLine($"            this.{Name} = stats.{Name};");
+            sourceBuilder.Append(@"        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         partial void UpdateFromRequestInternal(API.StatsRequest stats)
-        {");
-            foreach (var (DisplayType, Name) in properties)
-                sourceBuilder.Append(@$"
-            this.{Name} = stats.{Name};
+        {
+");
+            foreach ((_, string Name) in properties)
+                sourceBuilder.Append(@$"            this.{Name} = stats.{Name};
             _StatToUser[""{Name}""][UserId] = (double) stats.{Name};
 ");
-            sourceBuilder.Append(@"
-        }
+            sourceBuilder.Append(@"        }
 
         public static ImmutableArray<string> FieldNames { get; } = ImmutableArray.CreateRange(new[] { ");
 
@@ -89,15 +95,6 @@ namespace RimionshipServer.Data
                 Debugger.Launch();
             }
         #endif 
-        }
-
-        private static IEnumerable<INamedTypeSymbol> GetTypes(INamespaceSymbol symbol)
-        {
-            foreach (var type in symbol.GetNamespaceMembers().SelectMany(GetTypes))
-                yield return type;
-
-            foreach (var type in symbol.GetTypeMembers())
-                yield return type;
         }
 
         private static INamespaceSymbol GetNamespace(INamespaceSymbol root, params string[] names)

@@ -35,18 +35,7 @@ namespace RimionshipServer.Services
             await SeedSettings();
             await db.SeedSingeRecordTables();
             await db.SaveChangesAsync();
-            if (env.IsDevelopment())
-            {
-                if (Environment.GetCommandLineArgs().Contains("--fillMeUp"))
-				{
-					await CreateBotUsersAsync();
-					await PopulateDataAsync();
-					await db.SaveChangesAsync();
-					Environment.Exit(0);
-					return;
-				}
-            }
-		}
+        }
         private async Task SeedSettings()
         {
             if (await db.Settings.AnyAsync())
@@ -128,90 +117,10 @@ namespace RimionshipServer.Services
                                     new AllowedMod{PackageId = "com.github.alandariva.moreplanning", SteamId = 2551225702, LoadOrder = 27},
                                     new AllowedMod{PackageId = "showhair.kv.rw", SteamId                     = 1180826364, LoadOrder = 28});
         }
-
-
-        private IEnumerable<string> GetBotIds() => Enumerable.Range(0, 100).Select(i => $"BOT-{i:000}");
-
+        
         public Task AdminEveryone()
         {
             return userManager.Users.ForEachAsync(x => userManager.AddToRoleAsync(x, Roles.Admin));
         }
-        
-		private async Task CreateBotUsersAsync()
-		{
-			foreach (var id in GetBotIds())
-			{
-				if (await userManager.FindByIdAsync(id) == null)
-				{
-					var user = new RimionUser
-					{
-						Id = id,
-						UserName = id,
-						AvatarUrl = null,
-					};
-
-					var result = await userManager.CreateAsync(user);
-					if (!result.Succeeded)
-						throw new NotImplementedException();
-
-					await userManager.AddPlayerIdAsync(user, id);
-				}
-			}
-		}
-
-		private async Task PopulateDataAsync()
-		{
-			await db.Database.ExecuteSqlRawAsync("DELETE FROM HistoryStats");
-
-			var duration = TimeSpan.FromHours(11);
-			var interval = TimeSpan.FromSeconds(10);
-			var end = DateTimeOffset.UtcNow;
-			var rng = new Random();
-			foreach (var id in GetBotIds())
-				CreateTestDataAsync(
-					 id,
-					 end.Subtract(duration).Add(TimeSpan.FromSeconds(rng.Next(0, 3600))),
-					 end.Subtract(TimeSpan.FromSeconds(rng.Next(0, 360))),
-					 interval);
-		}
-
-		private void CreateTestDataAsync(string userId, DateTimeOffset start, DateTimeOffset end, TimeSpan interval)
-		{
-			var rng = new Random();
-
-			var resetCounter = -rng.Next();
-			var stats = new StatsRequest();
-			var props = stats.GetType().GetProperties().Where(c => c.PropertyType == typeof(int) || c.PropertyType == typeof(float)).ToList();
-
-			for (var now = start; now < end; now += interval + TimeSpan.FromSeconds(rng.NextDouble() - 0.5))
-			{
-				resetCounter += rng.Next(0, 100);
-				if (resetCounter > 0)
-				{
-					stats = new StatsRequest();
-					resetCounter = -rng.Next();
-				}
-
-				foreach (var prop in props)
-				{
-					var val = prop.GetValue(stats);
-					prop.SetValue(stats, val switch
-					{
-						float f => (object)(float)(f + (rng.NextDouble() - 0.4) * 10),
-						int i => (object)(int)(i + rng.Next(-100, 100)),
-						_ => throw new Exception()
-					});
-				}
-
-				var historyStats = new HistoryStats
-				{
-					UserId = userId,
-					Timestamp = now
-				};
-
-				historyStats.UpdateFromRequest(stats);
-				db.HistoryStats.Add(historyStats);
-			}
-		}
-	}
+    }
 }
