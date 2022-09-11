@@ -10,7 +10,8 @@ namespace RimionshipServer.Data
 
         public bool WasBanned    { get; set; } = false;
         public bool IsSuspicious { get; set; } = false;
-        
+        public bool HasQuit { get; set; } = false;
+
         public int WasShownTimes { get; set; }
         
         public virtual List<GraphData> InGraphs { get; set; } = new ();

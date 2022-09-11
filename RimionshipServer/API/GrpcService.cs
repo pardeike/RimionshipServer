@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
@@ -36,7 +37,17 @@ namespace RimionshipServer.API
             _attention = attention;
             _settingService = settingService;
         }
-
+        
+        public override async Task<StopResponse> Stop(StopRequest request, ServerCallContext context)
+        {
+            VerifyId(request.Id);
+            var user = await db.Users.FirstAsync(x => x.Id == request.Id);
+            user.HasQuit = true;
+            db.Users.Update(user);
+            dataService.InvalidatePlayerCache(request.Id);
+            return new StopResponse();
+        }
+        
         /**
 		 * Increases the Attention Score for player X by Y amount
 		 */
@@ -147,8 +158,12 @@ namespace RimionshipServer.API
                 is not State.Types.Game.Started 
                and not State.Types.Game.Training)
                 return new StatsResponse{ Interval = 10 };
-            
+
             var user = await GetCachedUserAsync(request.Id);
+            
+            if (user.HasQuit)
+                return new StatsResponse{ Interval = 10 };
+            
             // PARTIALLY implemented - at least, we keep the scores in-memory
             await this.scoreService.AddOrUpdateScoreAsync(request.Id, user.UserName, user.AvatarUrl, request.Wealth, context.CancellationToken);
 
