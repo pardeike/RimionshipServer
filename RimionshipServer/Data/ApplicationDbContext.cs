@@ -14,6 +14,8 @@ namespace RimionshipServer.Data
         public  DbSet<GraphData>                     GraphData    { get; set; } = null!;
         public  DbSet<GraphUser>                     GraphUsers   { get; set; } = null!;
         
+        public  DbSet<SaveFile>                      SaveFiles   { get; set; } = null!;
+
         private DbSet<MiscSettings.State>            GameState { get; set; } = null!;
         private DbSet<MiscSettings.BroadcastMessage> MotdSet   { get; set; } = null!;
 

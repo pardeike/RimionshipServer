@@ -1,0 +1,38 @@
+﻿@model RimionshipServer.Pages.Admin.ModSettings
+<form asp-page-handler="Motd" method="post">
+    <div class="input-group mb-3 justify-content-center">
+        <input name="motd" type="text" style="margin-right: 1%; width: 84%;" placeholder="@Model.Motd"/>
+        <div class="input-group-prepend" style="width: 15%;">
+            <button class="btn btn-outline-dark form-control" type="submit">Set Broadcast Message</button>
+        </div>
+    </div>
+</form>
+<form asp-page-handler="Game" method="post">
+    <div class="justify-content-center">
+        <div class="input-group justify-content-center align-items-center">
+            <div>
+                <div class="input-group">
+                    <label class="m-2 form-label">@nameof(Model.PlannedStartHour)</label>
+                    @Html.TextBoxFor(x => x.PlannedStartHour, new{@class = "m-2 form-control"})
+                </div>
+                <div class="input-group">
+                    <label class="m-2 form-label">@nameof(Model.PlannedStartMinute)</label>
+                    @Html.TextBoxFor(x => x.PlannedStartMinute, new{@class = "m-2 form-control"})
+                </div>
+                <div class="input-group">
+                    <label class="m-2 form-label">@nameof(Model.GameState)</label>
+                    @Html.DropDownListFor(x => x.GameState, new[]{
+                                                                     new SelectListItem("STOPPED", "0", Model.GameState == 0),
+                                                                     new SelectListItem("TRAINING", "1", Model.GameState == 1),
+                                                                     new SelectListItem("PREPARE", "2", Model.GameState == 2),
+                                                                     new SelectListItem("STARTED", "3", Model.GameState == 3),
+                                                                     new SelectListItem("COMPLETED", "4", Model.GameState == 4)
+                                                                 }, new{@class = "m-2 form-control"})
+                </div>
+            </div>
+            <div class="input-group-prepend justify-content-center align-items-center" style="width: 15%;">
+                <button class="btn btn-outline-dark form-control" type="submit">Set Game Data</button>
+            </div>
+        </div>
+    </div>
+</form>

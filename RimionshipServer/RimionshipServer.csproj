@@ -40,6 +40,9 @@
     <Content Update="Pages\Admin\_GraphList.cshtml">
       <DependentUpon>GraphConfigurator.cshtml</DependentUpon>
     </Content>
+    <Content Update="Pages\Admin\_GeneralSettings.cshtml">
+      <DependentUpon>ModSettings.cshtml</DependentUpon>
+    </Content>
   </ItemGroup>
   
 </Project>

@@ -1,4 +1,6 @@
 ﻿@page
+@using RimionshipServer.Pages.Api
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model RimionshipServer.Pages.Admin.ModSettings
 
 @{
@@ -24,59 +26,27 @@
 }
 <div class="text-center">
     <h1>Mod Settings</h1>
+    @Html.ValidationMessageFor(x => x.Upload,  null,new {@Class = "alert-danger"})
     <div class="tabbed">
-        <input checked="checked" id="tab1" type="radio" name="tabs" />
-        <input id="tab2" type="radio" name="tabs" />
-        <input id="tab3" type="radio" name="tabs" />
-    
+        <input checked="checked" id="tab1" type="radio" name="tabs"/>
+        <input id="tab2" type="radio" name="tabs"/>
+        <input id="tab3" type="radio" name="tabs"/>
+        <input id="tab4" type="radio" name="tabs"/>
+
         <nav>
             <label for="tab1">Broadcast Message</label>
             <label for="tab2">Allowed Mods</label>
             <label for="tab3">Game Settings</label>
+            <label for="tab4">Safe File Settings</label>
         </nav>
-       
+
         <figure>
             <div class="tab1">
-                <form asp-page-handler="Motd" method="post">
-                    <div class="input-group mb-3 justify-content-center">
-                        <input name="motd" type="text" style="margin-right: 1%; width: 84%;" placeholder="@Model.Motd"/>
-                        <div class="input-group-prepend" style="width: 15%;">
-                            <button class="btn btn-outline-dark form-control" type="submit">Set Broadcast Message</button>
-                        </div>
-                    </div>
-                </form>
-                <form asp-page-handler="Game" method="post">
-                    <div class="justify-content-center">
-                        <div class="input-group justify-content-center align-items-center">
-                            <div>
-                                <div class="input-group">
-                                    <label class="m-2 form-label">@nameof(Model.PlannedStartHour)</label>
-                                    @Html.TextBoxFor(x => x.PlannedStartHour, new{@class = "m-2 form-control"})
-                                </div>
-                                <div class="input-group">
-                                    <label class="m-2 form-label">@nameof(Model.PlannedStartMinute)</label>
-                                    @Html.TextBoxFor(x => x.PlannedStartMinute, new{@class = "m-2 form-control"})
-                                </div>
-                                <div class="input-group">
-                                    <label class="m-2 form-label">@nameof(Model.GameState)</label>
-                                    @Html.DropDownListFor(x => x.GameState, new[]{
-                                                                                     new SelectListItem("STOPPED", "0", Model.GameState == 0),
-                                                                                     new SelectListItem("TRAINING", "1", Model.GameState == 1),
-                                                                                     new SelectListItem("PREPARE", "2", Model.GameState == 2),
-                                                                                     new SelectListItem("STARTED", "3", Model.GameState == 3),
-                                                                                     new SelectListItem("COMPLETED", "4", Model.GameState == 4)
-                                                                                 }, new{@class = "m-2 form-control"})
-                                </div>
-                            </div>
-                            <div class="input-group-prepend justify-content-center align-items-center" style="width: 15%;">
-                                <button class="btn btn-outline-dark form-control" type="submit">Set Game Data</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                <partial name="_GeneralSettings" model=Model></partial>
             </div>
             <div class="tab2">
-                <partial name="_ModList" model=Model></partial> </div>
+                <partial name="_ModList" model=Model></partial>
+            </div>
             <div class="tab3">
                 <form asp-page-handler="Setting" method="post">
                     <div class="input-group mb-3 justify-content-center">
@@ -94,6 +64,25 @@
                 </form>
                 <form asp-page-handler="DeleteAll" method="post">
                     <button class="btn btn-danger form-control" type="submit">DELETE ALL HISTORY DATA</button>
+                </form>
+            </div>
+            <div class="tab4">
+                <h3>Select Safe File</h3>
+                <label>Currently Active: @(SaveFilePageModel.SafeFile?.Name ?? "None")</label>
+                <form method="post" asp-page-handler="FileSelect">
+                    <div class="input-group mb-3 justify-content-center">
+                        <label class="m-2 form-label">Select Safe File</label>
+                        @Html.DropDownListFor(x => x.SaveFileId, Model.SaveFileSelect)
+                        <input type="submit"/>
+                    </div>
+                </form>
+                <h3>Upload</h3>
+                <form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
+                    <div class="input-group mb-3 justify-content-center">
+                        <label class="m-2 form-label">Safe File</label>
+                        <input type="file" asp-for="Upload"/>
+                        <input type="submit"/>
+                    </div>
                 </form>
             </div>
         </figure>
