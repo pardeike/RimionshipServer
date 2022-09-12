@@ -56,7 +56,7 @@
 			@foreach (var user in Model.Users)
 			{
 				var isAdmin = user.Role.Contains(Roles.Admin);
-				var classs = "";
+				var classs = "bg-default";
 				@if (user.IsSuspicious)
 				{
 					classs = "bg-yellow";
@@ -73,7 +73,7 @@
 						classs = user.WasBanned ? "bg-red userrow" : "bg-green userrow";
 					}
 					<td class="userrow">
-						@if (user.Role.Count != 0)
+						@if (user.Role.Count == 0)
 						{
 							@if (user.WasBanned)
 							{
