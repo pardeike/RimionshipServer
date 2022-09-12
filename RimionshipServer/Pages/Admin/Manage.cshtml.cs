@@ -12,22 +12,22 @@ namespace RimionshipServer.Pages.Admin
 
         [BindProperty(SupportsGet = true)]
         public IEnumerable<UsersDTO> Users { get; set; } = null!;
-        
+
         [BindProperty(SupportsGet = true)]
         public int Pages { get; set; }
-        
+
         [BindProperty(SupportsGet = true)]
         public int pageNo { get; set; }
-        
-        public const int ElementsPerSite = 25;
-        
-        private readonly UserManager     _userManager;
+
+        public const int ElementsPerSite = 100;
+
+        private readonly UserManager _userManager;
         private readonly RimionDbContext _db;
-        
+
         public Manage(UserManager userManager, RimionDbContext db)
         {
             _userManager = userManager;
-            _db          = db;
+            _db = db;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -48,12 +48,12 @@ namespace RimionshipServer.Pages.Admin
             if (string.IsNullOrWhiteSpace(id))
                 return BadRequest();
             var toBan = await _userManager.Users.Where(x => x.Id == id).FirstAsync(CancellationToken.None);
-            toBan.WasBanned    = ban;
+            toBan.WasBanned = ban;
             toBan.IsSuspicious = ban;
             var wasBanned = await _userManager.UpdateAsync(toBan);
             if (wasBanned.Succeeded)
                 return RedirectToPage("/Admin/Manage", pageNo);
-            
+
             foreach (var wasBannedError in wasBanned.Errors)
             {
                 Log.Error("Error while banning {User}, Error Code: {Code}, ErrorDescription: {Description}", toBan.UserName, wasBannedError.Code, wasBannedError.Description);
@@ -61,10 +61,10 @@ namespace RimionshipServer.Pages.Admin
             }
             return Page();
         }
-        
+
         public async Task<IActionResult> OnPostPromoteAsync(string id)
         {
-            var user  = await _userManager.Users.Where(x => x.Id == id).FirstAsync(CancellationToken.None);
+            var user = await _userManager.Users.Where(x => x.Id == id).FirstAsync(CancellationToken.None);
             var roles = await _userManager.GetRolesAsync(user);
             if (roles.Contains(Roles.Admin))
             {
@@ -82,7 +82,7 @@ namespace RimionshipServer.Pages.Admin
         {
             if (string.IsNullOrWhiteSpace(searchKey))
                 return RedirectToPage("/Admin/Manage", 0);
-            
+
             Users = await Task.WhenAll((await _userManager.Users
                                                           .AsNoTrackingWithIdentityResolution()
                                                           .Where(x => EF.Functions.Like(x.UserName, $"%{searchKey}%"))
@@ -92,7 +92,7 @@ namespace RimionshipServer.Pages.Admin
                                               .Select(async x => new UsersDTO(x.WasBanned, x.IsSuspicious, x.UserName, x.Id, await _userManager.GetRolesAsync(x))));
             return Page();
         }
-        
+
         public async Task<IActionResult> OnPostSwitchStreamAsync(string id)
         {
             await _db.SetStreamerAsync(id);

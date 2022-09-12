@@ -1,89 +1,68 @@
 ﻿@model ModSettings
 
 <table class="table table-bordered">
-    <thead class="table-dark">
-    <tr>
-        <th scope="col">@(nameof(AllowedMod.LoadOrder))</th>
-        <th scope="col">@(nameof(AllowedMod.SteamId))</th>
-        <th scope="col">@(nameof(AllowedMod.PackageId))</th>
-        <th scope="col">Remove</th>
-        <th scope="col">Edit @(nameof(AllowedMod.LoadOrder))</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var modelAllowedMod in Model.AllowedMods)
-    {
-        <tr>
-            <td>
-                @modelAllowedMod.LoadOrder
-            </td>
-            <td>
-                @modelAllowedMod.SteamId
-            </td>
-            <td>
-                @modelAllowedMod.PackageId
-            </td>
-            <td>
-                <form asp-page-handler="DeleteMod" method="Post">
-                    <input hidden="" name="packageId" value="@modelAllowedMod.PackageId"/>
-                    <input hidden="" name="steamId" value="@modelAllowedMod.SteamId"/>
-                    <button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to remove the mod: @modelAllowedMod.PackageId`)">
-                        <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
-                            <path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm4.5 6c0 .9-.3 1.8-.8 2.5L5.5 4.3a4.5 4.5 0 0 1 7 3.7zm-9 0c0-.9.3-1.8.8-2.5l6.2 6.2a4.5 4.5 0 0 1-7-3.7z"/>
-                        </svg>
-                    </button>
-                </form>
-            </td>
-            <td>
-                @if (modelAllowedMod.LoadOrder != 1)
-                {
-                    <form asp-page-handler="EditOrder" method="Post">
-                        <input hidden="" name="originalLoadOrder" value="@(modelAllowedMod.LoadOrder)"/>
-                        <input hidden="" name="loadOrder" value="@(modelAllowedMod.LoadOrder - 1)"/>
-                        <button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to edit the mod: @modelAllowedMod.PackageId`)">
-                            <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
-                                <path d="M9 14V6.7h2c.4 0 .6-.5.4-.8l-3-3.7c-.2-.2-.6-.2-.8 0l-3 3.7c-.2.3 0 .8.4.8h2V14h2z"/>
-                            </svg>
-                        </button>
-                    </form>
-                }
-                @if (modelAllowedMod.LoadOrder != Model.MaximumLoadOrder)
-                {
-                    <form asp-page-handler="EditOrder" method="Post">
-                        <input hidden="" name="originalLoadOrder" value="@(modelAllowedMod.LoadOrder)"/>
-                        <input hidden="" name="loadOrder" value="@(modelAllowedMod.LoadOrder + 1)"/>
-                        <button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to edit the mod: @modelAllowedMod.PackageId`)">
-                            <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
-                                <path d="M7 2v7.3H5c-.4 0-.6.5-.4.8l3 3.7c.2.2.6.2.8 0l3-3.7c.2-.3 0-.8-.4-.8H9V2H7z"/>
-                            </svg>
-                        </button>
-                    </form>
-                }
-            </td>
-        </tr>
-    }
-    <tr>
-        <form asp-page-handler="Mod" method="post">
-            <td style="padding:0">
-                @(Model.MaximumLoadOrder + 1)
-                <input hidden="" class="table-create" id="loadOrder" name="loadOrder" value="@(Model.MaximumLoadOrder + 1)"/>
-            </td>
-            <td style="padding:0">
-                <input class="table-create" id="packageId" name="packageId" type="text"/>
-            </td>
-            <td style="padding:0">
-                <input class="table-create" id="steamId" name="steamId" type="text"/>
-            </td>
-            <td>
-                <button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to add this mod?`)">
-                    <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 16 16">
-                        <path d="M12.5 9H9v3.5c0 .3-.2.5-.5.5h-1c-.3 0-.5-.2-.5-.5V9H3.5c-.3 0-.5-.2-.5-.5v-1c0-.3.2-.5.5-.5H7V3.5c0-.3.2-.5.5-.5h1c.3 0 .5.2.5.5V7h3.5c.3 0 .5.2.5.5v1c0 .3-.2.5-.5.5z"/>
-                    </svg>
-                </button>
-            </td>
-            <td>
-            </td>
-        </form>
-    </tr>
-    </tbody>
+	<thead class="table-dark">
+		<tr>
+			<th scope="col">Platz</th>
+			<th scope="col">Steam-Id</th>
+			<th scope="col">Package-Id</th>
+			<th scope="col"></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var modelAllowedMod in Model.AllowedMods)
+		{
+			<tr>
+				<td class="modrow">
+					@modelAllowedMod.LoadOrder
+				</td>
+				<td class="modrow">
+					@modelAllowedMod.SteamId
+				</td>
+				<td class="modrow">
+					@modelAllowedMod.PackageId
+				</td>
+				<td class="modrow">
+					@if (modelAllowedMod.LoadOrder != 1)
+					{
+						<form asp-page-handler="EditOrder" method="Post" style="display: inline">
+							<input hidden="" name="originalLoadOrder" value="@(modelAllowedMod.LoadOrder)" />
+							<input hidden="" name="loadOrder" value="@(modelAllowedMod.LoadOrder - 1)" />
+							<button type="submit" class="btn" value="submit request">Hoch</button>
+						</form>
+					}
+					@if (modelAllowedMod.LoadOrder != Model.MaximumLoadOrder)
+					{
+						<form asp-page-handler="EditOrder" method="Post" style="display: inline">
+							<input hidden="" name="originalLoadOrder" value="@(modelAllowedMod.LoadOrder)" />
+							<input hidden="" name="loadOrder" value="@(modelAllowedMod.LoadOrder + 1)" />
+							<button type="submit" class="btn" value="submit request">Runter</button>
+						</form>
+					}
+					<form asp-page-handler="DeleteMod" method="Post" style="display: inline">
+						<input hidden="" name="packageId" value="@modelAllowedMod.PackageId" />
+						<input hidden="" name="steamId" value="@modelAllowedMod.SteamId" />
+						<button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to remove the mod: @modelAllowedMod.PackageId`)">Löschen</button>
+					</form>
+				</td>
+			</tr>
+		}
+		<tr>
+			<form asp-page-handler="Mod" method="post">
+			<td class="modrow">
+					@(Model.MaximumLoadOrder + 1)
+				<input hidden="" id="loadOrder" name="loadOrder" value="@(Model.MaximumLoadOrder + 1)" />
+			</td>
+			<td class="modrow">
+				<input id="packageId" name="packageId" type="number" />
+			</td>
+			<td class="modrow">
+				<input id="steamId" name="steamId" type="text" />
+			</td>
+			<td class="modrow">
+				<button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to add this mod?`)">Hinzufügen</button>
+			</td>
+			</form>
+		</tr>
+	</tbody>
 </table>

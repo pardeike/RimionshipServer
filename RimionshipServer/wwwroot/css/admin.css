@@ -3,6 +3,27 @@
     word-wrap: break-word;
 }
 
+.modrow {
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+}
+
+.userrow {
+    padding: 0;
+    margin: 0;
+    color: white;
+    vertical-align: middle;
+}
+
+    .userrow * button {
+        color: white;
+    }
+
+    .userrow form {
+        display: inline;
+    }
+
 svg {
     height: 2rem;
 }
@@ -30,12 +51,4 @@ svg {
 .bg-light-blue {
     background-color: lightskyblue !important;
     color: white;
-}
-
-.table-create {
-    width: 100%;
-    display: inline-block;
-    box-sizing: border-box;
-    font-size: xxx-large;
-    text-align: center;
 }

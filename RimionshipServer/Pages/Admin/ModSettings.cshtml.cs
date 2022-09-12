@@ -15,30 +15,30 @@ namespace RimionshipServer.Pages.Admin
     public class ModSettings : PageModel
     {
         private ConfigurationService _configurationService;
-        private SettingService       _settingService;
-        private RimionDbContext      _dbContext;
-        
+        private SettingService _settingService;
+        private RimionDbContext _dbContext;
+
         [BindProperty(SupportsGet = true)]
         public string Motd { get; set; }
-        
+
         [BindProperty(SupportsGet = true)]
         public IEnumerable<AllowedMod> AllowedMods { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public byte MaximumLoadOrder { get; set; }
-        
+
         [BindProperty(SupportsGet = true)]
         public string ActiveSetting { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public IEnumerable<SelectListItem> SettingsSelect { get; set; }
-        
+
         [BindProperty(SupportsGet = true)]
         public byte PlannedStartHour { get; set; }
-        
+
         [BindProperty(SupportsGet = true)]
         public byte PlannedStartMinute { get; set; }
-        
+
         [BindProperty(SupportsGet = true)]
         public byte GameState { get; set; }
         
@@ -104,8 +104,8 @@ namespace RimionshipServer.Pages.Admin
         public ModSettings(ConfigurationService configurationService, RimionDbContext dbContext, SettingService settingService)
         {
             _configurationService = configurationService;
-            _dbContext            = dbContext;
-            _settingService       = settingService;
+            _dbContext = dbContext;
+            _settingService = settingService;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -115,17 +115,17 @@ namespace RimionshipServer.Pages.Admin
                                                      .OrderBy(x => x.LoadOrder)
                                                      .ToListAsync(HttpContext.RequestAborted);
 
-            MaximumLoadOrder = Math.Max((byte) 1, AllowedMods.Max(x => x.LoadOrder));
+            MaximumLoadOrder = Math.Max((byte)1, AllowedMods.Max(x => x.LoadOrder));
 
             var settings = await _dbContext.Settings.AsNoTrackingWithIdentityResolution().ToListAsync(HttpContext.RequestAborted);
 
             SettingsSelect = settings
                             .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
                             .ToList();
-            
-            ActiveSetting    = (await _settingService.GetActiveSetting(_dbContext, HttpContext.RequestAborted)).Name;
-            SettingsSelect   = SettingsSelect.Append(new SelectListItem("Create New", "cn"));
-            Motd             = await _dbContext.GetMotdAsync(HttpContext.RequestAborted);
+
+            ActiveSetting = (await _settingService.GetActiveSetting(_dbContext, HttpContext.RequestAborted)).Name;
+            SettingsSelect = SettingsSelect.Append(new SelectListItem("Create New", "cn"));
+            Motd = await _dbContext.GetMotdAsync(HttpContext.RequestAborted);
             var gameState = await _dbContext.GetGameStateAsync(HttpContext.RequestAborted);
             PlannedStartHour   = (byte) gameState.PlannedStartHour;
             PlannedStartMinute = (byte) gameState.PlannedStartMinute;
@@ -150,47 +150,52 @@ namespace RimionshipServer.Pages.Admin
         public async Task<IActionResult> OnPostDeleteModAsync(string packageId, ulong steamId)
         {
             await _configurationService.RemoveAllowedModAsync(packageId, steamId);
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
 
         public async Task<IActionResult> OnPostEditOrderAsync(byte loadOrder, byte originalLoadOrder)
         {
             await _configurationService.EditModOrder(loadOrder, originalLoadOrder);
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
 
         public async Task<IActionResult> OnPostModAsync(string packageId, ulong steamId, byte loadOrder)
         {
-            await _configurationService.AddAllowedMod(new AllowedMod{
-                                                                        SteamId   = steamId,
-                                                                        PackageId = packageId,
-                                                                        LoadOrder = Math.Max((byte) 1, loadOrder)
-                                                                    });
+            await _configurationService.AddAllowedMod(new AllowedMod
+            {
+                SteamId = steamId,
+                PackageId = packageId,
+                LoadOrder = Math.Max((byte)1, loadOrder)
+            });
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
-        
+
         public async Task<IActionResult> OnPostSettingAsync()
         {
             if (ActiveSetting == "cn")
             {
                 return RedirectToPage("/Admin/CreateNewSetting");
             }
-            await _settingService.SelectActiveSetting(_dbContext,int.Parse(ActiveSetting));
+            await _settingService.SelectActiveSetting(_dbContext, int.Parse(ActiveSetting));
             _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
-        
+
         public async Task<IActionResult> OnPostGameAsync()
         {
             await _dbContext.SetGameStateAsync(GameState, PlannedStartHour, PlannedStartMinute);
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
-        
+
         public async Task<IActionResult> OnPostDeleteAllAsync()
         {
-            if (((State.Types.Game) (await _dbContext.GetGameStateAsync()).GameState) != State.Types.Game.Completed)
+            if (((State.Types.Game)(await _dbContext.GetGameStateAsync()).GameState) != State.Types.Game.Completed)
                 return Forbid();
-            
+
             _dbContext.HistoryStats.RemoveRange(await _dbContext.HistoryStats.AsNoTrackingWithIdentityResolution().ToArrayAsync());
             await _dbContext.SaveChangesAsync();
             return RedirectToPage("/Admin/ModSettings");

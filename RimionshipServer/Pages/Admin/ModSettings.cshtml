@@ -4,87 +4,158 @@
 @model RimionshipServer.Pages.Admin.ModSettings
 
 @{
-    ViewData["Title"] = "Mod Settings";
+	ViewData["Title"] = "Einstellungen";
 }
 @section Scripts
-{
-    <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        const editBtn = document.getElementById("editBtn");
-        const select = document.getElementById("ActiveSetting"); 
-        function reroute() 
-        {
-            location.href = "@Url.PageLink("CreateNewSetting")" + "?SettingId=" + select.options[select.selectedIndex].value;
-        }
-        editBtn.onclick = reroute;
-    </script>
-}
-@section Css 
-{
-    <link rel="stylesheet" href="/css/admin.css">
-    <link rel="stylesheet" href="/css/tabs.css">
-}
-<div class="text-center">
-    <h1>Mod Settings</h1>
-    @Html.ValidationMessageFor(x => x.Upload,  null,new {@Class = "alert-danger"})
-    <div class="tabbed">
-        <input checked="checked" id="tab1" type="radio" name="tabs"/>
-        <input id="tab2" type="radio" name="tabs"/>
-        <input id="tab3" type="radio" name="tabs"/>
-        <input id="tab4" type="radio" name="tabs"/>
+	{
+	<script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
+	<script>
+		function getCookie(cname) {
+			 let name = cname + "=";
+			 let decodedCookie = decodeURIComponent(document.cookie);
+			 let ca = decodedCookie.split(';');
+			 for (let i = 0; i < ca.length; i++) {
+				  let c = ca[i];
+				  while (c.charAt(0) == ' ') {
+						c = c.substring(1);
+				  }
+				  if (c.indexOf(name) == 0) {
+						return c.substring(name.length, c.length);
+				  }
+			 }
+			 return "";
+		}
+		function setCookie(cname, val) {
+			 document.cookie = cname + "=" + val + "; path=/";
+		}
 
-        <nav>
-            <label for="tab1">Broadcast Message</label>
-            <label for="tab2">Allowed Mods</label>
-            <label for="tab3">Game Settings</label>
-            <label for="tab4">Safe File Settings</label>
-        </nav>
+		var tabIndex = getCookie("selectedtab");
+		if (!tabIndex) {
+			 tabIndex = "1";
+			 setCookie("selectedtab", tabIndex);
+		}
 
-        <figure>
-            <div class="tab1">
-                <partial name="_GeneralSettings" model=Model></partial>
-            </div>
-            <div class="tab2">
-                <partial name="_ModList" model=Model></partial>
-            </div>
-            <div class="tab3">
-                <form asp-page-handler="Setting" method="post">
-                    <div class="input-group mb-3 justify-content-center">
-                        <div style="margin-right: 1%;">
-                            <div>Currently Active: @Model.ActiveSetting</div>
-                            @Html.DropDownListFor(x => x.ActiveSetting, Model.SettingsSelect)
-                        </div>
-                        <div class="input-group-prepend" style="width: 15%;">
-                            <button class="btn btn-outline-dark form-control" type="submit">Select Active Setting</button>
-                            <div style="margin-top: 2%">
-                                <a id="editBtn" class="btn btn-outline-dark form-control" href="#">Edit Selected Setting</a>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <form asp-page-handler="DeleteAll" method="post">
-                    <button class="btn btn-danger form-control" type="submit">DELETE ALL HISTORY DATA</button>
-                </form>
-            </div>
-            <div class="tab4">
-                <h3>Select Safe File</h3>
-                <label>Currently Active: @(SaveFilePageModel.SafeFile?.Name ?? "None")</label>
-                <form method="post" asp-page-handler="FileSelect">
-                    <div class="input-group mb-3 justify-content-center">
-                        <label class="m-2 form-label">Select Safe File</label>
-                        @Html.DropDownListFor(x => x.SaveFileId, Model.SaveFileSelect)
-                        <input type="submit"/>
-                    </div>
-                </form>
-                <h3>Upload</h3>
-                <form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
-                    <div class="input-group mb-3 justify-content-center">
-                        <label class="m-2 form-label">Safe File</label>
-                        <input type="file" asp-for="Upload"/>
-                        <input type="submit"/>
-                    </div>
-                </form>
-            </div>
-        </figure>
-    </div>
+		const t = document.getElementById("tab" + tabIndex);
+		if (t) t.checked = true;
+
+		const editBtn = document.getElementById("editBtn");
+		const select = document.getElementById("ActiveSetting");
+		function reroute() {
+			 location.href = "@Url.PageLink("CreateNewSetting")" + "?SettingId=" + select.options[select.selectedIndex].value;
+		}
+		editBtn.onclick = reroute;
+	</script>
+	}
+	@section Css
+	{
+	<link rel="stylesheet" href="/css/admin.css">
+	<link rel="stylesheet" href="/css/tabs.css">
+	}
+	<div>
+		<h1>Einstellungen</h1>
+		<div class="tabbed">
+			<input id="tab1" type="radio" name="tabs" onClick="setCookie('selectedtab', '1')" />
+			<input id="tab2" type="radio" name="tabs" onClick="setCookie('selectedtab', '2')" />
+			<input id="tab3" type="radio" name="tabs" onClick="setCookie('selectedtab', '3')" />
+			<input id="tab4" type="radio" name="tabs" onClick="setCookie('selectedtab', '4')" />
+			<input id="tab5" type="radio" name="tabs" onClick="setCookie('selectedtab', '5')" />
+			<input id="tab6" type="radio" name="tabs" onClick="setCookie('selectedtab', '6')" />
+
+			<nav>
+				<label for="tab1">Broadcast-Nachricht</label>
+				<label for="tab2">Tournament Status</label>
+				<label for="tab3">Erlaubte Mods</label>
+				<label for="tab4">Mod-Einstellungen</label>
+				<label for="tab5">Datenbank</label>
+				<label for="tab6">Spieldatei</label>
+			</nav>
+
+			<figure>
+				<div class="tab1">
+					<form asp-page-handler="Motd" method="post">
+						<div class="input-group mb-3">
+							<div>
+								Aktuelle Nachricht: @{
+								if (Model.Motd.Length == 0)
+								{
+									<i>keine Nachricht</i>
+								}
+								else
+								{
+									<b>@Model.Motd</b>
+								}
+							}
+						</div>
+						<input name="motd" type="text" style="margin-right: 1%; width: 84%;" />
+						<div class="input-group-prepend" style="width: 15%;">
+							<button class="btn btn-outline-dark form-control" type="submit">Setzen</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="tab2">
+				<form asp-page-handler="Game" method="post">
+					<div class="input-group tab1">
+						<div>
+							<div class="input-group">
+								<label class="m-2 form-label">Startzeit (hh:mm)</label>
+								@Html.TextBoxFor(x => x.PlannedStartHour, new{@class = "m-2 form-control"})
+								@Html.TextBoxFor(x => x.PlannedStartMinute, new{@class = "m-2 form-control"})
+							</div>
+							<div class="input-group">
+								<label class="m-2 form-label">@nameof(Model.GameState)</label>
+								@Html.DropDownListFor(x => x.GameState, new[]{
+								new SelectListItem("STOPPED", "0", Model.GameState == 0),
+								new SelectListItem("TRAINING", "1", Model.GameState == 1),
+								new SelectListItem("PREPARE", "2", Model.GameState == 2),
+								new SelectListItem("STARTED", "3", Model.GameState == 3),
+								new SelectListItem("COMPLETED", "4", Model.GameState == 4)
+								}, new{@class = "m-2 form-control"})
+							</div>
+							<button class="btn btn-outline-dark form-control" type="submit" style="width: 40%">Speichern</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="tab3">
+				<partial name="_ModList" model=Model></partial>
+			</div>
+			<div class="tab4">
+				<form asp-page-handler="Setting" method="post">
+					<div>
+						<span>
+							Currently Active: @Model.ActiveSetting<br />
+							@Html.DropDownListFor(x => x.ActiveSetting, Model.SettingsSelect)
+						</span>
+						<button class="btn btn-outline-dark" type="submit">Select Active Setting</button>
+						<a id="editBtn" class="btn btn-outline-dark" href="#">Edit Selected Setting</a>
+					</div>
+				</form>
+			</div>
+			<div class="tab5">
+				<form asp-page-handler="DeleteAll" method="post">
+					<button class="btn btn-danger" type="submit" onclick="return window.confirm('Wirklich alle Tournamentdaten in der Datenbank löschen?')">Tournamentdaten komplett löschen!</button> (Achtung: nur kurz vor dem Start benutzen!)
+				</form>
+			</div>
+         <div class="tab6">
+               <h3>Select Safe File</h3>
+               <label>Currently Active: @(SaveFilePageModel.SafeFile?.Name ?? "None")</label>
+               <form method="post" asp-page-handler="FileSelect">
+                  <div class="input-group mb-3 justify-content-center">
+                     <label class="m-2 form-label">Select Safe File</label>
+                     @Html.DropDownListFor(x => x.SaveFileId, Model.SaveFileSelect)
+                     <input type="submit"/>
+                  </div>
+               </form>
+               <h3>Upload</h3>
+               <form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
+                  <div class="input-group mb-3 justify-content-center">
+                     <label class="m-2 form-label">Safe File</label>
+                     <input type="file" asp-for="Upload"/>
+                     <input type="submit"/>
+                  </div>
+               </form>
+         </div>
+		</figure>
+	</div>
 </div>
