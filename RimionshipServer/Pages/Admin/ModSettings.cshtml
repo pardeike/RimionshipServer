@@ -137,25 +137,25 @@
 					<button class="btn btn-danger" type="submit" onclick="return window.confirm('Wirklich alle Tournamentdaten in der Datenbank löschen?')">Tournamentdaten komplett löschen!</button> (Achtung: nur kurz vor dem Start benutzen!)
 				</form>
 			</div>
-         <div class="tab6">
-               <h3>Select Safe File</h3>
-               <label>Currently Active: @(SaveFilePageModel.SafeFile?.Name ?? "None")</label>
-               <form method="post" asp-page-handler="FileSelect">
-                  <div class="input-group mb-3 justify-content-center">
-                     <label class="m-2 form-label">Select Safe File</label>
-                     @Html.DropDownListFor(x => x.SaveFileId, Model.SaveFileSelect)
-                     <input type="submit"/>
-                  </div>
-               </form>
-               <h3>Upload</h3>
-               <form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
-                  <div class="input-group mb-3 justify-content-center">
-                     <label class="m-2 form-label">Safe File</label>
-                     <input type="file" asp-for="Upload"/>
-                     <input type="submit"/>
-                  </div>
-               </form>
-         </div>
+			<div class="tab6">
+				<h3>Select Safe File</h3>
+				<label>Currently Active: @(SaveFilePageModel.SafeFile?.Name ?? "None")</label>
+				<form method="post" asp-page-handler="FileSelect">
+					<div class="input-group mb-3 justify-content-center">
+						<label class="m-2 form-label">Select Safe File</label>
+						@Html.DropDownListFor(x => x.SaveFileId, Model.SaveFileSelect)
+						<input type="submit" />
+					</div>
+				</form>
+				<h3>Upload</h3>
+				<form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
+					<div class="input-group mb-3 justify-content-center">
+						<label class="m-2 form-label">Safe File</label>
+						<input type="file" asp-for="Upload" />
+						<input type="submit" />
+					</div>
+				</form>
+			</div>
 		</figure>
 	</div>
 </div>

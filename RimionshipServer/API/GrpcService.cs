@@ -15,33 +15,33 @@ namespace RimionshipServer.API
         private readonly DataService dataService;
         private readonly LoginService loginService;
         private readonly IOptions<RimionshipOptions> options;
-        private readonly AttentionService            _attention;
-        private readonly SettingService              _settingService;
-        private readonly LinkGenerator               _linkGenerator;
-        
+        private readonly AttentionService _attention;
+        private readonly SettingService _settingService;
+        private readonly LinkGenerator _linkGenerator;
+
         public GrpcService(
-             RimionDbContext             db,
-             ConfigurationService        configurationService,
-             ScoreService                scoreService,
-             DataService                 dataService,
-             LoginService                loginService,
+             RimionDbContext db,
+             ConfigurationService configurationService,
+             ScoreService scoreService,
+             DataService dataService,
+             LoginService loginService,
              IOptions<RimionshipOptions> options,
-             AttentionService            attention,
-             SettingService              settingService, 
+             AttentionService attention,
+             SettingService settingService,
              LinkGenerator linkGenerator)
         {
-            this.db                   = db;
+            this.db = db;
             this.configurationService = configurationService;
-            this.scoreService         = scoreService;
-            this.dataService          = dataService;
-            this.loginService         = loginService;
-            this.options              = options;
-            _attention                = attention;
-            _settingService           = settingService;
-            _linkGenerator       = linkGenerator;
+            this.scoreService = scoreService;
+            this.dataService = dataService;
+            this.loginService = loginService;
+            this.options = options;
+            _attention = attention;
+            _settingService = settingService;
+            _linkGenerator = linkGenerator;
         }
-        
-        
+
+
         public override async Task<StopResponse> Stop(StopRequest request, ServerCallContext context)
         {
             VerifyId(request.Id);
@@ -51,7 +51,7 @@ namespace RimionshipServer.API
             dataService.InvalidatePlayerCache(request.Id);
             return new StopResponse();
         }
-        
+
         /**
 		 * Increases the Attention Score for player X by Y amount
 		 */
@@ -136,14 +136,13 @@ namespace RimionshipServer.API
         {
             VerifyId(request.Id);
             var user = await GetCachedUserAsync(request.Id);
-            var address = "http://" + context.Host.Replace(":5063", "");
-            // NYI
+            var address = "http://" + context.Host.Replace(":5063", context.Host.Contains("localhost") ? ":5062" : "");
             return new StartResponse
             {
-                GameFileHash      = address + _linkGenerator.GetPathByPage("/API/SaveFile", "Hash"),
-                GameFileUrl       = address + _linkGenerator.GetPathByPage("/API/SaveFile", "File"),
-                StartingPawnCount = 5,
-                Settings          = await _settingService.GetActiveSetting(db)
+                GameFileHash = address + _linkGenerator.GetPathByPage("/API/SaveFile", "Hash"),
+                GameFileUrl = address + _linkGenerator.GetPathByPage("/API/SaveFile", "File"),
+                StartingPawnCount = 5, // NYI
+                Settings = await _settingService.GetActiveSetting(db)
             };
         }
 
@@ -158,24 +157,24 @@ namespace RimionshipServer.API
         public override async Task<StatsResponse> Stats(StatsRequest request, ServerCallContext context)
         {
             VerifyId(request.Id);
-            if ((State.Types.Game)(await db.GetGameStateAsync(context.CancellationToken)).GameState 
-                is not State.Types.Game.Started 
+            if ((State.Types.Game)(await db.GetGameStateAsync(context.CancellationToken)).GameState
+                is not State.Types.Game.Started
                and not State.Types.Game.Training)
-                return new StatsResponse{ Interval = 10 };
+                return new StatsResponse { Interval = 10 };
 
             var user = await GetCachedUserAsync(request.Id);
-            
+
             if (user.HasQuit)
-                return new StatsResponse{ Interval = 10 };
-            
+                return new StatsResponse { Interval = 10 };
+
             // PARTIALLY implemented - at least, we keep the scores in-memory
             await this.scoreService.AddOrUpdateScoreAsync(request.Id, user.UserName, user.AvatarUrl, request.Wealth, context.CancellationToken);
 
             await db.AddOrUpdateStatsAsync(user, request);
             return new StatsResponse { Interval = 10 };
         }
-        
-        private static readonly ManualResetEventSlim _mres = new ();
+
+        private static readonly ManualResetEventSlim _mres = new();
 
         public static Task ToggleResetEvent()
         {
@@ -195,14 +194,15 @@ namespace RimionshipServer.API
                                         {
                                             _mres.Wait(context.CancellationToken);
                                         }, context.CancellationToken, TaskCreationOptions.LongRunning, PriorityScheduler.Lowest);
-            
+
             context.CancellationToken.ThrowIfCancellationRequested();
-            
-            return new SyncResponse{
-                                       Message  = await db.GetMotdAsync(context.CancellationToken),
-                                       State    = await db.GetGameStateAsync(context.CancellationToken),
-                                       Settings = await _settingService.GetActiveSetting(db, context.CancellationToken)
-                                   };
+
+            return new SyncResponse
+            {
+                Message = await db.GetMotdAsync(context.CancellationToken),
+                State = await db.GetGameStateAsync(context.CancellationToken),
+                Settings = await _settingService.GetActiveSetting(db, context.CancellationToken)
+            };
         }
 
         private void VerifyId(string id)

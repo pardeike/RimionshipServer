@@ -1,8 +1,4 @@
-﻿using System.Buffers;
-using System.IO.Compression;
-using System.Net;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +6,10 @@ using RimionshipServer.API;
 using RimionshipServer.Data;
 using RimionshipServer.Pages.Api;
 using RimionshipServer.Services;
+using System.Buffers;
+using System.IO.Compression;
+using System.Net;
+using System.Security.Cryptography;
 namespace RimionshipServer.Pages.Admin
 {
     public class ModSettings : PageModel
@@ -41,47 +41,48 @@ namespace RimionshipServer.Pages.Admin
 
         [BindProperty(SupportsGet = true)]
         public byte GameState { get; set; }
-        
+
         [BindProperty]
         public IFormFile Upload { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public IEnumerable<SelectListItem> SaveFileSelect { get; set; }
-        
+
         [BindProperty]
         public int SaveFileId { get; set; }
-        
+
         public async Task<IActionResult> OnPostFileSelectAsync()
         {
             SaveFilePageModel.SafeFile = await _dbContext.SaveFiles.FindAsync(SaveFileId);
             return RedirectToPage("/Admin/ModSettings");
         }
-        
+
         public async Task<IActionResult> OnPostUploadAsync()
         {
-            using var       checksum = MD5.Create();
+            using var checksum = MD5.Create();
             await using var uploaded = Upload.OpenReadStream();
-            var             filename = WebUtility.UrlEncode(Upload.FileName.Trim());
+            var filename = WebUtility.UrlEncode(Upload.FileName.Trim());
             if (!filename.EndsWith(".rws"))
             {
                 ModelState.AddModelError(nameof(Upload), "Can only upload .rws save files!");
                 return await OnGetAsync();
             }
-            var             rent     = ArrayPool<byte>.Shared.Rent((int) uploaded.Length);
+            var rent = ArrayPool<byte>.Shared.Rent((int)uploaded.Length);
             try
             {
-                await using var memstream = new MemoryStream(rent, 0, (int) uploaded.Length);
+                await using var memstream = new MemoryStream(rent, 0, (int)uploaded.Length);
                 await uploaded.CopyToAsync(memstream);
                 memstream.Position = 0;
                 var hashTask = await checksum.ComputeHashAsync(memstream);
                 memstream.Position = 0;
                 await using var compressed = await Compress(memstream);
-                var             md5B64     = Convert.ToBase64String(hashTask);
-                var safeFile = new SaveFile{
-                                               File = compressed.ToArray(),
-                                               MD5  = md5B64,
-                                               Name = filename
-                                           };
+                var md5B64 = Convert.ToHexString(hashTask).ToLower();
+                var safeFile = new SaveFile
+                {
+                    File = compressed.ToArray(),
+                    MD5 = md5B64,
+                    Name = filename
+                };
                 _dbContext.SaveFiles.Add(safeFile);
                 await _dbContext.SaveChangesAsync();
                 return RedirectToPage("/Admin/ModSettings");
@@ -95,12 +96,12 @@ namespace RimionshipServer.Pages.Admin
         private static async Task<MemoryStream> Compress(Stream input)
         {
             var outputStream = new MemoryStream();
-            await using GZipStream gzip         = new (outputStream, CompressionLevel.SmallestSize);
+            await using GZipStream gzip = new(outputStream, CompressionLevel.SmallestSize);
             await input.CopyToAsync(gzip);
             await gzip.FlushAsync();
             return outputStream;
         }
-        
+
         public ModSettings(ConfigurationService configurationService, RimionDbContext dbContext, SettingService settingService)
         {
             _configurationService = configurationService;
@@ -127,12 +128,12 @@ namespace RimionshipServer.Pages.Admin
             SettingsSelect = SettingsSelect.Append(new SelectListItem("Create New", "cn"));
             Motd = await _dbContext.GetMotdAsync(HttpContext.RequestAborted);
             var gameState = await _dbContext.GetGameStateAsync(HttpContext.RequestAborted);
-            PlannedStartHour   = (byte) gameState.PlannedStartHour;
-            PlannedStartMinute = (byte) gameState.PlannedStartMinute;
-            GameState          = (byte) gameState.GameState;
-            SaveFileSelect     = (await _dbContext.SaveFiles
+            PlannedStartHour = (byte)gameState.PlannedStartHour;
+            PlannedStartMinute = (byte)gameState.PlannedStartMinute;
+            GameState = (byte)gameState.GameState;
+            SaveFileSelect = (await _dbContext.SaveFiles
                                                   .AsNoTracking()
-                                                  .Select(x => new {x.Name, x.Id})
+                                                  .Select(x => new { x.Name, x.Id })
                                                   .ToArrayAsync())
                                 .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
                                 .Prepend(new SelectListItem("None", string.Empty, true))
