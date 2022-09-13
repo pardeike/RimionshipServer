@@ -62,100 +62,21 @@
 			<input id="tab6" type="radio" name="tabs" onClick="setCookie('selectedtab', '6')" />
 
 			<nav>
-				<label for="tab1">Broadcast-Nachricht</label>
+				<label for="tab1">Spieldatei</label>
 				<label for="tab2">Tournament Status</label>
-				<label for="tab3">Erlaubte Mods</label>
-				<label for="tab4">Mod-Einstellungen</label>
-				<label for="tab5">Datenbank</label>
-				<label for="tab6">Spieldatei</label>
+				<label for="tab3">Broadcast-Nachricht</label>
+				<label for="tab4">Erlaubte Mods</label>
+				<label for="tab5">Mod-Einstellungen</label>
+				<label for="tab6">Datenbank</label>
 			</nav>
 
 			<figure>
-				<div class="tab1">
-					<form asp-page-handler="Motd" method="post">
-						<div class="input-group mb-3">
-							<div>
-								Aktuelle Nachricht: @{
-								if (Model.Motd.Length == 0)
-								{
-									<i>keine Nachricht</i>
-								}
-								else
-								{
-									<b>@Model.Motd</b>
-								}
-							}
-						</div>
-						<input name="motd" type="text" style="margin-right: 1%; width: 84%;" />
-						<div class="input-group-prepend" style="width: 15%;">
-							<button class="btn btn-outline-dark form-control" type="submit">Setzen</button>
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="tab2">
-				<form asp-page-handler="Game" method="post">
-					<div class="input-group tab1">
-						<div>
-							<div class="input-group">
-								<label class="m-2 form-label">Startzeit (hh:mm)</label>
-								@Html.TextBoxFor(x => x.PlannedStartHour, new{@class = "m-2 form-control"})
-								@Html.TextBoxFor(x => x.PlannedStartMinute, new{@class = "m-2 form-control"})
-							</div>
-							<div class="input-group">
-								<label class="m-2 form-label">@nameof(Model.GameState)</label>
-								@Html.DropDownListFor(x => x.GameState, new[]{
-								new SelectListItem("STOPPED", "0", Model.GameState == 0),
-								new SelectListItem("TRAINING", "1", Model.GameState == 1),
-								new SelectListItem("PREPARE", "2", Model.GameState == 2),
-								new SelectListItem("STARTED", "3", Model.GameState == 3),
-								new SelectListItem("COMPLETED", "4", Model.GameState == 4)
-								}, new{@class = "m-2 form-control"})
-							</div>
-							<button class="btn btn-outline-dark form-control" type="submit" style="width: 40%">Speichern</button>
-						</div>
-					</div>
-				</form>
-			</div>
-			<div class="tab3">
-				<partial name="_ModList" model=Model></partial>
-			</div>
-			<div class="tab4">
-				<form asp-page-handler="Setting" method="post">
-					<div>
-						<span>
-							Activ: @Model.ActiveSetting<br />
-							@Html.DropDownListFor(x => x.ActiveSetting, Model.SettingsSelect, null, new {@class="btn btn-outline-dark"})
-						</span>
-						<button class="btn btn-outline-dark" type="submit">Aktivieren</button>
-						<a id="editBtn" class="btn btn-outline-dark" href="#">Bearbeiten</a>
-					</div>
-				</form>
-			</div>
-			<div class="tab5">
-				<form asp-page-handler="DeleteAll" method="post">
-					<button class="btn btn-danger" type="submit" onclick="return window.confirm('Wirklich alle Tournamentdaten in der Datenbank löschen?')">Tournamentdaten komplett löschen!</button> (Achtung: nur kurz vor dem Start benutzen!)
-				</form>
-			</div>
-			<div class="tab6">
-				<h3>Select Safe File</h3>
-				<label>Currently Active: @(SaveFilePageModel.SafeFile?.Name ?? "None")</label>
-				<form method="post" asp-page-handler="FileSelect">
-					<div class="input-group mb-3 justify-content-center">
-						<label class="m-2 form-label">Select Safe File</label>
-						@Html.DropDownListFor(x => x.SaveFileId, Model.SaveFileSelect)
-						<input type="submit" />
-					</div>
-				</form>
-				<h3>Upload</h3>
-				<form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
-					<div class="input-group mb-3 justify-content-center">
-						<label class="m-2 form-label">Safe File</label>
-						<input type="file" asp-for="Upload" />
-						<input type="submit" />
-					</div>
-				</form>
-			</div>
-		</figure>
+				<div class="tab1"><partial name="_File" model=Model></partial></div>
+				<div class="tab2"><partial name="_Status" model=Model></partial></div>
+				<div class="tab3"><partial name="_Message" model=Model></partial></div>
+				<div class="tab4"><partial name="_ModList" model=Model></partial></div>
+				<div class="tab5"><partial name="_Settings" model=Model></partial></div>
+				<div class="tab6"><partial name="_Database" model=Model></partial></div>
+			</figure>
+		</div>
 	</div>
-</div>

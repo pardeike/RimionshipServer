@@ -37,6 +37,21 @@
         <Content Update="Pages\Admin\_ModList.cshtml">
             <DependentUpon>ModSettings.cshtml</DependentUpon>
         </Content>
+        <Content Update="Pages\Admin\_Settings.cshtml">
+            <DependentUpon>ModSettings.cshtml</DependentUpon>
+        </Content>
+        <Content Update="Pages\Admin\_Message.cshtml">
+            <DependentUpon>ModSettings.cshtml</DependentUpon>
+        </Content>
+        <Content Update="Pages\Admin\_Status.cshtml">
+            <DependentUpon>ModSettings.cshtml</DependentUpon>
+        </Content>
+        <Content Update="Pages\Admin\_File.cshtml">
+            <DependentUpon>ModSettings.cshtml</DependentUpon>
+        </Content>
+        <Content Update="Pages\Admin\_Database.cshtml">
+            <DependentUpon>ModSettings.cshtml</DependentUpon>
+        </Content>
         <Content Update="Pages\Admin\_GraphList.cshtml">
             <DependentUpon>GraphConfigurator.cshtml</DependentUpon>
         </Content>

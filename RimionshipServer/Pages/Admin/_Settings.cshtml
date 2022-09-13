@@ -1,0 +1,12 @@
+﻿@model ModSettings
+
+<form asp-page-handler="Setting" method="post">
+	<div>
+		<span>
+			Activ: @Model.ActiveSetting<br />
+			@Html.DropDownListFor(x => x.ActiveSetting, Model.SettingsSelect, null, new {@class="btn btn-outline-dark"})
+		</span>
+		<button class="btn btn-outline-dark" type="submit">Aktivieren</button>
+		<a id="editBtn" class="btn btn-outline-dark" href="#">Bearbeiten</a>
+	</div>
+</form>

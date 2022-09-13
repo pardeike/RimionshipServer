@@ -1,0 +1,24 @@
+﻿@model ModSettings
+
+<form asp-page-handler="Game" method="post">
+	<div class="input-group tab1">
+		<div>
+			<div class="input-group">
+				<label class="m-2 form-label">Startzeit (hh:mm)</label>
+				@Html.TextBoxFor(x => x.PlannedStartHour, new{@class = "m-2 form-control"})
+				@Html.TextBoxFor(x => x.PlannedStartMinute, new{@class = "m-2 form-control"})
+			</div>
+			<div class="input-group">
+				<label class="m-2 form-label">@nameof(Model.GameState)</label>
+				@Html.DropDownListFor(x => x.GameState, new[]{
+				new SelectListItem("STOPPED", "0", Model.GameState == 0),
+				new SelectListItem("TRAINING", "1", Model.GameState == 1),
+				new SelectListItem("PREPARE", "2", Model.GameState == 2),
+				new SelectListItem("STARTED", "3", Model.GameState == 3),
+				new SelectListItem("COMPLETED", "4", Model.GameState == 4)
+				}, new{@class = "m-2 form-control"})
+			</div>
+			<button class="btn btn-outline-dark form-control" type="submit" style="width: 40%">Speichern</button>
+		</div>
+	</div>
+</form>

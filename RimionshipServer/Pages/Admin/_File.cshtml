@@ -1,0 +1,16 @@
+﻿@using RimionshipServer.Pages.Api
+
+@model ModSettings
+
+<label>Aktive Spieldatei: <b>@(SaveFilePageModel.SafeFile?.Name ?? "None")</b></label>
+<form method="post" asp-page-handler="FileSelect">
+	<label>Neue Spieledatei: </label>
+	@Html.DropDownListFor(x => x.SaveFileId, Model.SaveFileSelect)<br />
+	<input style="margin-top: 10px" type="submit" value="Speichern" />
+</form>
+<hr />
+<form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
+	<label>Hochladen:</label>
+	<input type="file" asp-for="Upload" /><br />
+	<input style="margin-top: 10px" type="submit" value="Speichern" />
+</form>
