@@ -2,127 +2,161 @@
 @model RimionshipServer.Pages.Admin.GraphConfigurator
 
 @{
-    ViewData["Title"] = "Graph Configurator";
+	ViewData["Title"] = "Graphen";
 }
 @section Css
-{
-      <link rel="stylesheet" href="/css/admin.css">
-      <link rel="stylesheet" href="/css/tabs.css">
+	{
+	<link rel="stylesheet" href="/css/admin.css">
+	<link rel="stylesheet" href="/css/tabs.css">
 }
-@section Scripts
-{
-    @if (!Model.Done)
-    {
-        <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
-        <script>
-        //Taken from https://stackoverflow.com/a/27578356
-        window.onmousedown = function (e) {
-            var el = e.target;
-            if (el.tagName.toLowerCase() == 'option' && el.parentNode.hasAttribute('multiple')) {
-                e.preventDefault();
-        
-                // toggle selection
-                if (el.hasAttribute('selected')) el.removeAttribute('selected');
-                else el.setAttribute('selected', '');
-        
-                // hack to correct buggy behavior
-                var select = el.parentNode.cloneNode(true);
-                el.parentNode.parentNode.replaceChild(select, el.parentNode);
-            }
-        }
-        </script>
-    }
-    <script type="text/javascript">
-            const links = document.getElementsByTagName("a");
-            for(let i=0; i<links.length; i++) {
-                if (links[i].innerHTML === "!will be replaced by js!")
-                    links[i].innerHTML = links[i].href;
-            }
-    </script>
+	@section Scripts
+	{
+	@if (!Model.Done)
+	{
+		<script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
+		<script>
+			//Taken from https://stackoverflow.com/a/27578356
+			window.onmousedown = function (e) {
+				 var el = e.target;
+				 if (el.tagName.toLowerCase() == 'option' && el.parentNode.hasAttribute('multiple')) {
+					  e.preventDefault();
+
+					  // toggle selection
+					  if (el.hasAttribute('selected')) el.removeAttribute('selected');
+					  else el.setAttribute('selected', '');
+
+					  // hack to correct buggy behavior
+					  var select = el.parentNode.cloneNode(true);
+					  el.parentNode.parentNode.replaceChild(select, el.parentNode);
+				 }
+			}
+		</script>
+	}
+	<script type="text/javascript">
+		const links = document.getElementsByTagName("a");
+		for (let i = 0; i < links.length; i++) {
+			 if (links[i].innerHTML === "!will be replaced by js!")
+				  links[i].innerHTML = links[i].href;
+		}
+	</script>
 }
-<div class="text-center">
-    <h1>@ViewData["Title"]</h1>
-    @if (Model.Done)
-    {
-        <a id="done" href="/API/SimpleGraph/@Model.AccessCode">!will be replaced by js!</a> 
-        <br/>
-        <br/>
-        <a class="btn btn-outline-dark" id="back" asp-page="GraphConfigurator">Back to Graph Configurator</a>
-    }
-    else
-    {
-        <div class="tabbed">
-            <input checked="checked" id="tab1" type="radio" name="tabs"/>
-            <input id="tab2" type="radio" name="tabs"/>
-            <input id="tab3" type="radio" name="tabs"/>
-            <input id="tab4" type="radio" name="tabs"/>
+	<div>
+		<h1>@ViewData["Title"]</h1>
+	@if (Model.Done)
+	{
+		<a id="done" href="/API/SimpleGraph/@Model.AccessCode">!will be replaced by js!</a>
+		<br />
+		<br />
+		<a class="btn btn-outline-dark" id="back" asp-page="GraphConfigurator">Back to Graph Configurator</a>
+	}
+	else
+	{
+		<div class="tabbed">
+			<input checked="checked" id="tab1" type="radio" name="tabs" />
+			<input id="tab2" type="radio" name="tabs" />
+			<input id="tab3" type="radio" name="tabs" />
+			<input id="tab4" type="radio" name="tabs" />
 
-            <nav>
-                <label for="tab1">Top X of Statt</label>
-                <label for="tab2">Wealthiest Top X</label>
-                <label for="tab3">Complex Form</label>
-                <label for="tab4">Delete Graphs</label>
-            </nav>
-            <figure>
-                <div class="tab1">
-                    <form method="post">
-                        <span asp-validation-for="AccessCode" class="text-danger"></span> <br/>
-                        @Html.Label("Name")<br/>
-                        @Html.TextBoxFor(x => x.AccessCode) <br/>
-                        @Html.Label(nameof(GraphData.Statt))<br/>
-                        @Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems) <br/>
-                        @Html.Label("Last X Minutes: ")<br/>
-                        @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) <br/>
-                        @Html.Label(nameof(GraphData.Autorefresh)) <br/>
-                        @Html.CheckBoxFor(x => x.Autorefresh) <br/>
-                        @Html.Label(nameof(GraphData.CountUser)) <br/>
-                        @Html.TextBoxFor(x => x.CountUser) <br/>
-                        <button asp-page-handler="CreateTop10" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Create</button>
-                    </form>
-                </div>
-                <div class="tab2">
-                    <form method="post">
-                         <span asp-validation-for="AccessCode" class="text-danger"></span> <br/>
-                         @Html.Label("Name")<br/>
-                         @Html.TextBoxFor(x => x.AccessCode) <br/>
-                         @Html.Label(nameof(GraphData.Statt))<br/>
-                         @Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems) <br/>
-                         @Html.Label("Last X Minutes: ")<br/>
-                         @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) <br/>
-                         @Html.Label(nameof(GraphData.Autorefresh)) <br/>
-                         @Html.CheckBoxFor(x => x.Autorefresh) <br/>
-                         @Html.Label(nameof(GraphData.CountUser)) <br/>
-                         @Html.TextBoxFor(x => x.CountUser) <br/>
-                        <button asp-page-handler="CreateTop10Wealth" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Create</button>
-                    </form>
-                </div>
-                <div class="tab3">
-                    <form method="post">
-                        <span asp-validation-for="AccessCode" class="text-danger"></span> <br/>
-                        @Html.Label("Name")<br/>
-                        @Html.TextBoxFor(x => x.AccessCode) <br/>
-                        @Html.Label(nameof(GraphData.Statt))<br/>
-                        @Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems) <br/>
-                        @Html.Label(nameof(GraphData.Start))<br/>
-                        <input type="datetime-local" class="text-box single-line" asp-for="Start" value="@DateTime.Now"/><br/>
-                        @Html.Label(nameof(GraphData.End))<br/>
-                        <input type="datetime-local" class="text-box single-line" asp-for="End" value="@DateTime.Now"/><br/>
-
-                        @Html.Label(nameof(GraphData.IntervalSeconds))<br/>
-                        @Html.EditorFor(x => x.IntervalSeconds) <br/>
-
-                        @Html.Label(nameof(GraphData.Users))<br/>
-                        @Html.DropDownListFor(m => m.UserIds, Model.UserSelectListItems, new{multiple = "true"})<br/>
-
-                        @Html.Label(nameof(GraphData.Autorefresh)) <br/>
-                        @Html.CheckBoxFor(x => x.Autorefresh) <br/>
-                        <button asp-page-handler="Create" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Create</button>
-                    </form>
-                </div>
-                <div class="tab4">
-                    <partial name="_GraphList" model=Model></partial>
-                </div>
-            </figure>
-        </div>
-    }
+			<nav>
+				<label for="tab1">Sortiert nach ausgewähltem Wert</label>
+				<label for="tab2">Sortiert nach Tournamentplatz</label>
+				<label for="tab3">Komplexe Graphen</label>
+				<label for="tab4">Alle Graphen</label>
+			</nav>
+			<figure>
+				<div class="input-group tab1">
+					<form method="post">
+						<table cellpadding="8">
+							<tr>
+								<td>Name des Graphen<span asp-validation-for="AccessCode" class="text-danger"></span></td>
+								<td>@Html.TextBoxFor(x => x.AccessCode)</td>
+							</tr>
+							<tr>
+								<td>Dargestellter Wert</td>
+								<td>@Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems)</td>
+							</tr>
+							<tr>
+								<td>Zeitraum</td>
+								<td>Letzten @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) Minuten</td>
+							</tr>
+							<tr>
+								<td>Anzahl</td>
+								<td>@Html.TextBoxFor(x => x.CountUser, new { @class = "pmtallocated pull-right" , @dir = "rtl" }) Teilnehmer</td>
+							</tr>
+							<tr>
+								<td>Aktualisierung</td>
+								<td>@Html.CheckBoxFor(x => x.Autorefresh) Automatisch</td>
+							</tr>
+						</table>
+						<button asp-page-handler="CreateTop10" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Graph erzeugen</button>
+					</form>
+				</div>
+				<div class="input-group tab2">
+					<form method="post">
+						<table cellpadding="8">
+							<tr>
+								<td>Name des Graphen<span asp-validation-for="AccessCode" class="text-danger"></span></td>
+								<td>@Html.TextBoxFor(x => x.AccessCode)</td>
+							</tr>
+							<tr>
+								<td>Dargestellter Wert</td>
+								<td>@Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems)</td>
+							</tr>
+							<tr>
+								<td>Zeitraum</td>
+								<td>Letzten @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) Minuten</td>
+							</tr>
+							<tr>
+								<td>Anzahl</td>
+								<td>@Html.TextBoxFor(x => x.CountUser, new { @class = "pmtallocated pull-right" , @dir = "rtl" }) Teilnehmer</td>
+							</tr>
+							<tr>
+								<td>Aktualisierung</td>
+								<td>@Html.CheckBoxFor(x => x.Autorefresh) Automatisch</td>
+							</tr>
+						</table>
+						<button asp-page-handler="CreateTop10Wealth" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Graph erzeugen</button>
+					</form>
+				</div>
+				<div class="input-group tab3">
+					<form method="post">
+						<table cellpadding="8">
+							<tr>
+								<td>Name des Graphen<span asp-validation-for="AccessCode" class="text-danger"></span></td>
+								<td>@Html.TextBoxFor(x => x.AccessCode)</td>
+							</tr>
+							<tr>
+								<td>Dargestellter Wert</td>
+								<td>@Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems)</td>
+							</tr>
+							<tr>
+								<td>Start</td>
+								<td><input type="datetime-local" class="text-box single-line" asp-for="Start" value="@DateTime.Now" /></td>
+							</tr>
+							<tr>
+								<td>Ende</td>
+								<td><input type="datetime-local" class="text-box single-line" asp-for="End" value="@DateTime.Now" /></td>
+							</tr>
+							<tr>
+								<td>Intervall</td>
+								<td>@Html.EditorFor(x => x.IntervalSeconds) Sekunden</td>
+							</tr>
+							<tr>
+								<td>Spieler</td>
+								<td>@Html.DropDownListFor(m => m.UserIds, Model.UserSelectListItems, new{multiple = "true"})</td>
+							</tr>
+							<tr>
+								<td>Aktualisierung</td>
+								<td>@Html.CheckBoxFor(x => x.Autorefresh) Automatisch</td>
+							</tr>
+						</table>
+						<button asp-page-handler="Create" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Graph erzeugen</button>
+					</form>
+				</div>
+				<div class="input-group tab4">
+					<partial name="_GraphList" model=Model></partial>
+				</div>
+			</figure>
+		</div>
+	}
 </div>
