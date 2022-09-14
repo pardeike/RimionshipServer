@@ -88,7 +88,7 @@ namespace RimionshipServer.Pages.Admin
                 }
                 if (line.Contains("</savegame>"))
                 {
-                    await sw.WriteLineAsync("</savegame>");
+                    await sw.WriteLineAsync("<!--ende--></savegame>");
                     break;
                 }
                 await sw.WriteLineAsync(line);
@@ -99,52 +99,44 @@ namespace RimionshipServer.Pages.Admin
         {
             using var checksum = MD5.Create();
             await using var uploaded = Upload.OpenReadStream();
-            var rent = ArrayPool<byte>.Shared.Rent((int)Upload.Length);
-            try
+            await using var memstream = new MemoryStream((int)Upload.Length);
+            await ReplaceTicks(uploaded, memstream);
+            var filename = WebUtility.UrlEncode(Upload.FileName.Trim());
+            if (!filename.EndsWith(".rws"))
             {
-                await using var memstream = new MemoryStream(rent, 0, (int)Upload.Length - 1);
-                await ReplaceTicks(uploaded, memstream);
-                var filename = WebUtility.UrlEncode(Upload.FileName.Trim());
-                if (!filename.EndsWith(".rws"))
-                {
-                    ModelState.AddModelError(nameof(Upload), "Can only upload .rws save files!");
-                    return await OnGetAsync();
-                }
-                var oldFile = await _dbContext.SaveFiles.Where(x => x.Name == filename).FirstOrDefaultAsync();
-                var hash = await checksum.ComputeHashAsync(memstream);
-                var md5B64 = Convert.ToHexString(hash).ToLower();
-                if (oldFile?.MD5 == md5B64)
-                {
-                    return RedirectToPage("/Admin/ModSettings");
-                }
-                memstream.Position = 0;
-                await using var compressedStream = new MemoryStream();
-                await Compress(memstream, compressedStream);
-                if (oldFile is null)
-                {
-                    var safeFile = new SaveFile
-                    {
-                        File = compressedStream.ToArray(),
-                        MD5 = md5B64,
-                        Name = filename
-                    };
-
-                    _dbContext.SaveFiles.Add(safeFile);
-                }
-                else
-                {
-
-                    oldFile.File = compressedStream.ToArray();
-                    oldFile.MD5 = md5B64;
-                    _dbContext.SaveFiles.Update(oldFile);
-                }
-                await _dbContext.SaveChangesAsync();
+                ModelState.AddModelError(nameof(Upload), "Can only upload .rws save files!");
+                return await OnGetAsync();
+            }
+            var oldFile = await _dbContext.SaveFiles.Where(x => x.Name == filename).FirstOrDefaultAsync();
+            var hash = await checksum.ComputeHashAsync(memstream);
+            var md5B64 = Convert.ToHexString(hash).ToLower();
+            if (oldFile?.MD5 == md5B64)
+            {
                 return RedirectToPage("/Admin/ModSettings");
             }
-            finally
+            memstream.Seek(0, SeekOrigin.Begin);
+            await using var compressedStream = new MemoryStream();
+            await Compress(memstream, compressedStream);
+            if (oldFile is null)
             {
-                ArrayPool<byte>.Shared.Return(rent);
+                var safeFile = new SaveFile
+                {
+                    File = compressedStream.ToArray(),
+                    MD5 = md5B64,
+                    Name = filename
+                };
+
+                _dbContext.SaveFiles.Add(safeFile);
             }
+            else
+            {
+
+                oldFile.File = compressedStream.ToArray();
+                oldFile.MD5 = md5B64;
+                _dbContext.SaveFiles.Update(oldFile);
+            }
+            await _dbContext.SaveChangesAsync();
+            return RedirectToPage("/Admin/ModSettings");
         }
 
         private static async Task Compress(Stream input, MemoryStream output)
