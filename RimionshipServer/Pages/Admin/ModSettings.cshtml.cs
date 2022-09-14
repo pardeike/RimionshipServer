@@ -87,6 +87,8 @@ namespace RimionshipServer.Pages.Admin
                     line = "<ticksGame>0</ticksGame>";
                 }
                 await sw.WriteLineAsync(line);
+                if (line.Contains("</savegame>"))
+                    break;
             }
         }
 
