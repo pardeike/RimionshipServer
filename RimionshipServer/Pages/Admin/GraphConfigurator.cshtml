@@ -148,11 +148,11 @@
 							</tr>
 							<tr>
 								<td>Start</td>
-								<td><input type="datetime-local" class="text-box single-line" asp-for="Start" value="@DateTime.Now" /></td>
+								<td><input type="datetime-local" class="text-box single-line" asp-for="Start" value="@GraphConfigurator.NowNoSeconds()" asp-format="{0:yyyy-MM-dd HH:mm}" /></td>
 							</tr>
 							<tr>
 								<td>Ende</td>
-								<td><input type="datetime-local" class="text-box single-line" asp-for="End" value="@DateTime.Now" /></td>
+								<td><input type="datetime-local" class="text-box single-line" asp-for="End" value="@GraphConfigurator.NowNoSeconds()" asp-format="{0:yyyy-MM-dd HH:mm}" /></td>
 							</tr>
 							<tr>
 								<td>Intervall</td>
@@ -167,7 +167,7 @@
 								<td>@Html.CheckBoxFor(x => x.Autorefresh) Automatisch</td>
 							</tr>
 						</table>
-						<button asp-page-handler="Create" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Graph erzeugen</button>
+						<button asp-page-handler="CreateGraph" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Graph erzeugen</button>
 					</form>
 				</div>
 				<div class="input-group tab4">
