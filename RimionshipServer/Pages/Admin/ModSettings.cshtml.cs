@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +6,7 @@ using RimionshipServer.API;
 using RimionshipServer.Data;
 using RimionshipServer.Pages.Api;
 using RimionshipServer.Services;
+using System.Buffers;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -18,8 +18,8 @@ namespace RimionshipServer.Pages.Admin
     public class ModSettings : PageModel
     {
         private readonly ConfigurationService _configurationService;
-        private readonly SettingService       _settingService;
-        private readonly RimionDbContext      _dbContext;
+        private readonly SettingService _settingService;
+        private readonly RimionDbContext _dbContext;
 
         [BindProperty(SupportsGet = true)]
         [Display(Name = "Broadcast Message: ")]
@@ -56,7 +56,7 @@ namespace RimionshipServer.Pages.Admin
 
         [BindProperty]
         public int SaveFileId { get; set; }
-        
+
         [BindProperty]
         public string DownloadURI { get; set; } = null!;
 
@@ -75,14 +75,14 @@ namespace RimionshipServer.Pages.Admin
         private static async Task ReplaceTicks(Stream uploaded, MemoryStream memstream)
         {
             await using var br = new BufferedStream(uploaded);
-            using var       sr = new StreamReader(br);
+            using var sr = new StreamReader(br);
             await using var sw = new StreamWriter(memstream, Encoding.UTF8, -1, true);
             while (true)
             {
                 var line = await sr.ReadLineAsync();
                 if (line == null)
                     break;
-                if (line.Contains("<ticksGame>"))
+                if (line.Contains("<ticksGame>") && line.Contains("</ticksGame>"))
                 {
                     line = "<ticksGame>0</ticksGame>";
                 }
@@ -92,22 +92,22 @@ namespace RimionshipServer.Pages.Admin
 
         public async Task<IActionResult> OnPostUploadAsync()
         {
-            using var       checksum = MD5.Create();
+            using var checksum = MD5.Create();
             await using var uploaded = Upload.OpenReadStream();
-            var rent =  ArrayPool<byte>.Shared.Rent((int) Upload.Length);
+            var rent = ArrayPool<byte>.Shared.Rent((int)Upload.Length);
             try
             {
-                await using var memstream = new MemoryStream(rent, 0, (int) Upload.Length -1);
+                await using var memstream = new MemoryStream(rent, 0, (int)Upload.Length - 1);
                 await ReplaceTicks(uploaded, memstream);
-                var filename  = WebUtility.UrlEncode(Upload.FileName.Trim());
+                var filename = WebUtility.UrlEncode(Upload.FileName.Trim());
                 if (!filename.EndsWith(".rws"))
                 {
                     ModelState.AddModelError(nameof(Upload), "Can only upload .rws save files!");
                     return await OnGetAsync();
                 }
                 var oldFile = await _dbContext.SaveFiles.Where(x => x.Name == filename).FirstOrDefaultAsync();
-                var hash    = await checksum.ComputeHashAsync(memstream);
-                var md5B64  = Convert.ToHexString(hash).ToLower();
+                var hash = await checksum.ComputeHashAsync(memstream);
+                var md5B64 = Convert.ToHexString(hash).ToLower();
                 if (oldFile?.MD5 == md5B64)
                 {
                     return RedirectToPage("/Admin/ModSettings");
@@ -117,19 +117,20 @@ namespace RimionshipServer.Pages.Admin
                 await Compress(memstream, compressedStream);
                 if (oldFile is null)
                 {
-                    var safeFile = new SaveFile{
-                                                   File = compressedStream.ToArray(),
-                                                   MD5  = md5B64,
-                                                   Name = filename
-                                               };
+                    var safeFile = new SaveFile
+                    {
+                        File = compressedStream.ToArray(),
+                        MD5 = md5B64,
+                        Name = filename
+                    };
 
                     _dbContext.SaveFiles.Add(safeFile);
                 }
                 else
                 {
-                
+
                     oldFile.File = compressedStream.ToArray();
-                    oldFile.MD5  = md5B64;
+                    oldFile.MD5 = md5B64;
                     _dbContext.SaveFiles.Update(oldFile);
                 }
                 await _dbContext.SaveChangesAsync();
