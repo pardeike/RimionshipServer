@@ -2,21 +2,22 @@
 
 <form asp-page-handler="Motd" method="post">
 	<div class="input-group mb-3">
-		<div>
-			Aktuelle Nachricht: @{
-				if (Model.Motd.Length == 0)
-				{
-					<i>keine Nachricht</i>
-				}
-				else
-				{
-					<b>@Model.Motd</b>
-				}
+		Aktuelle Nachricht: @{
+			if (Model.Motd.Length == 0)
+			{
+				<i>keine Nachricht</i>
 			}
-		</div>
-		<input name="motd" type="text" style="margin-right: 1%; width: 84%;" />
-		<div class="input-group-prepend" style="width: 15%;">
-			<button class="btn btn-outline-dark form-control" type="submit">Setzen</button>
-		</div>
+			else
+			{
+				<b>@Model.Motd</b>
+			}
+		}
+	</div>
+	<div>
+		Neue Nachricht
+	</div>
+	<div class="input-group mb-3">
+		<input name="motd" type="text" style="width: 90%" />
+		<button class="btn btn-outline-dark" type="submit">Setzen</button>
 	</div>
 </form>
