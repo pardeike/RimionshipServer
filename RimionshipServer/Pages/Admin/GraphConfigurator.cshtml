@@ -5,40 +5,57 @@
 	ViewData["Title"] = "Graphen";
 }
 @section Css
-	{
-	<link rel="stylesheet" href="/css/admin.css">
-	<link rel="stylesheet" href="/css/tabs.css">
+{
+      <link rel="stylesheet" href="/css/admin.css">
+      <link rel="stylesheet" href="/css/tabs.css">
 }
-	@section Scripts
-	{
-	@if (!Model.Done)
-	{
-		<script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
-		<script>
-			//Taken from https://stackoverflow.com/a/27578356
-			window.onmousedown = function (e) {
-				 var el = e.target;
-				 if (el.tagName.toLowerCase() == 'option' && el.parentNode.hasAttribute('multiple')) {
-					  e.preventDefault();
+@section Scripts
+{
 
-					  // toggle selection
-					  if (el.hasAttribute('selected')) el.removeAttribute('selected');
-					  else el.setAttribute('selected', '');
-
-					  // hack to correct buggy behavior
-					  var select = el.parentNode.cloneNode(true);
-					  el.parentNode.parentNode.replaceChild(select, el.parentNode);
-				 }
-			}
-		</script>
-	}
-	<script type="text/javascript">
-		const links = document.getElementsByTagName("a");
-		for (let i = 0; i < links.length; i++) {
-			 if (links[i].innerHTML === "!will be replaced by js!")
-				  links[i].innerHTML = links[i].href;
-		}
-	</script>
+@{
+#if DEBUG
+}
+    @if (!Model.Done)
+    {
+        <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
+    }
+@{
+#else
+}
+    @if (!Model.Done)
+    {
+        <script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>
+    }
+@{
+#endif
+}
+    @if (!Model.Done)
+    {                                                                 
+    <script type="text/javascript" defer="">
+        //Taken from https://stackoverflow.com/a/27578356
+        window.onmousedown = function (e) {
+            var el = e.target;
+            if (el.tagName.toLowerCase() == 'option' && el.parentNode.hasAttribute('multiple')) {
+                e.preventDefault();
+        
+                // toggle selection
+                if (el.hasAttribute('selected')) el.removeAttribute('selected');
+                else el.setAttribute('selected', '');
+        
+                // hack to correct buggy behavior
+                var select = el.parentNode.cloneNode(true);
+                el.parentNode.parentNode.replaceChild(select, el.parentNode);
+            }
+        }
+        </script>
+    }
+    <script type="text/javascript">
+            const links = document.getElementsByTagName("a");
+            for (let i = 0; i < links.length; i++) {
+                 if (links[i].innerHTML === "!will be replaced by js!")
+                     links[i].innerHTML = links[i].href;
+            }
+    </script>
 }
 	<div>
 		<h1>@ViewData["Title"]</h1>

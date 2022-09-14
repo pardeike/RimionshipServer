@@ -1,23 +1,24 @@
 ﻿@model ModSettings
 
 <form asp-page-handler="Motd" method="post">
-	<div class="input-group mb-3">
-		Aktuelle Nachricht: @{
-			if (Model.Motd.Length == 0)
-			{
-				<i>keine Nachricht</i>
-			}
-			else
-			{
-				<b>@Model.Motd</b>
-			}
-		}
-	</div>
-	<div>
-		Neue Nachricht
-	</div>
-	<div class="input-group mb-3">
-		<input name="motd" type="text" style="width: 90%" />
-		<button class="btn btn-outline-dark" type="submit">Setzen</button>
-	</div>
+    <div class="mb-3">
+        <label class="form-label text-primary">
+            Aktuelle Nachricht:
+            @{
+                if (Model.Motd.Length == 0)
+                {
+                    <b><i>keine Nachricht</i></b>
+                }
+                else
+                {
+                    <b>@Model.Motd</b>
+                }
+            }
+        </label>
+        <div class="row">
+            <label class="col-2" asp-for="Motd"></label>
+            <input class="form-control col" name="motd" type="text" />
+        </div>
+    </div>
+    <button class="btn btn-outline-dark" type="submit">Speichern</button>
 </form>

@@ -2,11 +2,14 @@
 
 <form asp-page-handler="Setting" method="post">
 	<div>
-		<span>
-			Activ: @Model.ActiveSetting<br />
-			@Html.DropDownListFor(x => x.ActiveSetting, Model.SettingsSelect, null, new {@class="btn btn-outline-dark"})
-		</span>
-		<button class="btn btn-outline-dark" type="submit">Aktivieren</button>
-		<a id="editBtn" class="btn btn-outline-dark" href="#">Bearbeiten</a>
+        <label class="form-label text-primary">
+            Aktive Einstellungen: <b>@Model.ActiveSetting</b></label>
+        <br />
+        <div class="row g-2">
+            <label asp-for="ActiveSetting" class="col-1 form-label"></label>
+            <select class="form-select col m-2" asp-for="ActiveSetting" asp-items="Model.SettingsSelect"></select>
+            <button class="btn btn-outline-dark col-2 m-2" type="submit">Aktivieren</button>
+            <a id="editBtn" class="btn btn-outline-dark col-2 m-2" href="#">Bearbeiten</a>
+        </div>
 	</div>
 </form>

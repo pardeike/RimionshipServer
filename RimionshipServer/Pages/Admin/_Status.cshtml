@@ -1,24 +1,25 @@
-﻿@model ModSettings
+﻿@using RimionshipServer.API
+@model ModSettings
 
 <form asp-page-handler="Game" method="post">
-	<div class="input-group tab1">
-		<div>
-			<div class="input-group">
-				<label class="m-2 form-label">Startzeit (hh:mm)</label>
-				@Html.TextBoxFor(x => x.PlannedStartHour, new{@class = "m-2 form-control"})
-				@Html.TextBoxFor(x => x.PlannedStartMinute, new{@class = "m-2 form-control"})
-			</div>
-			<div class="input-group">
-				<label class="m-2 form-label">@nameof(Model.GameState)</label>
-				@Html.DropDownListFor(x => x.GameState, new[]{
-				new SelectListItem("STOPPED", "0", Model.GameState == 0),
-				new SelectListItem("TRAINING", "1", Model.GameState == 1),
-				new SelectListItem("PREPARE", "2", Model.GameState == 2),
-				new SelectListItem("STARTED", "3", Model.GameState == 3),
-				new SelectListItem("COMPLETED", "4", Model.GameState == 4)
-				}, new{@class = "m-2 form-control"})
-			</div>
-			<button class="btn btn-outline-dark form-control" type="submit" style="width: 40%">Speichern</button>
-		</div>
-	</div>
+    <div class="form-group tab1">
+        <div class="row">
+            <label class="form-label text-primary">Aktuelle Startzeit: <b>@(Model.PlannedStartHour.ToString("D2"))std : @(Model.PlannedStartMinute.ToString("D2"))min</b></label>
+        </div>
+        <div class="row">
+            <label class="form-label text-primary">Aktueller Status: <b>@((State.Types.Game)Model.GameState)</b></label>
+        </div>
+        <div>
+            <div class="form-group row">
+                <label class="m-2 form-label col">Startzeit: </label>
+                <input id="stunde" type="number" asp-for="PlannedStartHour" class="m-2 form-control col" alt="Stunde" title="Stunde" data-bs-toggle="tooltip" data-bs-placement="top" />
+                <input id="minute" type="number" asp-for="PlannedStartMinute" class="m-2 form-control col" alt="Minute" title="Minute" data-bs-toggle="tooltip" data-bs-placement="top" />
+            </div>
+            <div class="form-group row">
+                <label asp-for="GameState" class="m-2 form-label col-4"></label>
+                <select class="m-2 form-control col" asp-for="GameState" asp-items="@(new[]{new SelectListItem("STOPPED", "0", Model.GameState == 0), new SelectListItem("TRAINING", "1", Model.GameState == 1), new SelectListItem("PREPARE", "2", Model.GameState == 2), new SelectListItem("STARTED", "3", Model.GameState == 3), new SelectListItem("COMPLETED", "4", Model.GameState == 4)})"></select>
+            </div>
+            <button class="btn btn-outline-dark" type="submit">Speichern</button>
+        </div>
+    </div>
 </form>

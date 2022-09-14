@@ -131,19 +131,21 @@ namespace RimionshipServer.API
                 TwitchName = name ?? string.Empty
             };
         }
-
+        
         public override async Task<StartResponse> Start(StartRequest request, ServerCallContext context)
         {
             VerifyId(request.Id);
-            var user = await GetCachedUserAsync(request.Id);
-            var address = "http://" + context.Host.Replace(":5063", context.Host.Contains("localhost") ? ":5062" : "");
+            _ = await GetCachedUserAsync(request.Id);
+
+            var settings = await db.GetSaveSettingsAsync();
+            
             return new StartResponse
-            {
-                GameFileHash = address + _linkGenerator.GetPathByPage("/API/SaveFile", "Hash"),
-                GameFileUrl = address + _linkGenerator.GetPathByPage("/API/SaveFile", "File"),
-                StartingPawnCount = 5, // NYI
-                Settings = await _settingService.GetActiveSetting(db)
-            };
+                   {
+                       GameFileHash      = settings.DownloadURI + _linkGenerator.GetPathByPage("/API/SaveFile", "Hash"),
+                       GameFileUrl       = settings.DownloadURI + _linkGenerator.GetPathByPage("/API/SaveFile", "File"),
+                       StartingPawnCount = settings.CountColonists,
+                       Settings          = await _settingService.GetActiveSetting(db)
+                   };
         }
 
         public override async Task<FutureEventsResponse> FutureEvents(FutureEventsRequest request, ServerCallContext context)

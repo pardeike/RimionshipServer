@@ -1,15 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+#if RELEASE
+using NUglify;
+#endif
 using RimionshipServer;
 using RimionshipServer.API;
 using RimionshipServer.Data;
+using RimionshipServer.Pages.Api;
 using RimionshipServer.Services;
 using RimionshipServer.Users;
 using Serilog;
+using WebMarkupMin.AspNetCore6;
+using WebMarkupMin.NUglify;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder      = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
 
 // Add services to the container.
@@ -47,7 +53,7 @@ void ConfigureServices(IServiceCollection services)
     {
         options.KnownProxies.Clear();
         options.KnownNetworks.Clear();
-        options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     });
 
     services.AddRazorPages(options =>
@@ -88,6 +94,26 @@ void ConfigureServices(IServiceCollection services)
         options.LowercaseQueryStrings = true;
         options.AppendTrailingSlash = true;
     });
+    services.AddWebMarkupMin(
+                             options =>
+                             {
+                                 options.DisablePoweredByHttpHeaders = true;
+                             })
+            .AddHtmlMinification(
+                                 options =>
+                                 {
+                                     options.JsMinifierFactory = new NUglifyJsMinifierFactory(new NUglifyJsMinificationSettings{
+                                                                                                                                    PreserveImportantComments = false
+                                                                                                                                });
+                                     options.CssMinifierFactory = new NUglifyCssMinifierFactory(new NUglifyCssMinificationSettings{
+                                                                                                                                       ColorNames = CssColor.Major,
+                                                                                                                                       CommentMode = CssComment.None
+                                                                                                                                   });
+                                     options.MinificationSettings.RemoveRedundantAttributes         = true;
+                                     options.MinificationSettings.RemoveHttpProtocolFromAttributes  = true;
+                                     options.MinificationSettings.RemoveHttpsProtocolFromAttributes = true;
+                                 })
+            .AddHttpCompression();
 }
 
 ConfigureServices(builder.Services);
@@ -110,7 +136,7 @@ void Configure(WebApplication app)
     }
 
     app.UseStaticFiles();
-
+    app.UseWebMarkupMin();
     app.UseRouting();
 
     app.UseAuthentication();
@@ -124,6 +150,43 @@ void Configure(WebApplication app)
 
 var app = builder.Build();
 
+#if RELEASE
+Log.Information("Minifying Javascript");
+await MinifyJs(Path.Combine("wwwroot", "js"));
+
+async Task MinifyJs(string path)
+{
+    var dirs = Directory.GetDirectories(path);
+    await Task.WhenAll(dirs.Select(async x => await MinifyJs(x)));
+    var files = Directory.GetFiles(path);
+    foreach (string file in files)
+    {
+        if (file.EndsWith(".min.js") || !file.EndsWith(".js"))
+        {
+            continue;
+        }
+        Log.Information("Found Matching Source: {File}", file);
+        var siteJs = await File.ReadAllTextAsync(file);
+        var result = Uglify.Js(siteJs, file);
+        
+        if (!result.HasErrors)
+        {
+            var newFile = file.Replace(".js", ".min.js");
+            Log.Information("Processed Source: {File} → {NewFile}", file, newFile);
+            await File.WriteAllTextAsync(newFile, result.Code);
+        }
+        else
+        {
+            foreach (UglifyError resultError in result.Errors)
+            {
+                Log.Error("Error while minifying: {Error}", resultError);
+            }
+        }
+    }
+}
+Log.Information("Minifying Javascript done!");
+#endif
+
 await using (var scope = app.Services.CreateAsyncScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<RimionDbContext>();
@@ -134,6 +197,11 @@ await using (var scope = app.Services.CreateAsyncScope())
     await seeder.SeedAsync();
     Log.Information("Seeding complete! Fetching persistent inMemory-Data");
     await Task.WhenAll(Stats.InitStatFromDatabase(db));
+    var settingsAsync = await db.GetSaveSettingsAsync();
+    if (settingsAsync.SaveFile is not null)
+    {
+        SaveFilePageModel.SafeFile = await db.SaveFiles.AsNoTracking().Where(x => x.Name == settingsAsync.SaveFile).FirstAsync();
+    }
     Log.Information("Fetching Complete!");
 }
 

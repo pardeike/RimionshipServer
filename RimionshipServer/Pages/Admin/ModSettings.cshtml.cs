@@ -6,7 +6,8 @@ using RimionshipServer.API;
 using RimionshipServer.Data;
 using RimionshipServer.Pages.Api;
 using RimionshipServer.Services;
-using System.Buffers;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
@@ -14,24 +15,26 @@ namespace RimionshipServer.Pages.Admin
 {
     public class ModSettings : PageModel
     {
-        private ConfigurationService _configurationService;
-        private SettingService _settingService;
-        private RimionDbContext _dbContext;
+        private readonly ConfigurationService _configurationService;
+        private readonly SettingService       _settingService;
+        private readonly RimionDbContext      _dbContext;
 
         [BindProperty(SupportsGet = true)]
-        public string Motd { get; set; }
+        [Display(Name = "Broadcast Message: ")]
+        public string Motd { get; set; } = null!;
 
         [BindProperty(SupportsGet = true)]
-        public IEnumerable<AllowedMod> AllowedMods { get; set; }
+        public IEnumerable<AllowedMod> AllowedMods { get; set; } = null!;
 
         [BindProperty(SupportsGet = true)]
         public byte MaximumLoadOrder { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public string ActiveSetting { get; set; }
+        [Display(Name = "Einstellungen: ")]
+        public string ActiveSetting { get; set; } = null!;
 
         [BindProperty(SupportsGet = true)]
-        public IEnumerable<SelectListItem> SettingsSelect { get; set; }
+        public IEnumerable<SelectListItem> SettingsSelect { get; set; } = null!;
 
         [BindProperty(SupportsGet = true)]
         public byte PlannedStartHour { get; set; }
@@ -40,66 +43,79 @@ namespace RimionshipServer.Pages.Admin
         public byte PlannedStartMinute { get; set; }
 
         [BindProperty(SupportsGet = true)]
+        [Display(Name = "Spiel Status: ")]
         public byte GameState { get; set; }
 
         [BindProperty]
-        public IFormFile Upload { get; set; }
+        public IFormFile Upload { get; set; } = null!;
 
         [BindProperty(SupportsGet = true)]
-        public IEnumerable<SelectListItem> SaveFileSelect { get; set; }
+        public IEnumerable<SelectListItem> SaveFileSelect { get; set; } = null!;
 
         [BindProperty]
         public int SaveFileId { get; set; }
+        
+        [BindProperty]
+        public string DownloadURI { get; set; } = null!;
+
+        [BindProperty(SupportsGet = true)]
+        [Display(Name = "Pawns zum Start:")]
+        public int StartingPawns { get; set; }
 
         public async Task<IActionResult> OnPostFileSelectAsync()
         {
             SaveFilePageModel.SafeFile = await _dbContext.SaveFiles.FindAsync(SaveFileId);
+            Debug.Assert(SaveFilePageModel.SafeFile is not null);
+            await _dbContext.SetSaveSettingsAsync("http://" + DownloadURI, SaveFilePageModel.SafeFile, StartingPawns);
             return RedirectToPage("/Admin/ModSettings");
         }
 
         public async Task<IActionResult> OnPostUploadAsync()
         {
-            using var checksum = MD5.Create();
+            using var       checksum = MD5.Create();
             await using var uploaded = Upload.OpenReadStream();
-            var filename = WebUtility.UrlEncode(Upload.FileName.Trim());
+            var             filename = WebUtility.UrlEncode(Upload.FileName.Trim());
             if (!filename.EndsWith(".rws"))
             {
                 ModelState.AddModelError(nameof(Upload), "Can only upload .rws save files!");
                 return await OnGetAsync();
             }
-            var rent = ArrayPool<byte>.Shared.Rent((int)uploaded.Length);
-            try
+            var oldFile  = await _dbContext.SaveFiles.Where(x => x.Name == filename).FirstOrDefaultAsync();
+            var hash = await checksum.ComputeHashAsync(uploaded);
+            var md5B64   = Convert.ToHexString(hash).ToLower();
+            if (oldFile?.MD5 == md5B64)
             {
-                await using var memstream = new MemoryStream(rent, 0, (int)uploaded.Length);
-                await uploaded.CopyToAsync(memstream);
-                memstream.Position = 0;
-                var hashTask = await checksum.ComputeHashAsync(memstream);
-                memstream.Position = 0;
-                await using var compressed = await Compress(memstream);
-                var md5B64 = Convert.ToHexString(hashTask).ToLower();
-                var safeFile = new SaveFile
-                {
-                    File = compressed.ToArray(),
-                    MD5 = md5B64,
-                    Name = filename
-                };
-                _dbContext.SaveFiles.Add(safeFile);
-                await _dbContext.SaveChangesAsync();
                 return RedirectToPage("/Admin/ModSettings");
             }
-            finally
+            uploaded.Position = 0;
+            await using var compressedStream = new MemoryStream();
+            await Compress(uploaded, compressedStream);
+            if (oldFile is null)
             {
-                ArrayPool<byte>.Shared.Return(rent);
+                var safeFile = new SaveFile{
+                                               File = compressedStream.ToArray(),
+                                               MD5  = md5B64,
+                                               Name = filename
+                                           };
+
+                _dbContext.SaveFiles.Add(safeFile);
             }
+            else
+            {
+                
+                oldFile.File = compressedStream.ToArray();
+                oldFile.MD5  = md5B64;
+                _dbContext.SaveFiles.Update(oldFile);
+            }
+            await _dbContext.SaveChangesAsync();
+            return RedirectToPage("/Admin/ModSettings");
         }
 
-        private static async Task<MemoryStream> Compress(Stream input)
+        private static async Task Compress(Stream input, MemoryStream output)
         {
-            var outputStream = new MemoryStream();
-            await using GZipStream gzip = new(outputStream, CompressionLevel.SmallestSize);
+            await using GZipStream gzip = new(output, CompressionLevel.SmallestSize);
             await input.CopyToAsync(gzip);
             await gzip.FlushAsync();
-            return outputStream;
         }
 
         public ModSettings(ConfigurationService configurationService, RimionDbContext dbContext, SettingService settingService)
@@ -138,6 +154,7 @@ namespace RimionshipServer.Pages.Admin
                                 .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
                                 .Prepend(new SelectListItem("None", string.Empty, true))
                                 .ToArray();
+            StartingPawns = (await _dbContext.GetSaveSettingsAsync()).CountColonists;
             return Page();
         }
 

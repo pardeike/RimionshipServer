@@ -87,5 +87,12 @@
                                                                                 Game = (API.State.Types.Game) state.GameState
                                                                             };
         }
+        public class SaveSettings
+        {
+            public int     Id             { get; set; }
+            public string? SaveFile       { get; set; }
+            public string  DownloadURI    { get; set; }
+            public int     CountColonists { get; set; }
+        }
     }
 }

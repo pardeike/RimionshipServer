@@ -1,5 +1,4 @@
 ﻿@page
-@using RimionshipServer.Pages.Api
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model RimionshipServer.Pages.Admin.ModSettings
 
@@ -7,19 +6,35 @@
 	ViewData["Title"] = "Einstellungen";
 }
 @section Scripts
-	{
-	<script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
-	<script>
+{
+@{
+#if DEBUG
+}
+    <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
+@{
+#else
+}
+    <script type="text/javascript" src="~/js/site.min.js" asp-append-version="true"></script>
+@{
+#endif
+}
+    <script type="text/javascript" src="~/lib/Popper/popper.min.js"></script>
+    <script type="text/javascript" defer="">
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+        
 		function getCookie(cname) {
 			 let name = cname + "=";
 			 let decodedCookie = decodeURIComponent(document.cookie);
 			 let ca = decodedCookie.split(';');
 			 for (let i = 0; i < ca.length; i++) {
 				  let c = ca[i];
-				  while (c.charAt(0) == ' ') {
+				  while (c.charAt(0) === ' ') {
 						c = c.substring(1);
 				  }
-				  if (c.indexOf(name) == 0) {
+				  if (c.indexOf(name) === 0) {
 						return c.substring(name.length, c.length);
 				  }
 			 }
@@ -29,7 +44,7 @@
 			 document.cookie = cname + "=" + val + "; path=/";
 		}
 
-		var tabIndex = getCookie("selectedtab");
+		let tabIndex = getCookie("selectedtab");
 		if (!tabIndex) {
 			 tabIndex = "1";
 			 setCookie("selectedtab", tabIndex);
@@ -44,6 +59,8 @@
 			 location.href = "@Url.PageLink("CreateNewSetting")" + "?SettingId=" + select.options[select.selectedIndex].value;
 		}
 		editBtn.onclick = reroute;
+        const downloadUri = document.getElementById("downloadUri");
+        downloadUri.value = window.location.host;
 	</script>
 	}
 	@section Css

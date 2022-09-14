@@ -2,15 +2,30 @@
 
 @model ModSettings
 
-<label>Aktive Spieldatei: <b>@(SaveFilePageModel.SafeFile?.Name ?? "None")</b></label>
 <form method="post" asp-page-handler="FileSelect">
-	<label>Neue Spieledatei: </label>
-	@Html.DropDownListFor(x => x.SaveFileId, Model.SaveFileSelect)<br />
-	<input style="margin-top: 10px" type="submit" value="Speichern" />
+    <div class="justify-content-center row g-3 gy-2">
+        <label class="form-label text-primary">Aktive Spieldatei: <b>@(SaveFilePageModel.SafeFile?.Name ?? "Keine"), @Model.StartingPawns Pawns</b></label>
+        <div class="form-group col form-check-inline justify-content-center">
+            <div class="row">
+                <label class="col-form-label col-3">Spieledateiauswahl:</label>
+                <select class="col form-select" asp-for="SaveFileId" asp-items="Model.SaveFileSelect"></select>
+            </div>
+        </div>
+        <div class="form-group col form-check-inline justify-content-center">
+            <div class="row">
+                <label asp-for="StartingPawns" class="col-form-label col-3"></label>
+                <input class="form-control col" type="number" asp-for="StartingPawns"/>
+            </div>
+        </div>
+        <input type="hidden" asp-for="DownloadURI" id="downloadUri"/>
+    </div>
+      <input class="mt-3 btn btn-outline-dark" type="submit" value="Speichern"/>
 </form>
 <hr />
 <form method="post" enctype="multipart/form-data" asp-page-handler="Upload">
-	<label>Hochladen:</label>
-	<input type="file" asp-for="Upload" /><br />
-	<input style="margin-top: 10px" type="submit" value="Speichern" />
+    <div class="row">
+        <label class="col-1">Hochladen:</label>
+        <input class="col form-control" type="file" accept=".rws" asp-for="Upload"/><br/>
+    </div>
+    <input class="col mt-1 btn btn-outline-dark" type="submit" value="Speichern"/>
 </form>

@@ -19,7 +19,29 @@ namespace RimionshipServer.Data
         private DbSet<MiscSettings.State>            GameState { get; set; } = null!;
         private DbSet<MiscSettings.BroadcastMessage> MotdSet   { get; set; } = null!;
 
-        private MiscSettings.State? _cachedGameState;
+        private DbSet<MiscSettings.SaveSettings> SaveSettings                       { get; set; } = null!;
+        
+        private static MiscSettings.State?       _cachedGameState;
+        private static string?                   _cachedMotd;
+        private static string?                   _cachedStreamer;
+        private static MiscSettings.SaveSettings _cachedSaveSettings;
+        
+        public async Task SetSaveSettingsAsync(string downloadURI, SaveFile saveFile, int countColonist)
+        {
+            var toUpdate = await SaveSettings.FirstAsync();
+            toUpdate.SaveFile       = saveFile.Name;
+            toUpdate.CountColonists = countColonist;
+            toUpdate.DownloadURI    = downloadURI;
+            SaveSettings.Update(toUpdate);
+            await SaveChangesAsync();
+            
+            _cachedSaveSettings = await SaveSettings.AsNoTracking().FirstAsync();
+        }
+        
+        public async Task<MiscSettings.SaveSettings> GetSaveSettingsAsync(CancellationToken cancellationToken = default)
+        {
+            return _cachedSaveSettings ??= await SaveSettings.AsNoTracking().FirstAsync(cancellationToken);
+        }
         
         public async Task SetGameStateAsync(int gameState, int hour, int minute)
         {
@@ -29,7 +51,7 @@ namespace RimionshipServer.Data
             toUpdate.PlannedStartMinute = minute;
             GameState.Update(toUpdate);
             await SaveChangesAsync();
-            _cachedGameState = toUpdate;
+            _cachedGameState = await GameState.AsNoTracking().FirstAsync();
         }
         
         public async Task<MiscSettings.State> GetGameStateAsync(CancellationToken cancellationToken = default)
@@ -59,10 +81,16 @@ namespace RimionshipServer.Data
                                                         PlannedStartMinute = 0
                                                     });
             }
+            if (!await SaveSettings.AnyAsync())
+            {
+                SaveSettings.Add(new MiscSettings.SaveSettings{
+                                                                  DownloadURI = String.Empty,
+                                                                  CountColonists = 5,
+                                                                  SaveFile = null
+                                                              });
+            }
         }
         
-        private string? _cachedMotd;
-
         public async Task SetMotdAsync(string? newText)
         {
             var toUpdate = await MotdSet.FirstAsync();
@@ -77,7 +105,6 @@ namespace RimionshipServer.Data
             return _cachedMotd ??= (await MotdSet.AsNoTracking().FirstAsync(cancellationToken)).Text;
         }
         
-        private string? _cachedStreamer;
         public async Task SetStreamerAsync(string userId)
         {
             var user = await Users.FirstAsync(x => x.Id == userId);
@@ -309,7 +336,14 @@ GROUP BY (Timestamp / @bucketDivisor)";
                                             .HasAnnotation("Sqlite", "Autoincrement");
                                         entity.HasKey(x => x.Id);
                                       });
-            
+            builder.Entity<MiscSettings.SaveSettings>(
+                                                      entity =>
+                                                      {
+                                                            entity.Property(x => x.Id)
+                                                            .ValueGeneratedOnAdd()
+                                                            .HasAnnotation("Sqlite", "Autoincrement");
+                                                            entity.HasKey(x => x.Id);
+                                                      });
 			foreach (var entityType in builder.Model.GetEntityTypes())
 			{
 				var properties = entityType.ClrType
