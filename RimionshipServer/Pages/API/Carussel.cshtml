@@ -1,0 +1,85 @@
+﻿@page "{thing:int}"
+@model RimionshipServer.Pages.Api.Carussel
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <link rel="preload" href="~/fonts/RimWordFont.ttf" as="font" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/fonts.css"/>
+    <title>Carussel</title>
+</head>
+<body style="max-width: 425px; max-height: 750px; width: 425px; height: 750px">
+<div>
+<h2 class="m-1 text-center rimfont" style="color: #cd0000; font-size: calc(1.125rem + .9vw); margin-bottom: 2rem !important;">
+    @(RouteData.Values["thing"] switch {
+      "0" => "#1 Die Sturköpfe",
+      "1" => "#2 Spielverderber",
+      "2" => "#3 Die Geisterkolonie",
+      "3" => "#4 Die Waschlappen",
+      "4" => "#5 Ausgenommen gut",
+      _ => throw new ArgumentOutOfRangeException()
+      })
+</h2>
+<table class="m-1 table text-center table-bordered" style="color: #9d9d9c; font-size: 115%; font-family: 'Roboto Condensed', sans-serif">
+    <thead>
+        <tr>
+            <th scope="col" class="rimfont">#</th>
+            <th scope="col" class="rimfont">Name</th>
+            <th scope="col" class="rimfont">@(RouteData.Values["thing"] switch {
+                                  "0" => "Zeit",
+                                  "1" => "Zeit",
+                                  "2" => "Tote",
+                                  "3" => "Wert",
+                                  "4" => "Wert",
+                                  _ => throw new ArgumentOutOfRangeException()
+                                                                         })</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var entries in Model.Entries)
+    {
+        <tr>
+            <td>
+                @(entries.Item1 +1)
+            </td>
+            <td>
+                @entries.Item2
+            </td>
+            <td>
+                @entries.Item3
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+</div>
+<script type="text/javascript" defer="">
+    const url = new URL(window.location);
+    if ((url.searchParams.get("loop") === 'true')) {
+        const loopValues = ['/0', '/1', '/2'];
+        let time = url.searchParams.get("time");
+        if (time === null)
+            time = 30000;
+        window.setTimeout(() => 
+        {
+            
+            for (let i = 0; i < loopValues.length; i++) {
+                let loopValue = loopValues[i];
+                if (window.location.href.includes(loopValue)) {
+                    window.location.href = window.location.href
+                                          .replace(loopValue, loopValues[(i + 1) % loopValues.length]);
+                    return;
+                }
+            }
+        }, Number(time));
+    } else {
+        url.searchParams.set("loop", "false");
+        window.history.pushState({}, '', url);
+   }
+</script>
+</body>
+</html>

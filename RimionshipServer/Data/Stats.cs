@@ -8,6 +8,24 @@ namespace RimionshipServer.Data
         {
             InitStatToUser();
         }
+        
+        public static async Task<(int, string, double)[]> GetTopXNotBannedUserFromDynamicCacheWithValue(string stat, int max, RimionDbContext context)
+        {
+            var ids = _StatToUser[stat].OrderByDescending(x => x.Value)
+                                       .Select(x => x.Key)
+                                       .ToList();
+            var values = _StatToUser[stat].OrderByDescending(x => x.Value)
+                                       .Select(x => x.Value)
+                                       .ToList();
+            return (await context.Users
+                                 .Where(l => ids.Contains(l.Id))
+                                 .Where(x => !x.WasBanned)
+                                 .ToListAsync())
+                  .OrderBy(l => ids.IndexOf(l.Id))
+                  .Take(max)
+                  .Select((x, y) => (y, x.UserName, values[y]))
+                  .ToArray();
+        }
 
         public static async Task<RimionUser[]> GetTopXNotBannedUserFromDynamicCache(string stat, int max, RimionDbContext context)
         {
