@@ -16,7 +16,7 @@
         <canvas id="myChart"></canvas>
     </div>
     <script>
-        window.setTimeout(() => window.location = window.location, 5000);
+        // window.setTimeout(() => window.location = window.location, 5000);
     </script>
 @{
 #if DEBUG
@@ -54,35 +54,38 @@
                      }
                  },
                  plugins: {
-                     legend: {
+                     legend:{
                          position: 'right',
                          labels: {
-                             color: '#9d9d9c',
                              font: {
                                  size: 24
-                                 }
                              }
                          }
+                     }
                  },
                  scales: {
                      x: {
                          type: 'time',
+                         alignToPixels: true,
                          ticks: {
-                             color: '#9d9d9c'
+                             includeBounds: true,
+                             maxRotation: 0,
+                             maxTicksLimit: 13,
+                             color: '#9d9d9c',
+                             callback: function(value, index, ticks) {
+                                 const date = new Date(ticks[index].value);
+                                 return new Intl.DateTimeFormat('de', { hour: '2-digit', minute: '2-digit' }).format(date);
                              }
+                         }
                      },
                      y: {
-                         ticks: {
-                             color: '#9d9d9c'
-                             }
+                         color: '#9d9d9c',
+                         alignToPixels: true
                      }
                  }
              }
          };
-         const myChart = new Chart(
-             document.getElementById('myChart'),
-             config
-           );
+         const myChart = new Chart(document.getElementById('myChart'), config);
     </script>
 
     </body>
