@@ -6,7 +6,6 @@ using RimionshipServer.API;
 using RimionshipServer.Data;
 using RimionshipServer.Pages.Api;
 using RimionshipServer.Services;
-using System.Buffers;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -64,6 +63,23 @@ namespace RimionshipServer.Pages.Admin
         [Display(Name = "Pawns zum Start:")]
         public int StartingPawns { get; set; }
 
+        public async Task<IActionResult> OnPostFileDeleteAsync()
+        {
+            var toDelete = await _dbContext.SaveFiles.FindAsync(SaveFileId);
+            if (toDelete is null)
+                return RedirectToPage("/Admin/ModSettings");
+            
+            if (SaveFilePageModel.SafeFile?.Name == toDelete.Name)
+            {
+                SaveFilePageModel.SafeFile = null;
+                await _dbContext.SetSaveSettingsAsync("http://" + DownloadURI, null!, StartingPawns);
+            }
+            _dbContext.SaveFiles.Remove(toDelete);
+            await _dbContext.SaveChangesAsync();
+            
+            return RedirectToPage("/Admin/ModSettings");
+        }
+        
         public async Task<IActionResult> OnPostFileSelectAsync()
         {
             SaveFilePageModel.SafeFile = await _dbContext.SaveFiles.FindAsync(SaveFileId);
@@ -108,6 +124,7 @@ namespace RimionshipServer.Pages.Admin
                 return await OnGetAsync();
             }
             var oldFile = await _dbContext.SaveFiles.Where(x => x.Name == filename).FirstOrDefaultAsync();
+            memstream.Seek(0, SeekOrigin.Begin);
             var hash = await checksum.ComputeHashAsync(memstream);
             var md5B64 = Convert.ToHexString(hash).ToLower();
             if (oldFile?.MD5 == md5B64)
@@ -125,12 +142,10 @@ namespace RimionshipServer.Pages.Admin
                     MD5 = md5B64,
                     Name = filename
                 };
-
                 _dbContext.SaveFiles.Add(safeFile);
             }
             else
             {
-
                 oldFile.File = compressedStream.ToArray();
                 oldFile.MD5 = md5B64;
                 _dbContext.SaveFiles.Update(oldFile);

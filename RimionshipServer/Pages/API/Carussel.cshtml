@@ -1,4 +1,4 @@
-﻿@page "{thing:int}"
+﻿@page "{thing:int=1}"
 @model RimionshipServer.Pages.Api.Carussel
 
 @{
@@ -16,11 +16,11 @@
 <div>
     <div class="m-1 text-center rimfont" style="color: #cd0000; font-size: 1.767rem; margin-bottom: 2rem !important;">
         @(RouteData.Values["thing"] switch {
-          "0" => "#1 Die Sturköpfe",
-          "1" => "#2 Spielverderber",
-          "2" => "#3 Die Geisterkolonie",
-          "3" => "#4 Die Waschlappen",
-          "4" => "#5 Ausgenommen gut",
+          "1" => "#1 Die Sturköpfe",
+          "2" => "#2 Spielverderber",
+          "3" => "#3 Die Geisterkolonie",
+          "4" => "#4 Die Waschlappen",
+          "5" => "#5 Ausgenommen gut",
           _ => throw new ArgumentOutOfRangeException()
           })
     </div>
@@ -30,11 +30,11 @@
             <th scope="col" class="rimfont">#</th>
             <th scope="col" class="rimfont">Name</th>
             <th scope="col" class="rimfont">@(RouteData.Values["thing"] switch {
-                                              "0" => "Zeit",
                                               "1" => "Zeit",
-                                              "2" => "Tote",
-                                              "3" => "Wert",
+                                              "2" => "Zeit",
+                                              "3" => "Tote",
                                               "4" => "Wert",
+                                              "5" => "Wert",
                                               _ => throw new ArgumentOutOfRangeException()
                                               })</th>
         </tr>
@@ -60,7 +60,7 @@
 <script type="text/javascript" defer="">
     const url = new URL(window.location);
     if ((url.searchParams.get("loop") === 'true')) {
-        const loopValues = ['/0', '/1', '/2'];
+        const loopValues = ['/1', '/2', '/3'];
         let time = url.searchParams.get("time");
         if (time === null)
             time = 30000;

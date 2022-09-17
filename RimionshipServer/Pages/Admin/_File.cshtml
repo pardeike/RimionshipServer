@@ -2,7 +2,7 @@
 
 @model ModSettings
 
-<form method="post" asp-page-handler="FileSelect">
+<form method="post">
     <div class="justify-content-center row g-3 gy-2">
         <label class="form-label text-primary">Aktive Spieldatei: <b>@(SaveFilePageModel.SafeFile?.Name ?? "Keine"), @Model.StartingPawns Pawns</b></label>
         <div class="form-group col form-check-inline justify-content-center">
@@ -19,7 +19,8 @@
         </div>
         <input type="hidden" asp-for="DownloadURI" id="downloadUri"/>
     </div>
-      <input class="mt-3 btn btn-outline-dark" type="submit" value="Speichern"/>
+    <input class="mt-3 btn btn-outline-dark" type="submit" value="Speichern" asp-page-handler="FileSelect"/>
+    <input class="mt-3 btn btn-outline-danger" type="submit" value="Löschen" asp-page-handler="FileDelete"/>
 </form>
 <hr />
 <form method="post" enctype="multipart/form-data" asp-page-handler="Upload">

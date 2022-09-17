@@ -41,39 +41,43 @@
            datasets: datasets
          };
          const config = {
-           type: 'line',
-           data: data,
-           options: {
-               animation: false,
-               elements: {
-                   point: {
-                       radius: 0
-                   },
-                   line: {
-                        cubicInterpolationMode: 'monotone'
-                   }
-               },
-               plugins: {
-                   legend:{
-                       position: 'right',
-                       labels: {
-                                font: {
-                                    size: 24
-                                    }
-                               }
-                       }
-               },
-               scales: {
-                   x: {
-                           type: 'time'
-                         },
-                           y: {
-                                 ticks: {
-                                         display: false
-                                         }
-                               }
-                   }
-           }
+             type: 'line',
+             data: data,
+             options: {
+                 animation: false,
+                 elements: {
+                     point: {
+                         radius: 0
+                     },
+                     line: {
+                         cubicInterpolationMode: 'monotone'
+                     }
+                 },
+                 plugins: {
+                     legend: {
+                         position: 'right',
+                         labels: {
+                             color: '#9d9d9c',
+                             font: {
+                                 size: 24
+                                 }
+                             }
+                         }
+                 },
+                 scales: {
+                     x: {
+                         type: 'time',
+                         ticks: {
+                             color: '#9d9d9c'
+                             }
+                     },
+                     y: {
+                         ticks: {
+                             color: '#9d9d9c'
+                             }
+                     }
+                 }
+             }
          };
          const myChart = new Chart(
              document.getElementById('myChart'),

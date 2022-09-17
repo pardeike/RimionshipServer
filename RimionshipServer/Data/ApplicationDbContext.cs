@@ -26,10 +26,10 @@ namespace RimionshipServer.Data
         private static string?                   _cachedStreamer;
         private static MiscSettings.SaveSettings _cachedSaveSettings;
         
-        public async Task SetSaveSettingsAsync(string downloadURI, SaveFile saveFile, int countColonist)
+        public async Task SetSaveSettingsAsync(string downloadURI, SaveFile? saveFile, int countColonist)
         {
             var toUpdate = await SaveSettings.FirstAsync();
-            toUpdate.SaveFile       = saveFile.Name;
+            toUpdate.SaveFile       = saveFile?.Name;
             toUpdate.CountColonists = countColonist;
             toUpdate.DownloadURI    = downloadURI;
             SaveSettings.Update(toUpdate);

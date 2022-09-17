@@ -17,11 +17,11 @@ namespace RimionshipServer.Pages.Api
         public async Task<IActionResult> OnGetAsync(int thing)
         {
             Entries = await Stats.GetTopXNotBannedUserFromDynamicCacheWithValue(thing switch {
-                                                                                    0 => nameof(HistoryStats.TicksIgnoringBloodGod),
-                                                                                    1 => nameof(HistoryStats.TicksLowColonistMood),
-                                                                                    2 => nameof(HistoryStats.ColonistsKilled),
-                                                                                    3 => nameof(HistoryStats.AmountBloodCleaned),
-                                                                                    4 => nameof(HistoryStats.AnimalMeatCreated),
+                                                                                    1 => nameof(HistoryStats.TicksIgnoringBloodGod),
+                                                                                    2 => nameof(HistoryStats.TicksLowColonistMood),
+                                                                                    3 => nameof(HistoryStats.ColonistsKilled),
+                                                                                    4 => nameof(HistoryStats.AmountBloodCleaned),
+                                                                                    5 => nameof(HistoryStats.AnimalMeatCreated),
                                                                                     _ => throw new ArgumentOutOfRangeException(nameof(thing), thing, null)
                                                                                 }, 10, _db);
             return Page();

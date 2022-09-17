@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{time:int=10}"
 @model RimionshipServer.Pages.Api.Laufbanner
 
 @{
@@ -6,9 +6,12 @@
 }
 
 <!DOCTYPE html>
-
+@{
+    var seconds = int.Parse(RouteData.Values["time"]!.ToString()!);
+}
 <html>
 <head>
+    <link rel="stylesheet" href="~/css/fonts.css"/>
     <style>
     	.marquee {
     		max-width: 100vw;
@@ -23,11 +26,7 @@
     	.marquee span {
     		display: inline-block;
     		padding-left: 100%;
-    		animation: marquee @(Model.Entries.Count() * 10)s linear infinite;
-    	}
-    
-    	.marquee span:hover {
-    		animation-play-state: paused 
+    		animation: marquee @(Model.Entries.Count() * seconds)s linear infinite;
     	}
     
     	@@keyframes marquee {
@@ -51,7 +50,7 @@
     </div>
 </div>
 <script type="text/javascript" defer="">
-    window.setTimeout(() => {window.location = window.location}, @(Model.Entries.Count() * 10 * 1000));
+    window.setTimeout(() => {window.location = window.location}, @(Model.Entries.Count() * seconds * 1000));
 </script>
 </body>
 </html>
