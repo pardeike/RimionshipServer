@@ -13,16 +13,19 @@ namespace RimionshipServer.API
         private readonly RimionDbContext db;
         private readonly AttentionService attentionService;
         private readonly DirectionService directionService;
+        private readonly EventsService eventsService;
         public Serilog.ILogger logger = Serilog.Log.ForContext<DashboardHub>();
 
         public DashboardHub(
-            RimionDbContext db, 
+            RimionDbContext db,
             AttentionService attentionService,
-            DirectionService dataService)
+            DirectionService dataService,
+            EventsService eventsService)
         {
             this.db = db;
             this.attentionService = attentionService;
             this.directionService = dataService;
+            this.eventsService = eventsService;
         }
 
         public async Task<List<UserInfo>> GetUsers()
@@ -55,5 +58,10 @@ namespace RimionshipServer.API
 
         public async Task SetDirectionInstruction(string userId, string? comment)
             => await directionService.SetDirectionInstruction(userId, comment);
+
+        public List<UserEvent> GetEventsList()
+        {
+            return eventsService.Events.ToList();
+        }
     }
 }

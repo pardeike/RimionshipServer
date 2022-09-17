@@ -6,6 +6,7 @@ import { useRimionship } from './RimionshipContext'
 
 import { DirectionTable } from './DirectionTable'
 import { AttentionTable } from './AttentionTable'
+import { EventsTable } from './EventsTable'
 import { Link, Route, Routes } from '@solidjs/router'
 import { PlayerDetail } from './PlayerDetail'
 
@@ -31,11 +32,14 @@ const App: Component = () => {
 
       <Show when={connected()} fallback={<DisconnectAlert disconnectReason={disconnectReason()!} />}>
         <div class="row">
-          <div style="width: 50%">
+          <div style="width: 33%">
             <DirectionTable />
           </div>
-          <div style="width: 50%">
+          <div style="width: 33%">
             <AttentionTable />
+          </div>
+          <div style="width: 33%">
+            <EventsTable />
           </div>
         </div>
         <div class="row">

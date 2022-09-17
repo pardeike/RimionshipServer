@@ -20,14 +20,14 @@ const AttentionRow: VoidComponent<{ id: string, score: number }> = (props) => {
 export const AttentionTable: VoidComponent = () => {
   const { attentionList } = useRimionship()
   return <>
-    <h3>Interesting Liste</h3>
+    <h3>Interessante Spieler</h3>
     <table class="table">
       <thead>
         <tr class="table-warning">
           <th>Platz</th>
-          <th>Name</th>
+          <th>Spieler</th>
           <th>Koloniewert</th>
-          <th>Score</th>
+          <th>Punkte</th>
         </tr>
       </thead>
       <tbody>

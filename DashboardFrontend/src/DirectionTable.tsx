@@ -22,12 +22,12 @@ export const DirectionTable: VoidComponent = () => {
 
   createEffect(() => console.log(Array.from(directionList)))
   return <>
-    <h3>Regie-Liste</h3>
+    <h3>Regie</h3>
     <table class="table">
       <thead>
         <tr class="table-info">
           <th>Platz</th>
-          <th>Name</th>
+          <th>Spieler</th>
           <th>Koloniewert</th>
           <th>Bemerkung</th>
         </tr>

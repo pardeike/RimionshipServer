@@ -12,6 +12,7 @@ namespace RimionshipServer.API
         private readonly RimionDbContext db;
         private readonly ConfigurationService configurationService;
         private readonly ScoreService scoreService;
+        private readonly EventsService eventsService;
         private readonly DataService dataService;
         private readonly LoginService loginService;
         private readonly IOptions<RimionshipOptions> options;
@@ -23,6 +24,7 @@ namespace RimionshipServer.API
              RimionDbContext db,
              ConfigurationService configurationService,
              ScoreService scoreService,
+             EventsService eventsService,
              DataService dataService,
              LoginService loginService,
              IOptions<RimionshipOptions> options,
@@ -33,6 +35,7 @@ namespace RimionshipServer.API
             this.db = db;
             this.configurationService = configurationService;
             this.scoreService = scoreService;
+            this.eventsService = eventsService;
             this.dataService = dataService;
             this.loginService = loginService;
             this.options = options;
@@ -131,28 +134,39 @@ namespace RimionshipServer.API
                 TwitchName = name ?? string.Empty
             };
         }
-        
+
         public override async Task<StartResponse> Start(StartRequest request, ServerCallContext context)
         {
             VerifyId(request.Id);
             _ = await GetCachedUserAsync(request.Id);
 
             var settings = await db.GetSaveSettingsAsync();
-            
+
             return new StartResponse
-                   {
-                       GameFileHash      = settings.DownloadURI + _linkGenerator.GetPathByPage("/API/SaveFile", "Hash"),
-                       GameFileUrl       = settings.DownloadURI + _linkGenerator.GetPathByPage("/API/SaveFile", "File"),
-                       StartingPawnCount = settings.CountColonists,
-                       Settings          = await _settingService.GetActiveSetting(db)
-                   };
+            {
+                GameFileHash = settings.DownloadURI + _linkGenerator.GetPathByPage("/API/SaveFile", "Hash"),
+                GameFileUrl = settings.DownloadURI + _linkGenerator.GetPathByPage("/API/SaveFile", "File"),
+                StartingPawnCount = settings.CountColonists,
+                Settings = await _settingService.GetActiveSetting(db)
+            };
         }
 
         public override async Task<FutureEventsResponse> FutureEvents(FutureEventsRequest request, ServerCallContext context)
         {
             VerifyId(request.Id);
+            if ((State.Types.Game)(await db.GetGameStateAsync(context.CancellationToken)).GameState
+               is not State.Types.Game.Started
+              and not State.Types.Game.Training)
+                return new FutureEventsResponse();
+
             var user = await GetCachedUserAsync(request.Id);
-            // NYI
+            if (user.HasQuit)
+                return new FutureEventsResponse();
+
+            // PARTIALLY implemented - at least, we keep the events in-memory
+            var events = request.Event.Select(e => new UserEvent(user.Id, e.Ticks, e.Name, e.Quest, e.Faction, e.Points, e.Strategy, e.ArrivalMode)).ToList();
+            await this.eventsService.AddOrUpdateEventsAsync(user.Id, events, context.CancellationToken);
+
             return new FutureEventsResponse();
         }
 

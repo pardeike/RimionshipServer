@@ -8,7 +8,6 @@ export const PlayerLink: VoidComponent<{ id: string }> = (props) => {
   const user = createMemo(() => users[props.id])
 
   return <Link href={`/player/${props.id}`}>
-    <img src={user().AvatarUrl} class="mini-avatar" />
-    {user().UserName}
+    <span style="white-space: nowrap"><img src={user().AvatarUrl} class="mini-avatar" /> {user().UserName}</span>
   </Link>
 }

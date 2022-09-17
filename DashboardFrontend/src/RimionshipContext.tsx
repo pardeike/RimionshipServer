@@ -2,7 +2,7 @@ import { createContext, createSignal, ParentComponent, useContext } from "solid-
 import { createStore } from "solid-js/store"
 import { LatestStats } from "./Stats"
 import { CreateSignalRConnection } from "./SignalRHandler"
-import { AttentionUpdate, DirectionInstruction, UserInfo } from "./MessageDTOs"
+import { AttentionUpdate, DirectionInstruction, UserInfo, EventUpdate } from "./MessageDTOs"
 
 function create() {
   const [connected, setConnected] = createSignal(false)
@@ -10,6 +10,7 @@ function create() {
   const [users, setUsers] = createStore<{ [userId: string]: UserInfo }>({})
   const [latestStats, setLatestStats] = createStore<LatestStats[]>([])
   const [attentionList, setAttentionList] = createStore<AttentionUpdate[]>([])
+  const [eventsList, setEventsList] = createStore<EventUpdate[]>([])
   const [directionList, setDirectionList] = createStore<DirectionInstruction[]>([])
 
   const connection = CreateSignalRConnection()
@@ -20,6 +21,7 @@ function create() {
     users, setUsers,
     latestStats, setLatestStats,
     attentionList, setAttentionList,
+    eventsList, setEventsList,
     directionList, setDirectionList,
     connection
   } as const

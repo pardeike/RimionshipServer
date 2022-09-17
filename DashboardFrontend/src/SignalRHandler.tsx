@@ -3,7 +3,7 @@ import { produce, reconcile } from 'solid-js/store'
 import * as signalR from '@microsoft/signalr'
 import * as signalRm from '@microsoft/signalr-protocol-msgpack'
 import { useRimionship } from "./RimionshipContext"
-import { AttentionUpdate, DirectionInstruction, UserInfo } from "./MessageDTOs"
+import { AttentionUpdate, DirectionInstruction, UserInfo, EventUpdate } from "./MessageDTOs"
 import { LatestStats } from "./Stats"
 
 export const CreateSignalRConnection = () => {
@@ -22,6 +22,7 @@ export const SignalRHandler: VoidComponent = () => {
     connected, setConnected,
     disconnectReason, setDisconnectReason,
     setAttentionList,
+    setEventsList,
     setDirectionList
   } = useRimionship()
 
@@ -49,6 +50,10 @@ export const SignalRHandler: VoidComponent = () => {
         const attention = await connection.invoke<AttentionUpdate[]>('GetAttentionList')
         attention.sort((a, b) => b.Score - a.Score)
         setAttentionList(reconcile(attention))
+
+        const events = await connection.invoke<EventUpdate[]>('GetEventsList')
+        // events.sort((a, b) => a.Ticks - b.Ticks) -- already sorted
+        setEventsList(reconcile(events))
       }
     }
     catch (err) {

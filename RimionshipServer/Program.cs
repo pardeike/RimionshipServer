@@ -15,7 +15,7 @@ using Serilog;
 using WebMarkupMin.AspNetCore6;
 using WebMarkupMin.NUglify;
 
-var builder      = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
 
 // Add services to the container.
@@ -43,6 +43,7 @@ void ConfigureServices(IServiceCollection services)
         .AddScoped<LoginService>()
         .AddScoped<IAuthorizationHandler, CustomRoleAuthHandler>()
         .AddSingleton<ScoreService>()
+        .AddSingleton<EventsService>()
         .AddSingleton<AttentionService>()
         .AddSingleton<DirectionService>()
         .AddSingleton<SettingService>();
@@ -102,15 +103,17 @@ void ConfigureServices(IServiceCollection services)
             .AddHtmlMinification(
                                  options =>
                                  {
-                                     options.JsMinifierFactory = new NUglifyJsMinifierFactory(new NUglifyJsMinificationSettings{
-                                                                                                                                    PreserveImportantComments = false
-                                                                                                                                });
-                                     options.CssMinifierFactory = new NUglifyCssMinifierFactory(new NUglifyCssMinificationSettings{
-                                                                                                                                       ColorNames = CssColor.Major,
-                                                                                                                                       CommentMode = CssComment.None
-                                                                                                                                   });
-                                     options.MinificationSettings.RemoveRedundantAttributes         = true;
-                                     options.MinificationSettings.RemoveHttpProtocolFromAttributes  = true;
+                                     options.JsMinifierFactory = new NUglifyJsMinifierFactory(new NUglifyJsMinificationSettings
+                                     {
+                                         PreserveImportantComments = false
+                                     });
+                                     options.CssMinifierFactory = new NUglifyCssMinifierFactory(new NUglifyCssMinificationSettings
+                                     {
+                                         ColorNames = CssColor.Major,
+                                         CommentMode = CssComment.None
+                                     });
+                                     options.MinificationSettings.RemoveRedundantAttributes = true;
+                                     options.MinificationSettings.RemoveHttpProtocolFromAttributes = true;
                                      options.MinificationSettings.RemoveHttpsProtocolFromAttributes = true;
                                  })
             .AddHttpCompression();
