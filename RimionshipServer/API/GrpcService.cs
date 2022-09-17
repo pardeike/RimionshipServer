@@ -164,8 +164,8 @@ namespace RimionshipServer.API
                 return new FutureEventsResponse();
 
             // PARTIALLY implemented - at least, we keep the events in-memory
-            var events = request.Event.Select(e => new UserEvent(user.Id, e.Ticks, e.Name, e.Quest, e.Faction, e.Points, e.Strategy, e.ArrivalMode)).ToList();
-            await this.eventsService.AddOrUpdateEventsAsync(user.Id, events, context.CancellationToken);
+            var events = request.Event.Select(e => new UserEvent(user.Id, e.Ticks, e.Name, e.Quest, e.Faction, e.Points, e.Strategy, e.ArrivalMode));
+            this.eventsService.AddOrUpdateEvents(user.Id, events);
 
             return new FutureEventsResponse();
         }
