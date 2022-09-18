@@ -107,11 +107,29 @@ export const PlayerDetail: VoidComponent = () => {
   const params = useParams<{ id: string }>()
   const { latestStats, users } = useRimionship()
 
+  const getStoredStat = () => {
+    const name = "stat="
+    let decodedCookie = decodeURIComponent(document.cookie)
+    let ca = decodedCookie.split(';')
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i]
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1)
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length)
+      }
+    }
+    return "Wealth"
+  }
+
   const user = createMemo(() => users[params.id])
   const stats = createMemo(() => latestStats.find(s => s.UserId === params.id))
-  const [selectedStat, setSelectedStat] = createSignal("Wealth")
+  const [selectedStat, setSelectedStat] = createSignal(getStoredStat())
 
-  const statsHeaderColor = (val: JSX.Element) => {
+  const statsHeaderColor = (id: string, val: JSX.Element) => {
+    if (id == selectedStat())
+      return { 'color': 'white', 'background-color': 'black' }
     return { 'color': val == '' ? '#ccc' : '#666' }
   }
 
@@ -119,7 +137,10 @@ export const PlayerDetail: VoidComponent = () => {
     if (stat == 'Timestamp')
       return () => { }
     else
-      return () => setSelectedStat(stat)
+      return () => {
+        setSelectedStat(stat)
+        document.cookie = "stat=" + stat
+      }
   }
 
   const currentServerAddress = () => {
@@ -142,7 +163,7 @@ export const PlayerDetail: VoidComponent = () => {
               <ul class="list-group">
                 <For each={detail}>{(col) =>
                   <li class="list-group-item bigger highlight" onClick={showGraph(col.id)}>
-                    <span class="bigger" style={statsHeaderColor(displayValue(stats()![col.id], col.id))}>{col.displayName}</span><br />
+                    <span class="bigger" style={statsHeaderColor(col.id, displayValue(stats()![col.id], col.id))}>{col.displayName}</span><br />
                     <b>{displayValue(stats()![col.id], col.id) || '0'}</b>
                   </li>
                 }</For>
