@@ -17,7 +17,7 @@ const Details = [
     CC('Colonists', 'Anzahl Kolonisten'),
     CC('ColonistsNeedTending', 'Verletzte Kolonisten'),
     CC('MedicalConditions', 'Krankeiten'),
-    CC('Enemies', 'Feide'),
+    CC('Enemies', 'Feinde'),
     CC('WildAnimals', 'Wilde Tiere'),
     CC('TamedAnimals', 'Gezähmte Tiere'),
     CC('Visitors', 'Besucher'),

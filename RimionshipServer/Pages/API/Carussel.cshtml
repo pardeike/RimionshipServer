@@ -9,6 +9,7 @@
 <head>
     <link rel="preload" href="~/fonts/RimWordFont.ttf" as="font" crossorigin="anonymous">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/tables.css"/>
 @{
 #if DEBUG
 }
@@ -34,12 +35,12 @@
           _ => throw new ArgumentOutOfRangeException()
           })
     </div>
-    <table class="m-1 table text-center table-bordered" style="color: #9d9d9c; font-size: 115%; font-family: 'Roboto Condensed', sans-serif">
+    <table class="m-1 table text-center stats">
         <thead>
         <tr>
-            <th scope="col" class="rimfont">#</th>
-            <th scope="col" class="rimfont">Name</th>
-            <th scope="col" class="rimfont">@(RouteData.Values["thing"] switch {
+            <th scope="col" class="rimfont right">#</th>
+            <th scope="col" class="rimfont left">Spieler</th>
+            <th scope="col" class="rimfont right">@(RouteData.Values["thing"] switch {
                                               "1" => "Zeit",
                                               "2" => "Zeit",
                                               "3" => "Tote",
@@ -53,13 +54,13 @@
         @foreach (var entries in Model.Entries)
         {
             <tr>
-                <td>
+                <td class="tablefont right">
                     @(entries.Item1 +1)
                 </td>
-                <td>
+                <td class="tablefont left">
                     @entries.Item2
                 </td>
-                <td>
+                <td class="tablefont right">
                     @entries.Item3
                 </td>
             </tr>
