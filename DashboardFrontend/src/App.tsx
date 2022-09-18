@@ -32,13 +32,13 @@ const App: Component = () => {
 
       <Show when={connected()} fallback={<DisconnectAlert disconnectReason={disconnectReason()!} />}>
         <div class="row">
-          <div style="width: 33%">
+          <div class="col">
             <DirectionTable />
           </div>
-          <div style="width: 33%">
+          <div class="col">
             <AttentionTable />
           </div>
-          <div style="width: 33%">
+          <div class="col">
             <EventsTable />
           </div>
         </div>

@@ -4,6 +4,19 @@ body,
     font-size: 9pt;
 }
 
+.bigger {
+    font-size: 12pt;
+}
+
+.bigger b {
+    font-size: 12pt;
+    line-height: 24pt;
+}
+
+.highlight:hover {
+    background-color: #f0f0f0;
+}
+
 body {
     margin: 5px;
 }
@@ -30,4 +43,8 @@ body {
     padding-right: 0;
     text-align: center;
     white-space: nowrap;
+}
+
+.left {
+    text-align: left;
 }

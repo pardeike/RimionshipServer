@@ -3,25 +3,56 @@ import { createEffect, createMemo, createRenderEffect, createSignal, For, Show, 
 import { LatestTable } from "./LatestTable"
 import { useRimionship } from "./RimionshipContext"
 import { CC, displayValue } from "./Utils"
+import { JSX } from "solid-js"
 
 const MiniColumns = [
   CC('Place', '#'),
   CC('UserId', 'Spieler')
 ]
 
-const DetailColumns = [
-  CC('Wealth', 'Koloniewert'),
-  CC('AmountBloodCleaned', 'Blutsäuberung'),
-  CC('AnimalMeatCreated', 'Tierfleischerzeugnisse'),
-  CC('Caravans', 'Karnevalle'),
-  CC('Colonists', 'Darmisten'),
-  CC('Fire', 'Feuer!'),
-  CC('Electricity', 'Stroom'),
-  CC('Timestamp', 'Letztes Update'),
-  CC('MedicalConditions', 'Medizinische Bedingungen')
+const Details = [
+  [
+    CC('Wealth', 'Koloniereichtum'),
+    CC('MapCount', 'Anzahl Karten'),
+    CC('Colonists', 'Anzahl Kolonisten'),
+    CC('ColonistsNeedTending', 'Verletzte Kolonisten'),
+    CC('MedicalConditions', 'Krankeiten'),
+    CC('Enemies', 'Feide'),
+    CC('WildAnimals', 'Wilde Tiere'),
+    CC('TamedAnimals', 'Gezähmte Tiere'),
+    CC('Visitors', 'Besucher'),
+  ], [
+    CC('Prisoners', 'Gefangene'),
+    CC('DownedColonists', 'Ohnmächtige Kolonisten'),
+    CC('MentalColonists', 'Durchgedrehte Kolonisten'),
+    CC('Rooms', 'Bebaute Fläche'),
+    CC('Caravans', 'Kolonisten in Karawanen'),
+    CC('WeaponDps', 'Waffenkraft'),
+    CC('Electricity', 'Verfügbare Energie'),
+    CC('Medicine', 'Medizin'),
+  ], [
+    CC('Food', 'Essen'),
+    CC('Fire', 'Brandstellen'),
+    CC('Conditions', 'Wetter & Kartenbedingungen'),
+    CC('Temperature', 'Temperatur auf Hauptkarte'),
+    CC('NumRaidsEnemy', 'Feindliche Überfälle'),
+    CC('NumThreatBigs', 'Große Bedrohungen'),
+    CC('ColonistsKilled', 'Kolonisten getötet'),
+    CC('GreatestPopulation', 'Maximale Anzahl Kolonisten'),
+  ], [
+    CC('InGameHours', 'Gespielte Stunden'),
+    CC('DamageTakenPawns', 'Schaden an Kolonisten'),
+    CC('DamageTakenThings', 'Schaden an der Kolonie'),
+    CC('DamageDealt', 'Ausgeteilter Schaden'),
+    CC('AnimalMeatCreated', 'Geschlachtetes Tierfleisch'),
+    CC('AmountBloodCleaned', 'Menge aufgewischtes Blut'),
+    CC('TicksLowColonistMood', 'Zeit mit niedriger Moral'),
+    CC('TicksIgnoringBloodGod', 'Zeit mit Ignoranz des Blutgottes'),
+    CC('Timestamp', 'Letzter Kontakt mit Server'),
+  ]
 ]
 
-const MiniPlayerList: VoidComponent = () => <LatestTable sortable={false} columns={MiniColumns} />
+const MiniPlayerList: VoidComponent = () => <LatestTable sortable={false} columns={MiniColumns} width={250} />
 
 const SetDirectionInstruction: VoidComponent<{ userId: string }> = (props) => {
   const { connection, directionList } = useRimionship()
@@ -61,7 +92,7 @@ const SetDirectionInstruction: VoidComponent<{ userId: string }> = (props) => {
   return <div class="input-group">
     <input
       type="text"
-      class="form-control"
+      class="form-control bigger"
       value={comment()}
       placeholder="Regie-Kommentar"
       onInput={e => setText((e.currentTarget as HTMLInputElement).value)}
@@ -79,25 +110,41 @@ export const PlayerDetail: VoidComponent = () => {
   const user = createMemo(() => users[params.id])
   const stats = createMemo(() => latestStats.find(s => s.UserId === params.id))
 
+  const statsHeaderColor = (val: JSX.Element) => {
+    return { 'color': val == '' ? '#ccc' : '#666' }
+  }
+
+  const showGraph = (id: string) => {
+    return () => alert(id)
+  }
+
   return <div class="row">
-    <div class="col-2">
+    <div class="col" style="flex-grow: 0">
       <MiniPlayerList />
     </div>
-    <div class="col-5">
-      <h1>{user().UserName}</h1>
-      <SetDirectionInstruction userId={params.id} />
+    <div class="col" style="flex-grow: 9">
+      <ul class="list-group" style="padding-bottom: 20px">
+        <li class="list-group-item bg-black"><h1 style="color: white">{user().UserName}</h1></li>
+        <li class="list-group-item"><SetDirectionInstruction userId={params.id} /></li>
+      </ul>
       <Show when={stats()} fallback={<strong>Keine Daten verfügbar.</strong>}>
         <div class="row align-items-start">
-          <For each={DetailColumns}>{(col) =>
-            <div class="col-3">
-              <dt>{col.displayName}</dt>
-              <dd>{displayValue(stats()![col.id], col.id)}</dd>
+          <For each={Details}>{(detail) =>
+            <div class="col">
+              <ul class="list-group">
+                <For each={detail}>{(col) =>
+                  <li class="list-group-item bigger highlight" onClick={showGraph(col.id)}>
+                    <span class="bigger" style={statsHeaderColor(displayValue(stats()![col.id], col.id))}>{col.displayName}</span><br />
+                    <b>{displayValue(stats()![col.id], col.id) || '0'}</b>
+                  </li>
+                }</For>
+              </ul>
             </div>
           }</For>
         </div>
       </Show>
     </div>
-    <div class="col">
+    <div class="col" style="flex-grow: 0">
       <iframe
         src={`https://player.twitch.tv/?channel=${user().UserName}&parent=${encodeURIComponent(window.location.host)}`}
         width="640"

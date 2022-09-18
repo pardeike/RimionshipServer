@@ -42,7 +42,7 @@ const DefaultColumns = [
   CC('Timestamp', 'Seen Ago')
 ]
 
-export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDef[] }> = (props) => {
+export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDef[], width: number }> = (props) => {
   props = mergeProps({ sortable: true, columns: DefaultColumns }, props)
   const { latestStats } = useRimionship()
   const [sortKey, setSortKey] = createSignal<ColumnId | undefined>('Place')
@@ -108,7 +108,27 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
           c = '#500'
       }
     }
-    return { 'background-color': c }
+    let res = { 'background-color': c, 'text-align': 'center', 'padding-left': 'inherit' }
+    if (col.displayName == 'Spieler') {
+      res['text-align'] = 'left'
+      res['padding-left'] = '12px'
+    }
+    return res
+  }
+
+  const alignment = (col: ColumnDef) => {
+    let res = { 'text-align': 'center', 'padding-left': 'inherit' }
+    if (col.displayName == 'Spieler') {
+      res['text-align'] = 'left'
+      res['padding-left'] = '12px'
+    }
+    return res
+  }
+
+  const widthStyle = () => {
+    if (!props.width)
+      return {}
+    return { 'width': props.width + 'px' }
   }
 
   const rows = createMemo<LatestStats[]>((prev) => {
@@ -123,7 +143,7 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
     return Array.from(latestStats).sort((b, a) => sort(a[sk], b[sk]) * sd)
   })
 
-  return <table class="table table-striped table-hover table-stoppable stats" classList={{ "table-secondary": stopUpdating() }}>
+  return <table class="table table-striped table-hover table-stoppable stats" style={widthStyle()} classList={{ "table-secondary": stopUpdating() }}>
     <thead>
       <tr class="table-dark sortable">
         <For each={props.columns}>{(col) =>
@@ -139,7 +159,7 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
     <tbody onMouseEnter={() => setStopUpdating(true)} onMouseLeave={() => setStopUpdating(false)}>
       <For each={rows()}>{(row) =>
         <tr>
-          <For each={props.columns}>{(col) => <td>{displayValue(row[col.id], col.id)}</td>}</For>
+          <For each={props.columns}>{(col) => <td style={alignment(col)}>{displayValue(row[col.id], col.id)}</td>}</For>
         </tr>
       }</For>
     </tbody>
