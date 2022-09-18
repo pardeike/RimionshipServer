@@ -34,21 +34,22 @@
 			</div>
 		</nav>
 	</header>
-	<div class="container">
+	<div class="container" style="min-height: 85vh">
 		<main role="main" class="pb-3">
 			@RenderBody()
 		</main>
 	</div>
 
-	<footer class="border-top footer text-muted">
-		<div class="container">
-			&copy; 2022 - Rimionship - <a href="/TOS-de" target="_blank">Teilnahmebedingungen</a> / <a href="/TOS-en" target="_blank">Conditions for Participation</a> - <a asp-area="" asp-page="/Privacy">Privacy</a>
-		</div>
-	</footer>
-
-	<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-	@await RenderSectionAsync("Scripts", required: false)
+<footer class="border-top footer position-sticky bg-white" style="z-index: 1; overflow: hidden; margin-bottom: -10vh;">
+    <div class="container">
+        <a class="btn btn-outline-dark" asp-page="ModSettings">Einstellungen</a>
+        <a class="btn btn-outline-dark" asp-page="Manage">Spieler</a>
+        <a class="btn btn-outline-dark" asp-page="GraphConfigurator">Graphen</a>
+        <a class="btn btn-outline-dark" asp-page="APILinks">API Links</a>
+    </div>
+</footer>
+<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
