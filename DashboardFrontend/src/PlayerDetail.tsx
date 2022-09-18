@@ -161,7 +161,7 @@ export const PlayerDetail: VoidComponent = () => {
         allowfullscreen>
       </iframe>
       <iframe
-        src={`${currentServerAddress()}/api/embedgraph/${selectedStat()}/${user().UserName}`}
+        src={`${currentServerAddress()}/api/embedgraph/${selectedStat()}/${user().UserName}/620/340`}
         width="640"
         height="320"
         scrolling="no"
