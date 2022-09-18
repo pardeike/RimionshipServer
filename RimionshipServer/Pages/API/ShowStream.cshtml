@@ -1,75 +1,69 @@
 ﻿@page "{width}/{height}"
 @model RimionshipServer.Pages.Api.ShowStream
 @{
-    Layout = null;
+	Layout = null;
 }
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>
-        Remote Controlled Stream
-    </title>
+	<meta charset="utf-8" />
+	<title>
+		Remote Controlled Stream
+	</title>
 </head>
 <body>
-    <div class="m-1">
-        <iframe
-            id="twitchPlayer"
-            src=""
-            height="@RouteData.Values["height"]"
-            width="@RouteData.Values["width"]"
-            muted="true"
-            autoplay="true"
-            allowfullscreen="true">
-        </iframe>
-    </div>
-    <script type="text/javascript" defer="">
-        const player = document.getElementById("twitchPlayer");
-        const baseUrl = "https://player.twitch.tv/?channel=";
-        let currentStreamer = "";
-        
-        function getTwitchStreamFor(channel) {
-          return baseUrl + channel + "&parent=" + window.location.hostname
-        }
-        
-        function handleErrors(response) {
-            if (!response.ok) {
-                window.location.reload();
-                return;
-            }
-            return response.json();
-        }
-        
-        async function setStreamerId() {
-            try {
-                await fetch("?handler=Streamer", {
-                    method: "get"
-                })
-                .then(response => handleErrors(response))
-                .then(async (data) => {
-                    if (currentStreamer !== data.streamer) {
-                        player.setAttribute("src", getTwitchStreamFor(data.streamer));
-                        currentStreamer = data.streamer;
-                        document.title = currentStreamer;
-                    }
-                });
-            } catch (e) {
-                window.location.reload();
-            }
-        }
-        
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        
-        async function run() {
-            while (true) {
-                await setStreamerId();
-                await sleep(5000);
-            }
-        }
-        
-        run().then(_ => {});
-    </script>
+	<div class="m-1" id="twitch-embed"></div>
+	<script src="https://embed.twitch.tv/embed/v1.js"></script>
+	<script type="text/javascript" defer="">
+
+		let currentStreamer = '';
+		let player = null;
+
+		function handleErrors(response) {
+			 if (!response.ok) {
+				  window.location.reload();
+				  return;
+			 }
+			 return response.json();
+		}
+
+		async function setStreamerId() {
+			 try {
+				  await fetch("?handler=Streamer", {
+						method: "get"
+				  })
+						.then(response => handleErrors(response))
+						.then(async (data) => {
+							 console.log(data.streamer)
+							 if (currentStreamer !== data.streamer) {
+								  currentStreamer = data.streamer;
+								  if (!player)
+										player = new Twitch.Embed("twitch-embed", {
+											 width: @RouteData.Values["width"],
+											 height: @RouteData.Values["height"],
+											 channel: currentStreamer
+										});
+								  else
+										player.setChannel(currentStreamer);
+							 }
+						});
+			 } catch (e) {
+				  window.location.reload();
+			 }
+		}
+
+		function sleep(ms) {
+			 return new Promise(resolve => setTimeout(resolve, ms));
+		}
+
+		async function run() {
+			 while (true) {
+				  await setStreamerId();
+				  await sleep(2000);
+			 }
+		}
+
+		run().then(_ => { });
+	</script>
 </body>
 </html>
