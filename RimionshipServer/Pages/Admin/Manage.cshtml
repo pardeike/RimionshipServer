@@ -76,11 +76,7 @@
 			{
 				var isAdmin = user.Role.Contains(Roles.Admin);
 				var classs = "bg-default";
-				@if (user.IsSuspicious)
-				{
-					classs = "bg-yellow";
-				}
-				else if (isAdmin)
+				@if (isAdmin)
 				{
 					classs = "bg-blue";
 				}

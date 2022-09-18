@@ -16,21 +16,21 @@
     vertical-align: middle;
 }
 
-    .userrow * button {
-        color: white;
-    }
+.userrow * button {
+    color: white;
+}
 
-        .userrow * button:hover {
-            color: gray;
-        }
+.userrow * button:hover {
+    color: gray;
+}
 
-        .userrow * button:hover {
-            color: gray;
-        }
+.userrow * button:hover {
+    color: gray;
+}
 
-    .userrow form {
-        display: inline;
-    }
+.userrow form {
+    display: inline;
+}
 
 svg {
     height: 2rem;
@@ -41,17 +41,17 @@ svg {
     color: black;
 }
 
-    .bg-default .userrow {
-        color: black;
-    }
+.bg-default .userrow {
+    color: black;
+}
 
-        .bg-default .userrow * button {
-            color: black;
-        }
+.bg-default .userrow * button {
+    color: black;
+}
 
-            .bg-default .userrow * button:hover {
-                color: gray;
-            }
+.bg-default .userrow * button:hover {
+    color: gray;
+}
 
 .bg-green {
     background-color: darkgreen !important;
@@ -60,11 +60,6 @@ svg {
 
 .bg-red {
     background-color: darkred !important;
-    color: white;
-}
-
-.bg-yellow {
-    background-color: #d5be00 !important;
     color: white;
 }
 
