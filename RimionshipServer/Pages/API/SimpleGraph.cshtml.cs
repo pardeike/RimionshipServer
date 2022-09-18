@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -9,32 +8,7 @@ namespace RimionshipServer.Pages.Api;
 
 public class SimpleGraph : PageModel
 {
-    public record Data(long x, string y);
-    public record Dataset
-    {
-        public Dataset(string label, Color color, IEnumerable<Data> data)
-        {
-            this.label      = label;
-            borderColor     = HexConverter(color);
-            this.data       = data;
-            backgroundColor = HexConverter(color);
-        }
-
-        public string            backgroundColor { get; init; }
-        public string            label           { get; init; }
-        public string            borderColor     { get; init; }
-        public IEnumerable<Data> data            { get; init; }
-        public bool              showLine        { get; init; } = true;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static String HexConverter(Color c)
-        {
-            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
-        }
-    }
-
-
-    private static readonly Color[] Colors ={
+    public static readonly Color[] Colors ={
                                                 ColorTranslator.FromHtml("#00429d"),
                                                 ColorTranslator.FromHtml("#3c66ad"),
                                                 ColorTranslator.FromHtml("#5f8bbc"),
@@ -45,7 +19,7 @@ public class SimpleGraph : PageModel
                                                 ColorTranslator.FromHtml("#e45d6f"),
                                                 ColorTranslator.FromHtml("#c42a51"),
                                                 ColorTranslator.FromHtml("#93003a")
-                                             };
+                                            };
     
     public SimpleGraph(RimionDbContext dbContext)
     {
@@ -53,15 +27,15 @@ public class SimpleGraph : PageModel
     }
 
     [BindProperty(SupportsGet = true)]
-    public string GraphName { get; set; }
+    public string GraphName { get; set; } = null!;
 
     [BindProperty(SupportsGet = true)]
-    public string[] Labels { get; set; }
+    public string[] Labels { get; set; } = null!;
 
     [BindProperty(SupportsGet = true)]
-    public IEnumerable<Dataset> Datasets { get; set; }
+    public IEnumerable<Dataset> Datasets { get; set; } = null!;
 
-    private GraphData _graphData { get; set; }
+    private GraphData _graphData { get; set; } = null!;
 
     private readonly RimionDbContext _dbContext;
 
@@ -110,17 +84,17 @@ public class SimpleGraph : PageModel
                                                         ));
         }
 
-        var datasetRecords = new Dictionary<string, List <Data>>();
+        var datasetRecords = new Dictionary<string, List <DataEntry>>();
         foreach (var perUser in tasks) //per user
         {
-            var dataRecords = new List<Data>();
+            var dataRecords = new List<DataEntry>();
             for (var index = 0; index < perUser.Item1.Timestamp.Count; index++)
             {
                 var f   = perUser.Item1.Timestamp[index].ToUnixTimeMilliseconds();
                 var obj = perUser.Item1.Values[index].ToString()!;
                 if (obj is null or "0" or "")
                     continue;
-                dataRecords.Add(new Data(f, obj));
+                dataRecords.Add(new DataEntry(f, obj));
             }
             datasetRecords.Add(perUser.UserName, dataRecords);
         }
@@ -132,6 +106,23 @@ public class SimpleGraph : PageModel
 
         Datasets  = datasets;
         GraphName = _graphData.Accesscode;
+        return Page();
+    }
+    
+    public async Task<IActionResult> OnGetEmbedAsync(string statt, string username)
+    {
+        var user        = await _dbContext.Users.Where(x => x.UserName == username).FirstAsync();
+        var perUser     = await _dbContext.FetchDataVerticalAsync(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, 10, statt, user.Id);
+        var dataRecords = new List<DataEntry>();
+        for (var index = 0; index < perUser.Timestamp.Count; index++)
+        {
+            var f   = perUser.Timestamp[index].ToUnixTimeMilliseconds();
+            var obj = perUser.Values[index].ToString()!;
+            if (obj is null or "0" or "")
+                continue;
+            dataRecords.Add(new DataEntry(f, obj));
+        }
+        Datasets = new[]{new Dataset(username, Colors[0], dataRecords)};
         return Page();
     }
 }
