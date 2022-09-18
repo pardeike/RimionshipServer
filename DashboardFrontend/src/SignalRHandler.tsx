@@ -118,8 +118,6 @@ export const SignalRHandler: VoidComponent = () => {
     clearTimeout(updateTimer)
   })
 
-
-
   createEffect(() => {
     const err = disconnectReason()
     if (!!err && err.message.match(/Status code '40[13]'/)) {

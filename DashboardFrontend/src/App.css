@@ -48,3 +48,10 @@ body {
 .left {
     text-align: left;
 }
+
+.castButton {
+    margin-top: 6px !important;
+    color: red !important;
+    border: 3px solid red !important;
+    background-color: black !important;
+}

@@ -63,5 +63,11 @@ namespace RimionshipServer.API
         {
             return eventsService.Events.ToList();
         }
+
+        public async void SwitchTwitchChannel(string userName)
+        {
+            await db.SetStreamerAsync(userName, true);
+            Console.WriteLine($"CAST ------> {userName}");
+        }
     }
 }

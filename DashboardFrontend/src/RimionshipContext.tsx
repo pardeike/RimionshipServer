@@ -15,6 +15,10 @@ function create() {
 
   const connection = CreateSignalRConnection()
 
+  const switchTwitchChannel = async (userId: string) => {
+    await connection.invoke<void>('SwitchTwitchChannel', userId)
+  }
+
   return {
     connected, setConnected,
     disconnectReason, setDisconnectReason,
@@ -23,7 +27,8 @@ function create() {
     attentionList, setAttentionList,
     eventsList, setEventsList,
     directionList, setDirectionList,
-    connection
+    connection,
+    switchTwitchChannel
   } as const
 }
 

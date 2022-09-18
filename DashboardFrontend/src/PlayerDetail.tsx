@@ -105,7 +105,7 @@ const SetDirectionInstruction: VoidComponent<{ userId: string }> = (props) => {
 
 export const PlayerDetail: VoidComponent = () => {
   const params = useParams<{ id: string }>()
-  const { latestStats, users } = useRimionship()
+  const { latestStats, users, switchTwitchChannel } = useRimionship()
 
   const getStoredStat = () => {
     const name = "stat="
@@ -147,13 +147,28 @@ export const PlayerDetail: VoidComponent = () => {
     return location.protocol + '//' + location.host.replace("3000", "5062")
   }
 
+  const cast = (id: string) => {
+    return async () => {
+      await switchTwitchChannel(id)
+    }
+  }
+
   return <div class="row">
     <div class="col" style="flex-grow: 0">
       <MiniPlayerList />
     </div>
     <div class="col" style="flex-grow: 9">
       <ul class="list-group" style="padding-bottom: 20px">
-        <li class="list-group-item bg-black"><h1 style="color: white">{user().UserName}</h1></li>
+        <li class="list-group-item bg-black">
+          <div class="row">
+            <div class="col">
+              <h1 style="color: white">{user().UserName}</h1>
+            </div>
+            <div class="col" style="text-align: right">
+              <button class="btn castButton" onClick={cast(user().UserName)}>Stream anzeigen</button>
+            </div>
+          </div>
+        </li>
         <li class="list-group-item"><SetDirectionInstruction userId={params.id} /></li>
       </ul>
       <Show when={stats()} fallback={<strong>Keine Daten verfügbar.</strong>}>
