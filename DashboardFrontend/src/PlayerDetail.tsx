@@ -1,5 +1,5 @@
 import { useParams } from "@solidjs/router"
-import { JSX } from "solid-js"
+import { JSX, onMount } from "solid-js"
 import { createEffect, createMemo, createSignal, For, Show, VoidComponent } from "solid-js"
 import { LatestTable } from "./LatestTable"
 import { useRimionship } from "./RimionshipContext"
@@ -107,6 +107,15 @@ export const PlayerDetail: VoidComponent = () => {
   const params = useParams<{ id: string }>()
   const { latestStats, users, switchTwitchChannel } = useRimionship()
 
+  onMount(async () => {
+    new Twitch.Embed("twitch-embed", {
+      width: 640,
+      height: 320,
+      layout: 'video',
+      channel: user().UserName
+    })
+  })
+
   const getStoredStat = () => {
     const name = "stat="
     let decodedCookie = decodeURIComponent(document.cookie)
@@ -189,13 +198,7 @@ export const PlayerDetail: VoidComponent = () => {
       </Show>
     </div>
     <div class="col" style="flex-grow: 0">
-      <iframe
-        src={`https://player.twitch.tv/?channel=${user().UserName}&parent=${encodeURIComponent(window.location.host)}`}
-        width="640"
-        height="360"
-        class="border border-1 border-primary"
-        allowfullscreen>
-      </iframe>
+      <div id="twitch-embed" class="border border-1 border-primary"></div>
       <iframe
         src={`${currentServerAddress()}/api/embedgraph/${selectedStat()}/${user().UserName}/620/340`}
         width="640"
