@@ -8,9 +8,9 @@ namespace RimionshipServer.Data
 
 		public virtual LatestStats? LatestStats { get; set; }
 
-        public bool WasBanned    { get; set; } = false;
-        public bool IsSuspicious { get; set; } = false;
-        public bool HasQuit { get; set; } = false;
+        public bool WasBanned { get; set; }
+        
+        public bool HasQuit   { get; set; }
 
         public int WasShownTimes { get; set; }
         
