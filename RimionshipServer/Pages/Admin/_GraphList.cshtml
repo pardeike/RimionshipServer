@@ -5,11 +5,9 @@
 		<tr>
 			<th scope="col">Name</th>
 			<th scope="col">Wert</th>
-			<th scope="col">Start</th>
-			<th scope="col">Ende</th>
-			<th scope="col">Intervall (sek)</th>
-			<th scope="col">Aktualisieren</th>
-			<th scope="col">Spieler</th>
+			<th scope="col">Zeiteinstellung</th>
+            <th scope="col">Intervall (sek)</th>
+            <th scope="col">Spieler</th>
 			<th scope="col">Link</th>
 			<th scope="col">Aktion</th>
 		</tr>
@@ -24,22 +22,24 @@
 				<td>
 					@(GraphConfigurator.StatsName(modelAllowedMod.Statt))
 				</td>
-				<td>
-					@modelAllowedMod.Start
-				</td>
-				<td>
-					@modelAllowedMod.End
-				</td>
-				<td>
+                <td>
+                    @if (modelAllowedMod.Autorefresh)
+                    {
+                        var last = modelAllowedMod.End - modelAllowedMod.Start;
+                        @($"Letzte {Math.Round(last.TotalMinutes)} Minuten")
+                    }
+                    else
+                    {
+                       @($"{modelAllowedMod.End.ToLocalTime():HH:mm} - {modelAllowedMod.Start.ToLocalTime():HH:mm}")
+                    }
+                </td>
+                <td>
 					@modelAllowedMod.IntervalSeconds
 				</td>
-				<td>
-					@modelAllowedMod.Autorefresh
-				</td>
-				<td>
+                <td>
 					@if (modelAllowedMod.Users.Any())
 					{
-						@foreach (var user in modelAllowedMod.Users)
+						foreach (var user in modelAllowedMod.Users)
 						{
 							@user
 							<br />
