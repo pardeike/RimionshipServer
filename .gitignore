@@ -366,3 +366,5 @@ RimionshipServer/Rimionship.db*
 
 /**/.idea/
 appsettings.Development.json
+/**/wwwroot/css/*.min.css
+/**/wwwroot/js/*.min.js

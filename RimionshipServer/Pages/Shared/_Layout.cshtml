@@ -18,11 +18,21 @@
 
 	<link rel="preload" href="~/lib/jquery/dist/jquery.min.js" as="script">
 	<link rel="preload" href="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" as="script">
-
-	<link rel="stylesheet" href="~/css/fonts.css">
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-	@await RenderSectionAsync("Css", required: false)
+@{
+#if DEBUG
+}
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/fonts.css">
+@{
+#else
+}
+    <link rel="stylesheet" href="/css/fonts.min.css">
+    <link rel="stylesheet" href="/css/site.min.css">
+@{
+#endif
+}
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @await RenderSectionAsync("Css", required: false)
 </head>
 <body style="overflow-x: hidden;">
 	<div class="rimtitlebackground" style="height: 29.59vh">

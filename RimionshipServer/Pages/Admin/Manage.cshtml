@@ -19,7 +19,17 @@
 }
 }
 @section Css {
-	<link rel="stylesheet" href="/css/admin.css">
+@{
+#if DEBUG
+}
+    <link rel="stylesheet" href="/css/admin.css">
+@{
+#else
+}
+    <link rel="stylesheet" href="/css/admin.min.css">
+@{
+#endif
+}
 }
 
 	<header>

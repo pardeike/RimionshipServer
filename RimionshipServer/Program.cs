@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NUglify.Css;
+using NUglify.JavaScript;
 #if RELEASE
 using NUglify;
 #endif
@@ -14,6 +16,8 @@ using RimionshipServer.Users;
 using Serilog;
 using WebMarkupMin.AspNetCore6;
 using WebMarkupMin.NUglify;
+using CssColor = WebMarkupMin.NUglify.CssColor;
+using CssComment = WebMarkupMin.NUglify.CssComment;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
@@ -155,26 +159,42 @@ var app = builder.Build();
 
 #if RELEASE
 Log.Information("Minifying Javascript");
-await MinifyJs(Path.Combine("wwwroot", "js"));
-
-async Task MinifyJs(string path)
+await Minify(Path.Combine("wwwroot", "js"), "js");
+Log.Information("Minifying Javascript done!");
+Log.Information("Minifying Cascading Style Sheets");
+await Minify(Path.Combine("wwwroot", "css"), "css");
+Log.Information("Minifying Cascading Style Sheets done!");
+async Task Minify(string path, string type)
 {
+    if (type is not "js" and not "css")
+        throw new ArgumentException(type);
     var dirs = Directory.GetDirectories(path);
-    await Task.WhenAll(dirs.Select(async x => await MinifyJs(x)));
+    await Task.WhenAll(dirs.Select(async x => await Minify(x, type)));
     var files = Directory.GetFiles(path);
     foreach (string file in files)
     {
-        if (file.EndsWith(".min.js") || !file.EndsWith(".js"))
+        if (file.EndsWith(".min." +type) || !file.EndsWith("."+type))
         {
             continue;
         }
         Log.Information("Found Matching Source: {File}", file);
         var siteJs = await File.ReadAllTextAsync(file);
-        var result = Uglify.Js(siteJs, file);
-        
+        var result = type switch{
+                         "js"  => Uglify.Js(siteJs, file, new CodeSettings{
+                                                                              PreserveImportantComments = false
+                                                                          }),
+                         "css" => Uglify.Css(siteJs, file, new CssSettings{
+                                                                              ColorNames  = NUglify.Css.CssColor.Major,
+                                                                              CommentMode = NUglify.Css.CssComment.None   
+                                                                          }, 
+                                             new CodeSettings{
+                                                                 PreserveImportantComments = false
+                                                             }),
+                         _     => throw new ArgumentException(type)
+                     };
         if (!result.HasErrors)
         {
-            var newFile = file.Replace(".js", ".min.js");
+            var newFile = file.Replace("." +type, ".min." +type);
             Log.Information("Processed Source: {File} → {NewFile}", file, newFile);
             await File.WriteAllTextAsync(newFile, result.Code);
         }
@@ -187,7 +207,6 @@ async Task MinifyJs(string path)
         }
     }
 }
-Log.Information("Minifying Javascript done!");
 #endif
 
 await using (var scope = app.Services.CreateAsyncScope())

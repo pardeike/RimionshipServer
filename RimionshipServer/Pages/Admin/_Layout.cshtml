@@ -4,9 +4,19 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewData["Title"] - Rimionship 2022 Anmeldung</title>
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-	@await RenderSectionAsync("Css", required: false)
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+@{
+#if DEBUG
+}
+    <link rel="stylesheet" href="/css/site.css">
+@{
+#else
+}
+    <link rel="stylesheet" href="/css/site.min.css">
+@{
+#endif
+}
+    @await RenderSectionAsync("Css", required: false)
 </head>
 <body>
 	<header>

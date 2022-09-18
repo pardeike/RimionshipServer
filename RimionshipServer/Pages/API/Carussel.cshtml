@@ -9,7 +9,17 @@
 <head>
     <link rel="preload" href="~/fonts/RimWordFont.ttf" as="font" crossorigin="anonymous">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/fonts.css"/>
+@{
+#if DEBUG
+}
+    <link rel="stylesheet" href="/css/fonts.css">
+@{
+#else
+}
+    <link rel="stylesheet" href="/css/fonts.min.css">
+@{
+#endif
+}
     <title>Carussel</title>
 </head>
 <body style="max-width: 425px; max-height: 750px; width: 425px; height: 750px">

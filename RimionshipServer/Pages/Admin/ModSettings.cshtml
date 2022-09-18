@@ -64,10 +64,22 @@
 	</script>
 	}
 	@section Css
-	{
-	<link rel="stylesheet" href="/css/admin.css">
-	<link rel="stylesheet" href="/css/tabs.css">
-	}
+    {
+        
+@{
+#if DEBUG
+}
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/tabs.css">
+@{
+#else
+}
+    <link rel="stylesheet" href="/css/admin.min.css">
+    <link rel="stylesheet" href="/css/tabs.min.css">
+@{
+#endif
+}
+    }
 	<div>
 		<h1>Einstellungen</h1>
 		<div class="tabbed">
