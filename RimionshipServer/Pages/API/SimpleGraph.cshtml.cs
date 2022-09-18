@@ -109,8 +109,11 @@ public class SimpleGraph : PageModel
         return Page();
     }
     
-    public async Task<IActionResult> OnGetEmbedAsync(string statt, string username)
+    public async Task<IActionResult> OnGetEmbedAsync(string statt, string username, string width, string height)
     {
+        ViewData["embed"]  = true;
+        ViewData["width"]  = width;
+        ViewData["height"] = height;
         var user        = await _dbContext.Users.Where(x => x.UserName == username).FirstAsync();
         var perUser     = await _dbContext.FetchDataVerticalAsync(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, 10, statt, user.Id);
         var dataRecords = new List<DataEntry>();

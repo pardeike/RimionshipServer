@@ -12,7 +12,7 @@
         <title>Graph @Model.GraphName</title>
     </head>
     <body>
-    <div class="chart-container" style="position: relative; height:1080px; width:1920px">
+    <div class="chart-container" style="position: relative; height:@(Html.ViewData["height"] ?? 1080)px; width:@(Html.ViewData["width"] ?? 1920)px;">
         <canvas id="myChart"></canvas>
     </div>
     <script>
@@ -54,13 +54,27 @@
                      }
                  },
                  plugins: {
-                     legend:{
-                         position: 'right',
-                         labels: {
-                             font: {
-                                 size: 24
-                             }
+                     @if (Html.ViewData["embed"] is not null)
+                     {
+                         @Html.Raw(@"legend:{
+                            display: false
                          }
+                        ")
+                     }
+                     else
+                     {
+                         @Html.Raw(@"
+                         legend:
+                         {
+                             position: 'right',
+                             labels:
+                             {
+                                 font:
+                                 {
+                                     size: 24
+                                 }
+                             }
+                         }")
                      }
                  },
                  scales: {

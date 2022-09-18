@@ -65,7 +65,7 @@ void ConfigureServices(IServiceCollection services)
     {
         options.RootDirectory = "/Pages";
         options.Conventions.AuthorizeFolder("/Admin", Roles.Admin);
-        options.Conventions.AddPageRoute("/API/SimpleGraph", "/API/EmbedGraph/{statt}/{username}/{handler=Embed}");
+        options.Conventions.AddPageRoute("/API/SimpleGraph", "/API/EmbedGraph/{statt}/{username}/{width}/{height}/{handler=Embed}");
     })
 #if DEBUG
         .AddRazorRuntimeCompilation()
