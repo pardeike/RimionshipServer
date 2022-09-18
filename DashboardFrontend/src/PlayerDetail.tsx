@@ -1,9 +1,9 @@
 import { useParams } from "@solidjs/router"
-import { createEffect, createMemo, createRenderEffect, createSignal, For, Show, VoidComponent } from "solid-js"
+import { JSX } from "solid-js"
+import { createEffect, createMemo, createSignal, For, Show, VoidComponent } from "solid-js"
 import { LatestTable } from "./LatestTable"
 import { useRimionship } from "./RimionshipContext"
 import { CC, displayValue } from "./Utils"
-import { JSX } from "solid-js"
 
 const MiniColumns = [
   CC('Place', '#'),
@@ -109,13 +109,21 @@ export const PlayerDetail: VoidComponent = () => {
 
   const user = createMemo(() => users[params.id])
   const stats = createMemo(() => latestStats.find(s => s.UserId === params.id))
+  const [selectedStat, setSelectedStat] = createSignal("Wealth")
 
   const statsHeaderColor = (val: JSX.Element) => {
     return { 'color': val == '' ? '#ccc' : '#666' }
   }
 
-  const showGraph = (id: string) => {
-    return () => alert(id)
+  const showGraph = (stat: string) => {
+    if (stat == 'Timestamp')
+      return () => { }
+    else
+      return () => setSelectedStat(stat)
+  }
+
+  const currentServerAddress = () => {
+    return location.protocol + '//' + location.host.replace("3000", "5062")
   }
 
   return <div class="row">
@@ -151,6 +159,13 @@ export const PlayerDetail: VoidComponent = () => {
         height="360"
         class="border border-1 border-primary"
         allowfullscreen>
+      </iframe>
+      <iframe
+        src={`${currentServerAddress()}/api/embedgraph/${selectedStat()}/${user().UserName}`}
+        width="640"
+        height="320"
+        scrolling="no"
+        style={{ 'background-color': 'black' }}>
       </iframe>
     </div>
   </div>
