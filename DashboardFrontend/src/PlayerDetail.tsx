@@ -177,7 +177,7 @@ export const PlayerDetail: VoidComponent = () => {
   }
 
   const headerBackground = (user: UserInfo) => {
-    return `list-group-item ${user.WasBanned ? 'bg-red' : 'bg-black'}`
+    return `list-group-item ${user.WasBanned ? 'bg-red' : user.HasQuit ? 'bg-green' : 'bg-black'}`
   }
 
   return <div class="row">

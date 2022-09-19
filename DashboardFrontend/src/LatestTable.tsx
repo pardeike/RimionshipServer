@@ -126,7 +126,8 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
   }
 
   const rowColor = (row: LatestStats) => {
-    return { 'background-color': users[row.UserId].WasBanned ? '#ffb0c0' : 'white' }
+    let u = users[row.UserId]
+    return { 'background-color': u.WasBanned ? '#ffb0c0' : u.HasQuit ? '#c0ffc0' : 'white' }
   }
 
   const widthStyle = () => {
