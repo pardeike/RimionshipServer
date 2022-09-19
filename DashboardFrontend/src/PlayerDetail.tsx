@@ -107,15 +107,6 @@ export const PlayerDetail: VoidComponent = () => {
   const params = useParams<{ id: string }>()
   const { latestStats, users, switchTwitchChannel } = useRimionship()
 
-  onMount(async () => {
-    new Twitch.Embed("twitch-embed", {
-      width: 640,
-      height: 320,
-      layout: 'video',
-      channel: user().UserName
-    })
-  })
-
   const getStoredStat = () => {
     const name = "stat="
     let decodedCookie = decodeURIComponent(document.cookie)
@@ -135,6 +126,28 @@ export const PlayerDetail: VoidComponent = () => {
   const user = createMemo(() => users[params.id])
   const stats = createMemo(() => latestStats.find(s => s.UserId === params.id))
   const [selectedStat, setSelectedStat] = createSignal(getStoredStat())
+
+  onMount(async () => {
+    window.twitchPlayer = new Twitch.Embed("twitch-embed", {
+      width: 640,
+      height: 320,
+      layout: 'video',
+      channel: user().UserName
+    })
+  })
+
+  /*window.twitchPlayer = new Twitch.Embed("twitch-embed", {
+    width: 640,
+    height: 320,
+    layout: 'video',
+    channel: user().UserName
+  })*/
+
+  const userReload = () => {
+    var u = user()
+    window.twitchPlayer.setChannel(u.UserName)
+    return u
+  }
 
   const statsHeaderColor = (id: string, val: JSX.Element) => {
     if (id == selectedStat())
