@@ -41,7 +41,6 @@
 				  })
 						.then(response => handleErrors(response))
 						.then(async (data) => {
-							 console.log(data.streamer)
 							 if (currentStreamer !== data.streamer) {
 								  currentStreamer = data.streamer;
 								  if (!player)

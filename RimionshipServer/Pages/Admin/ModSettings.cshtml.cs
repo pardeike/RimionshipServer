@@ -104,7 +104,7 @@ namespace RimionshipServer.Pages.Admin
                 }
                 if (line.Contains("</savegame>"))
                 {
-                    await sw.WriteLineAsync("<!--ende--></savegame>");
+                    await sw.WriteLineAsync("</savegame>");
                     break;
                 }
                 await sw.WriteLineAsync(line);

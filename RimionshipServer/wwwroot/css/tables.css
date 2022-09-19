@@ -4,9 +4,9 @@
     font-family: 'Roboto Condensed', sans-serif;
 }
 
-    .stats * {
-        border: 0;
-    }
+.stats * {
+    border: 0;
+}
 
 .left {
     text-align: left;
