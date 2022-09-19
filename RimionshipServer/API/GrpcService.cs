@@ -178,7 +178,7 @@ namespace RimionshipServer.API
                 return new StatsResponse { Interval = 10 };
 
             var user = await GetCachedUserAsync(request.Id);
-            if (user.HasQuit || user.WasBanned)
+            if (user.HasQuit)
                 return new StatsResponse { Interval = 10 };
 
             // PARTIALLY implemented - at least, we keep the scores in-memory
