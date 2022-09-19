@@ -53,6 +53,8 @@ export const SignalRHandler: VoidComponent = () => {
         setLatestStats(reconcile(data))
 
         const attention = await connection.invoke<AttentionUpdate[]>('GetAttentionList')
+        //const dummy = { UserId: '61e08808-5f82-4575-8de4-408bbaae92af', Score: 1240 } as AttentionUpdate
+        //const attention = [dummy, dummy, dummy, dummy, dummy, dummy, dummy, dummy, dummy, dummy, dummy, dummy]
         attention.sort((a, b) => b.Score - a.Score)
         setAttentionList(reconcile(attention))
 

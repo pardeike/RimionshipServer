@@ -32,18 +32,20 @@ export const DirectionTable: VoidComponent = () => {
   const { directionList } = useRimionship()
   return <>
     <h3>Regie</h3>
-    <table class="table">
-      <thead>
-        <tr class="table-info">
-          <th>Platz</th>
-          <th>Spieler</th>
-          <th>Koloniewert</th>
-          <th>Bemerkung</th>
-        </tr>
-      </thead>
-      <tbody>
-        <For each={directionList}>{(row) => <DirectionRow id={row.UserId} comment={row.Comment!} />}</For>
-      </tbody>
-    </table>
+    <div class="toptable">
+      <table class="table">
+        <thead>
+          <tr class="table-info">
+            <th class="sticky">Platz</th>
+            <th class="sticky">Spieler</th>
+            <th class="sticky">Koloniewert</th>
+            <th class="sticky">Bemerkung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <For each={directionList}>{(row) => <DirectionRow id={row.UserId} comment={row.Comment!} />}</For>
+        </tbody>
+      </table>
+    </div>
   </>
 }
