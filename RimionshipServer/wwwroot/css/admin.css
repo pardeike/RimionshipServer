@@ -12,21 +12,28 @@
 .userrow {
     padding: 0;
     margin: 0;
-    color: white;
     vertical-align: middle;
 }
 
+.banned {
+    background-color: #ffb0c0;
+}
+
+.admin {
+    background-color: #b0d0ff;
+}
+
 .userrow * button {
-    color: white;
+    color: black;
 }
 
-.userrow * button:hover {
-    color: gray;
-}
+    .userrow * button:hover {
+        color: gray;
+    }
 
-.userrow * button:hover {
-    color: gray;
-}
+    .userrow * button:hover {
+        color: gray;
+    }
 
 .userrow form {
     display: inline;
@@ -41,34 +48,14 @@ svg {
     color: black;
 }
 
-.bg-default .userrow {
-    color: black;
-}
+    .bg-default .userrow {
+        color: black;
+    }
 
-.bg-default .userrow * button {
-    color: black;
-}
+        .bg-default .userrow * button {
+            color: black;
+        }
 
-.bg-default .userrow * button:hover {
-    color: gray;
-}
-
-.bg-green {
-    background-color: darkgreen !important;
-    color: white;
-}
-
-.bg-red {
-    background-color: darkred !important;
-    color: white;
-}
-
-.bg-blue {
-    background-color: darkblue !important;
-    color: white;
-}
-
-.bg-light-blue {
-    background-color: lightskyblue !important;
-    color: white;
-}
+            .bg-default .userrow * button:hover {
+                color: gray;
+            }

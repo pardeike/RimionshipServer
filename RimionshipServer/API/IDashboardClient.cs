@@ -1,6 +1,6 @@
 ﻿namespace RimionshipServer.API
 {
-    public record UserInfo(string Id, string UserName, string? AvatarUrl);
+    public record UserInfo(string Id, string UserName, bool WasBanned, string? AvatarUrl);
     public record DirectionInstruction(string UserId, string? Comment);
 
     public interface IDashboardClient

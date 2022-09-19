@@ -30,8 +30,6 @@ const DirectionRow: VoidComponent<{ id: string, comment: string }> = (props) => 
 
 export const DirectionTable: VoidComponent = () => {
   const { directionList } = useRimionship()
-
-  createEffect(() => console.log(Array.from(directionList)))
   return <>
     <h3>Regie</h3>
     <table class="table">

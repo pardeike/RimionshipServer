@@ -44,7 +44,7 @@ const DefaultColumns = [
 
 export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDef[], width: number }> = (props) => {
   props = mergeProps({ sortable: true, columns: DefaultColumns }, props)
-  const { latestStats } = useRimionship()
+  const { latestStats, users } = useRimionship()
   const [sortKey, setSortKey] = createSignal<ColumnId | undefined>('Place')
   const [sortDir, setSortDir] = createSignal<-1 | 1>(-1)
   const [stopUpdating, setStopUpdating] = createSignal(false)
@@ -125,6 +125,10 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
     return res
   }
 
+  const rowColor = (row: LatestStats) => {
+    return { 'background-color': users[row.UserId].WasBanned ? '#ffb0c0' : 'white' }
+  }
+
   const widthStyle = () => {
     if (!props.width)
       return {}
@@ -158,7 +162,7 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
     </thead>
     <tbody onMouseEnter={() => setStopUpdating(true)} onMouseLeave={() => setStopUpdating(false)}>
       <For each={rows()}>{(row) =>
-        <tr>
+        <tr style={rowColor(row)}>
           <For each={props.columns}>{(col) => <td style={alignment(col)}>{displayValue(row[col.id], col.id)}</td>}</For>
         </tr>
       }</For>

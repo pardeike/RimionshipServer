@@ -33,6 +33,11 @@ export const SignalRHandler: VoidComponent = () => {
   const updateData = async () => {
     try {
       if (connected()) {
+
+        const users = await connection.invoke<UserInfo[]>('GetUsers')
+        for (let user of users)
+          setUsers(user.Id, user)
+
         const data = await connection.invoke<LatestStats[]>('GetLatestStats')
         data.sort((a, b) => a.UserId.localeCompare(b.UserId))
 

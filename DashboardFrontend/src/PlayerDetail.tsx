@@ -4,6 +4,7 @@ import { createEffect, createMemo, createSignal, For, Show, VoidComponent } from
 import { LatestTable } from "./LatestTable"
 import { useRimionship } from "./RimionshipContext"
 import { CC, displayValue } from "./Utils"
+import { UserInfo } from "./MessageDTOs"
 
 const MiniColumns = [
   CC('Place', '#'),
@@ -175,13 +176,17 @@ export const PlayerDetail: VoidComponent = () => {
     }
   }
 
+  const headerBackground = (user: UserInfo) => {
+    return `list-group-item ${user.WasBanned ? 'bg-red' : 'bg-black'}`
+  }
+
   return <div class="row">
     <div class="col" style="flex-grow: 0">
       <MiniPlayerList />
     </div>
     <div class="col" style="flex-grow: 9">
       <ul class="list-group" style="padding-bottom: 20px">
-        <li class="list-group-item bg-black">
+        <li class={headerBackground(user())}>
           <div class="row">
             <div class="col">
               <h1 style="color: white">{user().UserName}</h1>
@@ -213,7 +218,7 @@ export const PlayerDetail: VoidComponent = () => {
     <div class="col" style="flex-grow: 0">
       <div id="twitch-embed" class="border border-1 border-primary"></div>
       <iframe
-        src={`${currentServerAddress()}/api/embedgraph/${selectedStat()}/${user().UserName}/620/340`}
+        src={`${currentServerAddress()} /api/embedgraph / ${selectedStat()} /${user().UserName}/620 / 340`}
         width="640"
         height="320"
         scrolling="no"

@@ -1,6 +1,7 @@
 export interface UserInfo {
   Id: string
   UserName: string
+  WasBanned: boolean
   AvatarUrl: string
 }
 

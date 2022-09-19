@@ -11,8 +11,8 @@ import { Link, Route, Routes } from '@solidjs/router'
 import { PlayerDetail } from './PlayerDetail'
 
 const DisconnectAlert: VoidComponent<{ disconnectReason: Error }> = (props) => {
-  return <div class="alert alert-danger">
-    <h4>Verbindung zum Server unterbrochen.</h4>
+  return <div>
+    <b>Verbindung zum Server unterbrochen.</b><br />
     <p>{props.disconnectReason?.message}</p>
   </div>
 }

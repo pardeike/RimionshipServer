@@ -60,8 +60,9 @@ namespace RimionshipServer.API
 		 */
         public override async Task<AttentionResponse> Attention(AttentionRequest request, ServerCallContext context)
         {
-            VerifyId(request.Id);
             var user = await GetCachedUserAsync(request.Id);
+            if (user.HasQuit || user.WasBanned)
+                return new AttentionResponse();
 
             _attention.IncreaseAttentionScore(user.Id, request.Delta);
             return new AttentionResponse();
@@ -100,10 +101,11 @@ namespace RimionshipServer.API
                 {
                     UserExists = true,
                     TwitchName = user.UserName,
-                    Position = position
+                    Position = user.WasBanned ? -1 : position
                 };
 
-                response.Score.AddRange(scoreEntries.Select(s => new Score { Position = s.Position, LatestScore = s.Score, TwitchName = s.Name }));
+                if (!user.WasBanned)
+                    response.Score.AddRange(scoreEntries.Select(s => new Score { Position = s.Position, LatestScore = s.Score, TwitchName = s.Name }));
             }
 
             response.AllowedMods.AddRange(await allowedModsTask);
@@ -137,11 +139,10 @@ namespace RimionshipServer.API
 
         public override async Task<StartResponse> Start(StartRequest request, ServerCallContext context)
         {
-            VerifyId(request.Id);
             _ = await GetCachedUserAsync(request.Id);
+            // banned or quit users are not blocked here
 
             var settings = await db.GetSaveSettingsAsync();
-
             return new StartResponse
             {
                 GameFileHash = settings.DownloadURI + _linkGenerator.GetPathByPage("/API/SaveFile", "Hash"),
@@ -153,14 +154,13 @@ namespace RimionshipServer.API
 
         public override async Task<FutureEventsResponse> FutureEvents(FutureEventsRequest request, ServerCallContext context)
         {
-            VerifyId(request.Id);
             if ((State.Types.Game)(await db.GetGameStateAsync(context.CancellationToken)).GameState
                is not State.Types.Game.Started
               and not State.Types.Game.Training)
                 return new FutureEventsResponse();
 
             var user = await GetCachedUserAsync(request.Id);
-            if (user.HasQuit)
+            if (user.HasQuit || user.WasBanned)
                 return new FutureEventsResponse();
 
             // PARTIALLY implemented - at least, we keep the events in-memory
@@ -172,15 +172,13 @@ namespace RimionshipServer.API
 
         public override async Task<StatsResponse> Stats(StatsRequest request, ServerCallContext context)
         {
-            VerifyId(request.Id);
             if ((State.Types.Game)(await db.GetGameStateAsync(context.CancellationToken)).GameState
                 is not State.Types.Game.Started
                and not State.Types.Game.Training)
                 return new StatsResponse { Interval = 10 };
 
             var user = await GetCachedUserAsync(request.Id);
-
-            if (user.HasQuit)
+            if (user.HasQuit || user.WasBanned)
                 return new StatsResponse { Interval = 10 };
 
             // PARTIALLY implemented - at least, we keep the scores in-memory
@@ -233,7 +231,6 @@ namespace RimionshipServer.API
         private async Task<RimionUser> GetCachedUserAsync(string clientId)
         {
             VerifyId(clientId);
-
             return await dataService.GetCachedUserByPlayerIdAsync(clientId) ?? throw new RpcException(new Status(StatusCode.Unauthenticated, "User not found"));
         }
     }

@@ -2,79 +2,119 @@
 @model RimionshipServer.Pages.Admin.Index
 
 @{
-    ViewData["Title"] = "Admin Area";
+	ViewData["Title"] = "Admin Area";
 }
 
-<div class="text-center">
-    <div>
-        <label for="table1">
-            #1 Die Sturköpfe
-        </label>
-        <a id="table1" asp-page="../API/Carussel" asp-route-thing="1">!will be replaced by js!</a>
-    </div>
-    <div>
-        <label for="table2">
-            #2 Spielverderber
-        </label>
-        <a id="table2" asp-page="../API/Carussel" asp-route-thing="2">!will be replaced by js!</a>
-    </div>
-    <div>
-        <label for="table3">
-            #3 Die Geisterkolonie
-        </label>
-        <a id="table3" asp-page="../API/Carussel" asp-route-thing="3">!will be replaced by js!</a>
-    </div>
-    <div>
-        <label for="table4">
-            #4 Die Waschlappen
-        </label>
-        <a id="table4" asp-page="../API/Carussel" asp-route-thing="4">!will be replaced by js!</a>
-    </div>
-    <div>
-        <label for="table5">
-            #5 Ausgenommen gut
-        </label>
-        <a id="table5" asp-page="../API/Carussel" asp-route-thing="5">!will be replaced by js!</a>
-    </div>
-    <div>
-        <label for="Karussel">
-            Karussel
-        </label>
-        <a id="Karussel" asp-page="../API/Carussel" asp-route-thing="1" asp-route-loop="true" asp-route-time="30000">!will be replaced by js!</a>
-    </div>  
-    <div>
-        <label for="Laufbanner">
-            Laufbanner
-        </label>
-        <a id="Laufbanner" asp-page="../API/Laufbanner" asp-route-time="10">!will be replaced by js!</a>
-    </div>  
-    <div>
-        <label for="ShowStream">
-            Stream anzeigen 
-        </label>
-        <a id="ShowStream" asp-page="../API/ShowStream" asp-route-width="1920" asp-route-height="1080">!will be replaced by js!</a>
-    </div>   
-    <div>
-        <label for="DownloadCurrentFile">
-            Aktuelle Datei
-        </label>
-        <a id="DownloadCurrentFile" asp-page="../API/SaveFile" asp-route-handler="file">!will be replaced by js!</a>
-    </div>  
-    <div>
-        <label for="DownloadCurrentHash">
-            Aktueller Hashwert
-        </label>
-        <a id="DownloadCurrentHash" asp-page="../API/SaveFile" asp-route-handler="hash">!will be replaced by js!</a>
-    </div>
+<div class="container">
+	<div class="row">
+		<div class="col-2">
+			<label for="table1">
+				#1 Die Sturköpfe
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="table1" asp-page="../API/Carussel" asp-route-thing="1">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="table2">
+				#2 Spielverderber
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="table2" asp-page="../API/Carussel" asp-route-thing="2">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="table3">
+				#3 Die Geisterkolonie
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="table3" asp-page="../API/Carussel" asp-route-thing="3">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="table4">
+				#4 Die Waschlappen
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="table4" asp-page="../API/Carussel" asp-route-thing="4">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="table5">
+				#5 Ausgenommen gut
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="table5" asp-page="../API/Carussel" asp-route-thing="5">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="Karussel">
+				Karussel
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="Karussel" asp-page="../API/Carussel" asp-route-thing="1" asp-route-loop="true" asp-route-time="30000">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="Laufbanner">
+				Laufbanner
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="Laufbanner" asp-page="../API/Laufbanner" asp-route-time="8">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="ShowStream">
+				Stream anzeigen
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="ShowStream" asp-page="../API/ShowStream" asp-route-width="1920" asp-route-height="1080">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="DownloadCurrentFile">
+				Aktuelle Datei
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="DownloadCurrentFile" asp-page="../API/SaveFile" asp-route-handler="file">!will be replaced by js!</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-2">
+			<label for="DownloadCurrentHash">
+				Aktueller Hashwert
+			</label>
+		</div>
+		<div class="col-9">
+			<a id="DownloadCurrentHash" asp-page="../API/SaveFile" asp-route-handler="hash">!will be replaced by js!</a>
+		</div>
+	</div>
 </div>
 
 @section Scripts
-{
-        <script type="text/javascript">
-                const links = document.getElementsByTagName("a");
-                for (let i = 0; i < links.length; i++) {
-                     if (links[i].innerHTML === "!will be replaced by js!")
-                         links[i].innerHTML = links[i].href;
-                }
-        </script>
+	{
+	<script type="text/javascript">
+		const links = document.getElementsByTagName("a");
+		for (let i = 0; i < links.length; i++) {
+			 if (links[i].innerHTML === "!will be replaced by js!")
+				  links[i].innerHTML = links[i].href;
+		}
+	</script>
 }
