@@ -36,9 +36,9 @@ export const DirectionTable: VoidComponent = () => {
       <table class="table">
         <thead>
           <tr class="table-info">
-            <th class="sticky">Platz</th>
-            <th class="sticky">Spieler</th>
-            <th class="sticky">Koloniewert</th>
+            <th>Platz</th>
+            <th>Spieler</th>
+            <th>Koloniewert</th>
             <th class="sticky">Bemerkung</th>
           </tr>
         </thead>

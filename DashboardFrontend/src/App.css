@@ -4,6 +4,11 @@ body,
     font-size: 9pt;
 }
 
+#root {
+    padding: 0;
+    margin: 0;
+}
+
 .bigger {
     font-size: 12pt;
 }
@@ -17,9 +22,7 @@ body,
     background-color: #f0f0f0;
 }
 
-body {
-    margin: 5px;
-}
+body {}
 
 .sortable th {
     user-select: none;

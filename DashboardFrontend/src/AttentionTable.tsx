@@ -38,9 +38,7 @@ export const AttentionTable: VoidComponent = () => {
             <th>Koloniewert</th>
             <th>
               <div class="row">
-                <div class="col">
-                  Punkte
-                </div>
+                <div class="col" style="padding-top: 2px">Punkte</div>
                 <div class="col end stepper" style="text-align: right; white-space: nowrap">
                   Abzug: {delta} Punkt{delta() == 1 ? '' : 'e'}/sek &nbsp;
                   <button onClick={() => updateDelta(-1)}><span>–</span></button> &nbsp;

@@ -38,7 +38,7 @@ const App: Component = () => {
   }
 
   return (
-    <>
+    <div style="padding-left: 5px; width: calc(100% - 10px)">
       <div class="row">
         <div>
           <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom mb-3 p-0 position-relative">
@@ -71,7 +71,7 @@ const App: Component = () => {
           </div>
         </div>
       </Show>
-    </>
+    </div>
   )
 }
 

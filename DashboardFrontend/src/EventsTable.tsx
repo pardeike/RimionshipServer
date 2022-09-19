@@ -32,14 +32,14 @@ export const EventsTable: VoidComponent = () => {
       <table class="table">
         <thead>
           <tr class="table-warning">
-            <th class="sticky">Spieler</th>
-            <th class="sticky">Zeitpunkt</th>
-            <th class="sticky">Typ</th>
-            <th class="sticky">Auftrag</th>
-            <th class="sticky">Faktion</th>
-            <th class="sticky">Punkte</th>
-            <th class="sticky">Strategie</th>
-            <th class="sticky">Modus</th>
+            <th>Spieler</th>
+            <th>Zeitpunkt</th>
+            <th>Typ</th>
+            <th>Auftrag</th>
+            <th>Faktion</th>
+            <th>Punkte</th>
+            <th>Strategie</th>
+            <th>Modus</th>
           </tr>
         </thead>
         <tbody>

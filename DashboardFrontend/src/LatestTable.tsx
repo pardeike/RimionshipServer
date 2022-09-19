@@ -113,6 +113,9 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
       res['text-align'] = 'left'
       res['padding-left'] = '12px'
     }
+    if (col.id == 'Prisoners' || col.id == 'DamageDealt') {
+      res['border-right'] = '1px solid white'
+    }
     return res
   }
 
@@ -121,6 +124,9 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
     if (col.displayName == 'Spieler') {
       res['text-align'] = 'left'
       res['padding-left'] = '12px'
+    }
+    if (col.id == 'Prisoners' || col.id == 'DamageDealt') {
+      res['border-right'] = '1px solid black'
     }
     return res
   }
