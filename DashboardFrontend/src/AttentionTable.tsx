@@ -1,4 +1,4 @@
-import { createMemo, For, VoidComponent } from "solid-js"
+import { createMemo, For, VoidComponent, createSignal } from "solid-js"
 import { PlayerLink } from "./PlayerLink"
 import { useRimionship } from "./RimionshipContext"
 
@@ -18,7 +18,15 @@ const AttentionRow: VoidComponent<{ id: string, score: number }> = (props) => {
 }
 
 export const AttentionTable: VoidComponent = () => {
-  const { attentionList } = useRimionship()
+  const { attentionList, setAttentionReduction } = useRimionship()
+
+  const [delta, setDelta] = createSignal(0)
+
+  const updateDelta = async (delta: number) => {
+    setDelta(await setAttentionReduction(delta))
+  }
+  updateDelta(0)
+
   return <>
     <h3>Interessante Spieler</h3>
     <table class="table">
@@ -27,7 +35,18 @@ export const AttentionTable: VoidComponent = () => {
           <th>Platz</th>
           <th>Spieler</th>
           <th>Koloniewert</th>
-          <th>Punkte</th>
+          <th>
+            <div class="row">
+              <div class="col">
+                Punkte
+              </div>
+              <div class="col end stepper" style="text-align: right; white-space: nowrap">
+                Abzug: {delta} Punkt{delta() == 1 ? '' : 'e'}/sek &nbsp;
+                <button onClick={() => updateDelta(-1)}><span>–</span></button> &nbsp;
+                <button onClick={() => updateDelta(1)}><span>+</span></button>
+              </div>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody>

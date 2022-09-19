@@ -63,3 +63,21 @@ body {
 .bg-green {
     background-color: #060;
 }
+
+.stepper button {
+    background-color: black;
+    width: 20px;
+    height: 20px;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    margin: 0;
+    padding-top: 2px;
+}
+
+.stepper button span {
+    color: white;
+    font-size: 16pt;
+    line-height: 0;
+    font-weight: bold;
+}

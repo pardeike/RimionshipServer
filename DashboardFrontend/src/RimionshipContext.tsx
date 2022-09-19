@@ -19,6 +19,10 @@ function create() {
     await connection.invoke<void>('SwitchTwitchChannel', userId)
   }
 
+  const setAttentionReduction = async (delta: number): Promise<number> => {
+    return await connection.invoke<number>('SetAttentionReduction', delta)
+  }
+
   return {
     connected, setConnected,
     disconnectReason, setDisconnectReason,
@@ -28,7 +32,8 @@ function create() {
     eventsList, setEventsList,
     directionList, setDirectionList,
     connection,
-    switchTwitchChannel
+    switchTwitchChannel,
+    setAttentionReduction
   } as const
 }
 

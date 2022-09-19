@@ -51,6 +51,11 @@ namespace RimionshipServer.API
                 .ToList();
         }
 
+        public int SetAttentionReduction(int delta)
+        {
+            return attentionService.ChangeDecrement(delta);
+        }
+
         public List<DirectionInstruction> GetDirectionInstructions()
             => directionService.DirectionInstructions
                 .Select(p => new DirectionInstruction(p.Key, p.Value))
