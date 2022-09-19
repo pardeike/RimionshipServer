@@ -5,24 +5,18 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewData["Title"] - Rimionship 2022 Anmeldung</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-@{
-#if DEBUG
-}
-    <link rel="stylesheet" href="/css/site.css">
-@{
-#else
-}
-    <link rel="stylesheet" href="/css/site.min.css">
-@{
-#endif
-}
+@{ #if DEBUG }
+	 <link rel="stylesheet" href="/css/site.css">
+@{ #else }
+	 <link rel="stylesheet" href="/css/site.min.css">
+@{ #endif }
     @await RenderSectionAsync("Css", required: false)
 </head>
 <body>
 	<header>
 		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-			<div class="container">
-				<a class="navbar-brand" asp-area="" asp-page="/Index">Rimionship Anmeldung 2022</a>
+			<div class="container-fluid">
+				<a class="navbar-brand" asp-area="" asp-page="/Index">Rimionship 2022</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
 						  aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -35,7 +29,11 @@
 								<a class="nav-link" asp-page="/Admin/Index">Admin</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="~/dashboard.html">Dashboard</a>
+								<script type="text/javascript">
+									 let hostname = location.host.replace('5062', '3000')
+									 let dashboardUrl = `${location.protocol}//${hostname}/dashboard.html`
+									 document.writeln(`<a class="nav-link" href="${dashboardUrl}">Dashboard</a>`)
+								</script>
 							</li>
 						}
 					</ul>
