@@ -247,7 +247,7 @@ export const PlayerDetail: VoidComponent = () => {
     <div class="col" style="flex-grow: 0">
       <div id="twitch-embed" class="border border-1 border-primary"></div>
       <iframe
-        src={`${currentServerAddress()} /api/embedgraph / ${selectedStat()} /${user().UserName}/620 / 340`}
+        src={`${currentServerAddress()}/api/embedgraph/${selectedStat()}/${user().UserName}/620/340`}
         width="640"
         height="320"
         scrolling="no"
