@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using NUglify.Helpers;
 using RimionshipServer.API;
 using System.Collections.Immutable;
 
@@ -20,7 +21,7 @@ namespace RimionshipServer.Services
             await directionSemaphore.WaitAsync();
             try
             {
-                if (comment == null)
+                if (comment.IsNullOrWhiteSpace())
                     DirectionInstructions = DirectionInstructions.Remove(userId);
                 else
                     DirectionInstructions = DirectionInstructions.SetItem(userId, comment);
