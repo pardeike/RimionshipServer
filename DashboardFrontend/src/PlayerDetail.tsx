@@ -13,43 +13,63 @@ const MiniColumns = [
 
 const Details = [
   [
-    CC('Wealth', 'Koloniereichtum'),
-    CC('MapCount', 'Anzahl Karten'),
-    CC('Colonists', 'Anzahl Kolonisten'),
-    CC('ColonistsNeedTending', 'Verletzte Kolonisten'),
-    CC('MedicalConditions', 'Krankeiten'),
-    CC('Enemies', 'Feinde'),
-    CC('WildAnimals', 'Wilde Tiere'),
-    CC('TamedAnimals', 'Gezähmte Tiere'),
-    CC('Visitors', 'Besucher'),
+    [
+      CC('Wealth', 'Koloniereichtum'),
+      CC('MedicalConditions', 'Krankeiten'),
+      CC('Conditions', 'Wetter & Kartenbedingungen'),
+      CC('WeaponDps', 'Waffenkraft'),
+    ], [
+      CC('MapCount', 'Anzahl Karten'),
+      CC('Enemies', 'Feinde'),
+      CC('NumRaidsEnemy', 'Feindliche Überfälle'),
+      CC('Electricity', 'Verfügbare Energie'),
+    ], [
+      CC('Colonists', 'Anzahl Kolonisten'),
+      CC('MentalColonists', 'Durchgedrehte Kolonisten'),
+      CC('NumThreatBigs', 'Große Bedrohungen'),
+      CC('Prisoners', 'Gefangene'),
+    ], [
+      CC('ColonistsNeedTending', 'Verletzte Kolonisten'),
+      CC('DownedColonists', 'Ohnmächtige Kolonisten'),
+      CC('Fire', 'Brandstellen'),
+      CC('Timestamp', 'Letzter Kontakt mit Server'),
+    ]
   ], [
-    CC('Prisoners', 'Gefangene'),
-    CC('DownedColonists', 'Ohnmächtige Kolonisten'),
-    CC('MentalColonists', 'Durchgedrehte Kolonisten'),
-    CC('Rooms', 'Bebaute Fläche'),
-    CC('Caravans', 'Kolonisten in Karawanen'),
-    CC('WeaponDps', 'Waffenkraft'),
-    CC('Electricity', 'Verfügbare Energie'),
-    CC('Medicine', 'Medizin'),
+    [
+      CC('ColonistsKilled', 'Kolonisten getötet'),
+      CC('AmountBloodCleaned', 'Menge aufgewischtes Blut'),
+    ],
+    [
+      CC('TicksLowColonistMood', 'Zeit mit niedriger Moral'),
+    ],
+    [
+      CC('TicksIgnoringBloodGod', 'Zeit mit Ignoranz des Blutgottes'),
+    ],
+    [
+      CC('AnimalMeatCreated', 'Geschlachtetes Tierfleisch'),
+    ]
   ], [
-    CC('Food', 'Essen'),
-    CC('Fire', 'Brandstellen'),
-    CC('Conditions', 'Wetter & Kartenbedingungen'),
-    CC('Temperature', 'Temperatur auf Hauptkarte'),
-    CC('NumRaidsEnemy', 'Feindliche Überfälle'),
-    CC('NumThreatBigs', 'Große Bedrohungen'),
-    CC('ColonistsKilled', 'Kolonisten getötet'),
-    CC('GreatestPopulation', 'Maximale Anzahl Kolonisten'),
-  ], [
-    CC('InGameHours', 'Gespielte Stunden'),
-    CC('DamageTakenPawns', 'Schaden an Kolonisten'),
-    CC('DamageTakenThings', 'Schaden an der Kolonie'),
-    CC('DamageDealt', 'Ausgeteilter Schaden'),
-    CC('AnimalMeatCreated', 'Geschlachtetes Tierfleisch'),
-    CC('AmountBloodCleaned', 'Menge aufgewischtes Blut'),
-    CC('TicksLowColonistMood', 'Zeit mit niedriger Moral'),
-    CC('TicksIgnoringBloodGod', 'Zeit mit Ignoranz des Blutgottes'),
-    CC('Timestamp', 'Letzter Kontakt mit Server'),
+    [
+      CC('Rooms', 'Bebaute Fläche'),
+      CC('Caravans', 'Kolonisten in Karawanen'),
+      CC('Temperature', 'Temperatur auf Hauptkarte'),
+      CC('DamageDealt', 'Ausgeteilter Schaden'),
+    ],
+    [
+      CC('Medicine', 'Medizin'),
+      CC('WildAnimals', 'Wilde Tiere'),
+      CC('InGameHours', 'Gespielte Stunden'),
+    ],
+    [
+      CC('Food', 'Essen'),
+      CC('TamedAnimals', 'Gezähmte Tiere'),
+      CC('DamageTakenPawns', 'Schaden an Kolonisten'),
+    ],
+    [
+      CC('GreatestPopulation', 'Maximale Anzahl Kolonisten'),
+      CC('Visitors', 'Besucher'),
+      CC('DamageTakenThings', 'Schaden an der Kolonie'),
+    ]
   ]
 ]
 
@@ -199,17 +219,26 @@ export const PlayerDetail: VoidComponent = () => {
         <li class="list-group-item"><SetDirectionInstruction userId={params.id} /></li>
       </ul>
       <Show when={stats()} fallback={<strong>Keine Daten verfügbar.</strong>}>
-        <div class="row align-items-start">
-          <For each={Details}>{(detail) =>
-            <div class="col">
-              <ul class="list-group">
-                <For each={detail}>{(col) =>
-                  <li class="list-group-item bigger highlight" onClick={showGraph(col.id)}>
-                    <span class="bigger" style={statsHeaderColor(col.id, displayValue(stats()![col.id], col.id))}>{col.displayName}</span><br />
-                    <b>{displayValue(stats()![col.id], col.id) || '0'}</b>
-                  </li>
+        <div>
+          <For each={Details}>{(section, i) =>
+            <div>
+              <div style="background-color: black; color: white; padding: 4px 8px 2px 8px">
+                <h4>{['Basics', 'Quests', 'Other'][i()]}</h4>
+              </div>
+              <div class="row align-items-start" style="padding-bottom: 20px">
+                <For each={section}>{(detail) =>
+                  <div class="col">
+                    <ul class="list-group">
+                      <For each={detail}>{(col) =>
+                        <li class="list-group-item bigger highlight" onClick={showGraph(col.id)}>
+                          <span class="bigger" style={statsHeaderColor(col.id, displayValue(stats()![col.id], col.id))}>{col.displayName}</span><br />
+                          <b>{displayValue(stats()![col.id], col.id) || '0'}</b>
+                        </li>
+                      }</For>
+                    </ul>
+                  </div>
                 }</For>
-              </ul>
+              </div>
             </div>
           }</For>
         </div>
