@@ -3,6 +3,7 @@ export interface UserInfo {
   UserName: string
   WasBanned: boolean
   HasQuit: boolean
+  WasShownTimes: number
   AvatarUrl: string
 }
 

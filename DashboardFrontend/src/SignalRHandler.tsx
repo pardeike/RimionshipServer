@@ -18,7 +18,7 @@ export const SignalRHandler: VoidComponent = () => {
   const {
     connection,
     setLatestStats,
-    setUsers,
+    users, setUsers,
     connected, setConnected,
     disconnectReason, setDisconnectReason,
     setAttentionList,
@@ -34,11 +34,14 @@ export const SignalRHandler: VoidComponent = () => {
     try {
       if (connected()) {
 
-        const users = await connection.invoke<UserInfo[]>('GetUsers')
-        for (let user of users)
+        const userList = await connection.invoke<UserInfo[]>('GetUsers')
+        for (let user of userList)
           setUsers(user.Id, user)
 
         const data = await connection.invoke<LatestStats[]>('GetLatestStats')
+        for (let d of data)
+          d.WasShownTimes = users[d.UserId].WasShownTimes
+
         data.sort((a, b) => a.UserId.localeCompare(b.UserId))
 
         // This is super funky and I kinda miss Linq.
@@ -97,11 +100,11 @@ export const SignalRHandler: VoidComponent = () => {
     while (true) {
       try {
         await connection.start()
-        const users = await connection.invoke<UserInfo[]>('GetUsers')
+        const userInfos = await connection.invoke<UserInfo[]>('GetUsers')
         const directions = await connection.invoke<DirectionInstruction[]>('GetDirectionInstructions')
 
         batch(() => {
-          for (let user of users)
+          for (let user of userInfos)
             setUsers(user.Id, user)
 
           setDirectionList(directions)

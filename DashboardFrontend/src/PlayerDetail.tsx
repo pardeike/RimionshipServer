@@ -221,7 +221,7 @@ export const PlayerDetail: VoidComponent = () => {
                   <h1 style="color: white">{user().UserName} <span class="timer">〽️{displayValue(stats()!['Timestamp'], 'Timestamp')}</span></h1>
                 </div>
                 <div class="col" style="text-align: right">
-                  <button class="btn castButton" onClick={cast()}>Stream anzeigen</button>
+                  <div class="castButton" onClick={cast()}>Stream anzeigen <b>{user().WasShownTimes}</b></div>
                 </div>
               </div>
             </li>

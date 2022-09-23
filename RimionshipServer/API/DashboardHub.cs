@@ -31,7 +31,8 @@ namespace RimionshipServer.API
         public async Task<List<UserInfo>> GetUsers()
         {
             return await db.Users
-                .Select(u => new UserInfo(u.Id, u.UserName, u.WasBanned, u.HasQuit, u.AvatarUrl))
+                .AsNoTrackingWithIdentityResolution()
+                .Select(u => new UserInfo(u.Id, u.UserName, u.WasBanned, u.HasQuit, u.WasShownTimes, u.AvatarUrl))
                 .ToListAsync();
         }
 

@@ -37,4 +37,5 @@ export interface LatestStats {
   AmountBloodCleaned: number
   TicksLowColonistMood: number
   TicksIgnoringBloodGod: number
+  WasShownTimes: number
 }

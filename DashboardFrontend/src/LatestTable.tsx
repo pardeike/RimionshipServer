@@ -1,4 +1,4 @@
-import { batch, createMemo, createSignal, For, mergeProps, Show, VoidComponent } from "solid-js"
+import { batch, createMemo, createSignal, For, mergeProps, Show, VoidComponent, JSX } from "solid-js"
 import { useRimionship } from "./RimionshipContext"
 import { LatestStats } from "./Stats"
 import { CC, ColumnDef, ColumnId, displayValue } from "./Utils"
@@ -7,6 +7,7 @@ const DefaultColumns = [
   CC('Place', '#'),
   CC('UserId', 'Player'),
   CC('Wealth', 'Wealth'),
+  CC('WasShownTimes', 'Stream'),
   CC('MapCount', 'Map'),
   CC('Colonists', 'Colonist'),
   CC('ColonistsNeedTending', 'Injured'),
@@ -120,7 +121,7 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
   }
 
   const alignment = (col: ColumnDef) => {
-    let res = { 'text-align': 'center', 'padding-left': 'inherit' }
+    let res = { 'text-align': 'center', 'padding-left': 'inherit' } as JSX.CSSProperties
     if (col.displayName == 'Spieler') {
       res['text-align'] = 'left'
       res['padding-left'] = '12px'

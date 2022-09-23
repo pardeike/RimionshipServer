@@ -53,10 +53,23 @@ body {}
 }
 
 .castButton {
-    margin-top: 6px !important;
-    color: red !important;
-    border: 3px solid red !important;
-    background-color: black !important;
+    display: inline-block;
+    padding: 4px 12px 4px 12px;
+    margin-top: 4px;
+    color: white;
+    border-radius: 4px;
+    background-color: #800;
+    cursor: pointer;
+}
+
+.castButton:hover {
+    background-color: rgba(128, 0, 0, 0.75);
+}
+
+.castButton b {
+    padding-left: 6px;
+    font-size: 1.4em;
+    font-weight: 800;
 }
 
 .bg-red {

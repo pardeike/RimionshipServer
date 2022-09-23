@@ -33,10 +33,7 @@ const App: Component = () => {
     return false
   }
 
-  const currentDate = () => {
-    const d = date()
-    return `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`
-  }
+  const currentDate = () => date().toLocaleTimeString('de-DE', { hour12: false })
 
   return (
     <div style="padding-left: 5px; width: calc(100% - 10px)">

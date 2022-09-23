@@ -150,7 +150,7 @@ namespace RimionshipServer.Pages.Account
                 var result = await userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
-                    _ = dashboardContext.Clients.All.AddUser(new UserInfo(user.Id, user.UserName, user.WasBanned, user.HasQuit, user.AvatarUrl));
+                    _ = dashboardContext.Clients.All.AddUser(new UserInfo(user.Id, user.UserName, user.WasBanned, user.HasQuit, user.WasShownTimes, user.AvatarUrl));
 
                     result = await userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
