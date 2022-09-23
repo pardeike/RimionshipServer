@@ -152,7 +152,11 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
       return latestStats
 
     const sd = sortDir()
-    return Array.from(latestStats).sort((b, a) => sort(a[sk], b[sk]) * sd)
+    let statsArray = Array.from(latestStats)
+
+    if (sk === 'UserId')
+      return statsArray.sort((a, b) => sort(users[b.UserId].UserName, users[a.UserId].UserName) * sd)
+    return statsArray.sort((a, b) => sort(b[sk], a[sk]) * sd)
   })
 
   return <table class="table table-striped table-hover table-stoppable stats" style={widthStyle()} classList={{ "table-secondary": stopUpdating() }}>
