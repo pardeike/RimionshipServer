@@ -108,3 +108,22 @@ body {}
     padding-left: 10px;
     font-size: 0.75em;
 }
+
+.hdRatio {
+    width: 100%;
+    aspect-ratio: 15.5 / 9;
+}
+
+.twitchzoom {
+    position: absolute;
+    left: 14px;
+    top: calc(50% - 67px);
+    width: 48px;
+    height: 48px;
+    color: white;
+    text-align: center;
+    font-size: 2.2em;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+}

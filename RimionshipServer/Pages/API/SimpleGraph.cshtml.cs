@@ -1,8 +1,8 @@
-﻿using System.Drawing;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Data;
+using System.Drawing;
 
 namespace RimionshipServer.Pages.Api;
 
@@ -112,8 +112,8 @@ public class SimpleGraph : PageModel
     public async Task<IActionResult> OnGetEmbedAsync(string statt, string username, string width, string height)
     {
         ViewData["embed"]  = true;
-        ViewData["width"]  = width;
-        ViewData["height"] = height;
+        ViewData["width"]  = width == "0" ? "100%" : width;
+        ViewData["height"] = height == "0" ? "100%" : height;
         var user        = await _dbContext.Users.Where(x => x.UserName == username).FirstAsync();
         var perUser     = await _dbContext.FetchDataVerticalAsync(DateTimeOffset.MinValue, DateTimeOffset.MaxValue, 10, statt, user.Id);
         var dataRecords = new List<DataEntry>();
