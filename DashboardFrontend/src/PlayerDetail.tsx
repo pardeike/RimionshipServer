@@ -15,62 +15,58 @@ const Details = [
   [
     [
       CC('Wealth', 'Koloniereichtum'),
-      CC('MedicalConditions', 'Krankeiten'),
-      CC('Conditions', 'Wetter & Kartenbedingungen'),
-      CC('WeaponDps', 'Waffenkraft'),
+      CC('Enemies', 'Feinde'),
+      CC('NumThreatBigs', 'Große Bedrohungen'),
     ], [
       CC('MapCount', 'Anzahl Karten'),
-      CC('Enemies', 'Feinde'),
-      CC('NumRaidsEnemy', 'Feindliche Überfälle'),
-      CC('Electricity', 'Verfügbare Energie'),
+      CC('MentalColonists', 'Durchgedrehte Kolonisten'),
+      CC('Fire', 'Brandstellen'),
     ], [
       CC('Colonists', 'Anzahl Kolonisten'),
-      CC('MentalColonists', 'Durchgedrehte Kolonisten'),
-      CC('NumThreatBigs', 'Große Bedrohungen'),
-      CC('Prisoners', 'Gefangene'),
+      CC('DownedColonists', 'Ohnmächtige Kolonisten'),
+      CC('WeaponDps', 'Waffenkraft'),
     ], [
       CC('ColonistsNeedTending', 'Verletzte Kolonisten'),
-      CC('DownedColonists', 'Ohnmächtige Kolonisten'),
-      CC('Fire', 'Brandstellen'),
-      CC('Timestamp', 'Letzter Kontakt mit Server'),
-    ]
+      CC('Conditions', 'Wetter & Kartenbedingungen'),
+      CC('Electricity', 'Verfügbare Energie'),
+    ], [
+      CC('MedicalConditions', 'Krankeiten'),
+      CC('NumRaidsEnemy', 'Feindliche Überfälle'),
+      CC('Prisoners', 'Gefangene'),
+    ],
   ], [
     [
-      CC('ColonistsKilled', 'Kolonisten getötet'),
-      CC('AmountBloodCleaned', 'Menge aufgewischtes Blut'),
-    ],
-    [
-      CC('TicksLowColonistMood', 'Zeit mit niedriger Moral'),
-    ],
-    [
       CC('TicksIgnoringBloodGod', 'Zeit mit Ignoranz des Blutgottes'),
-    ],
-    [
+    ], [
+      CC('TicksLowColonistMood', 'Zeit mit niedriger Moral'),
+    ], [
+      CC('ColonistsKilled', 'Kolonisten getötet'),
+    ], [
+      CC('AmountBloodCleaned', 'Menge aufgewischtes Blut'),
+    ], [
       CC('AnimalMeatCreated', 'Geschlachtetes Tierfleisch'),
-    ]
+    ],
   ], [
     [
       CC('Rooms', 'Bebaute Fläche'),
-      CC('Caravans', 'Kolonisten in Karawanen'),
-      CC('Temperature', 'Temperatur auf Hauptkarte'),
-      CC('DamageDealt', 'Ausgeteilter Schaden'),
-    ],
-    [
-      CC('Medicine', 'Medizin'),
       CC('WildAnimals', 'Wilde Tiere'),
+      CC('DamageTakenPawns', 'Schaden an Kolonisten'),
+    ], [
+      CC('Medicine', 'Medizin'),
+      CC('TamedAnimals', 'Gezähmte Tiere'),
+      CC('DamageTakenThings', 'Schaden an der Kolonie'),
+    ], [
+      CC('Food', 'Essen'),
+      CC('Visitors', 'Besucher'),
+      CC('DamageDealt', 'Ausgeteilter Schaden'),
+    ], [
+      CC('GreatestPopulation', 'Maximale Anzahl Kolonisten'),
+      CC('Temperature', 'Temperatur auf Hauptkarte'),
+    ], [
+      CC('Caravans', 'Kolonisten in Karawanen'),
       CC('InGameHours', 'Gespielte Stunden'),
     ],
-    [
-      CC('Food', 'Essen'),
-      CC('TamedAnimals', 'Gezähmte Tiere'),
-      CC('DamageTakenPawns', 'Schaden an Kolonisten'),
-    ],
-    [
-      CC('GreatestPopulation', 'Maximale Anzahl Kolonisten'),
-      CC('Visitors', 'Besucher'),
-      CC('DamageTakenThings', 'Schaden an der Kolonie'),
-    ]
-  ]
+  ],
 ]
 
 const MiniPlayerList: VoidComponent = () => <LatestTable sortable={false} columns={MiniColumns} width={250} />
@@ -124,6 +120,8 @@ const SetDirectionInstruction: VoidComponent<{ userId: string }> = (props) => {
   </div>
 }
 
+// ========================================================================================================
+
 export const PlayerDetail: VoidComponent = () => {
   const params = useParams<{ id: string }>()
   const { latestStats, users, switchTwitchChannel } = useRimionship()
@@ -148,27 +146,23 @@ export const PlayerDetail: VoidComponent = () => {
   const stats = createMemo(() => latestStats.find(s => s.UserId === params.id))
   const [selectedStat, setSelectedStat] = createSignal(getStoredStat())
 
-  onMount(async () => {
-    window.twitchPlayer = new Twitch.Embed("twitch-embed", {
-      width: 640,
-      height: 320,
-      layout: 'video',
-      channel: user().UserName
-    })
-  })
+  var twitchPlayer: any = null
 
-  /*window.twitchPlayer = new Twitch.Embed("twitch-embed", {
-    width: 640,
-    height: 320,
-    layout: 'video',
-    channel: user().UserName
-  })*/
+  createEffect((prevUser) => {
+    if (!twitchPlayer)
+      twitchPlayer = new Twitch.Embed("twitch-embed", {
+        width: 640,
+        height: 320,
+        layout: 'video',
+        channel: user().UserName
+      })
 
-  const userReload = () => {
-    var u = user()
-    window.twitchPlayer.setChannel(u.UserName)
-    return u
-  }
+    const currentUser = user().UserName
+    if (currentUser != prevUser) {
+      twitchPlayer.setChannel(currentUser)
+    }
+    return currentUser
+  }, user().UserName)
 
   const statsHeaderColor = (id: string, val: JSX.Element) => {
     if (id == selectedStat())
@@ -190,9 +184,9 @@ export const PlayerDetail: VoidComponent = () => {
     return location.protocol + '//' + location.host.replace("3000", "5062")
   }
 
-  const cast = (id: string) => {
+  const cast = () => {
     return async () => {
-      await switchTwitchChannel(id)
+      await switchTwitchChannel(user().UserName)
     }
   }
 
@@ -209,10 +203,10 @@ export const PlayerDetail: VoidComponent = () => {
         <li class={headerBackground(user())}>
           <div class="row">
             <div class="col">
-              <h1 style="color: white">{user().UserName}</h1>
+              <h1 style="color: white">{user().UserName} <span class="timer">〽️{displayValue(stats()!['Timestamp'], 'Timestamp')}</span></h1>
             </div>
             <div class="col" style="text-align: right">
-              <button class="btn castButton" onClick={cast(user().UserName)}>Stream anzeigen</button>
+              <button class="btn castButton" onClick={cast()}>Stream anzeigen</button>
             </div>
           </div>
         </li>
