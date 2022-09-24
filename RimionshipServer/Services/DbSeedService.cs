@@ -35,6 +35,7 @@ namespace RimionshipServer.Services
             await db.SeedSingeRecordTables();
             await db.SaveChangesAsync();
         }
+
         private async Task SeedSettings()
         {
             if (await db.Settings.AnyAsync())
@@ -44,30 +45,29 @@ namespace RimionshipServer.Services
                 Name = "Standard",
                 Punishment = new()
                 {
-                    FinalPauseInterval = 10,
-                    MaxThoughtFactor = 3f,
+                    StartPauseInterval = 120_000,
+                    FinalPauseInterval = 60_000,
                     MinThoughtFactor = 1f,
-                    StartPauseInterval = 120_000
+                    MaxThoughtFactor = 3f,
                 },
                 Rising = new()
                 {
-                    MaxFreeColonistCount = 5,
                     RisingCooldown = 0,
-                    RisingInterval = 1200_000,
+                    RisingInterval = 600_000,
                     RisingIntervalMinimum = 120_000,
-                    RisingReductionPerColonist = 240_000
+                    MaxFreeColonistCount = 5,
+                    RisingReductionPerColonist = 180_000
                 },
                 Traits = new()
                 {
+                    ScaleFactor = 0.6f,
                     BadTraitSuppression = 0.15f,
                     GoodTraitSuppression = 0.7f,
-                    ScaleFactor = 0.2f,
-                    MaxMeleeSkill = 6,
                     MaxMeleeFlames = 1,
-                    MaxShootingFlames = 1,
-                    MaxShootingSkill = 6
+                    MaxMeleeSkill = 6,
+                    MaxShootingSkill = 6,
+                    MaxShootingFlames = 1
                 }
-
             });
         }
 
