@@ -54,7 +54,7 @@
 		 {
         <span>
             @{
-                var toShow = Model.Entries.Aggregate("", (current, modelEntry) => current + $" #{(modelEntry.Item1 + 1)}: {modelEntry.Item2} {modelEntry.Item3} ◈ ");
+                var toShow = Model.Entries.Aggregate("", (current, modelEntry) => current + $" #{(modelEntry.Item1 + 1)} {modelEntry.Item2} {modelEntry.Item3}  ");
                 toShow = toShow[..^2];
             }
             @toShow
