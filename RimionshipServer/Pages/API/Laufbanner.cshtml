@@ -27,7 +27,7 @@
     		max-width: 100vw;
     		white-space: nowrap;
     		overflow: hidden;
-    		font-weight: bold;
+    		font-weight: 200;
     		font-size: xx-large;
     		color: #9d9d9c;
     		font-family: 'Roboto Condensed', sans-serif;
@@ -37,6 +37,16 @@
     		display: inline-block;
     		padding-left: 100%;
     		animation: marquee @(Model.Entries.Count() * seconds)s linear infinite;
+    	}
+        
+    	.marquee span div {
+			 display: inline;
+			 padding-right: 24px;
+			 word-spacing: -3px;
+    	}
+        
+    	.marquee span div b {
+    		font-weight: 800;
     	}
     
     	@@keyframes marquee {
@@ -50,16 +60,19 @@
 <body>
 <div>
     <div id="marquee" class="marquee">
-		 @if (Model.Entries.Count() > 0)
-		 {
-        <span>
-            @{
-                var toShow = Model.Entries.Aggregate("", (current, modelEntry) => current + $" #{(modelEntry.Item1 + 1)} {modelEntry.Item2} {modelEntry.Item3}  ");
-                toShow = toShow[..^2];
-            }
-            @toShow
-        </span>
-		 }
+		 <span>
+        @{
+            void Player(int pos, string name, double points) { <div>#@pos @name <b>@points</b></div> }
+            foreach (var entry in Model.Entries)
+                Player(entry.Item1 + 1, entry.Item2, entry.Item3);
+				Player(1, "Brrainz", 34595);
+				Player(2, "ArcticBathtue", 34595);
+				Player(3, "schemfil", 1034595);
+				Player(4, "Brrainz", 3455);
+				Player(5, "Brrainz", 595);
+				Player(6, "Whatever", 45534595);
+        }
+		  </span>
     </div>
 </div>
 <script type="text/javascript" defer="">
