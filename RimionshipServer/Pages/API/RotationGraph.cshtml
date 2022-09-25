@@ -1,0 +1,31 @@
+﻿@page "{name}/{id}"
+@model RimionshipServer.Pages.Api.RotationGraph
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<iframe src="/api/SimpleGraph/@Model.GraphAccessCode" height="1180" width="2020"></iframe>
+<script defer="">
+    let url = window.location;
+    const maximum = @Model.Maximum;
+    const currStr = url.toString().substring(url.toString().length - 1);
+    let current = Number(currStr) + 1;
+    current = current % maximum;
+    url = url.toString().substring(0, url.length - 2) + current;
+    window.setTimeout(() => {window.location = url;}, @Model.TimeToDisplay * 1000);
+</script>
+</body>
+</html>

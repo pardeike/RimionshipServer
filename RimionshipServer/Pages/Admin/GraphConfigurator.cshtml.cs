@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Data;
 using System.Security.Cryptography;
 using System.Web;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 namespace RimionshipServer.Pages.Admin
 {
     [BindProperties]
@@ -55,6 +57,8 @@ namespace RimionshipServer.Pages.Admin
             _dbContext = dbContext;
         }
 
+        public record UserNameId(string Name, string Id);
+        
         public bool Done { get; set; }
 
         public string AccessCode { get; set; }
@@ -62,40 +66,54 @@ namespace RimionshipServer.Pages.Admin
         public string LastTime { get; set; }
         public List<SelectListItem> LastTimeListItems { get; set; }
 
-        public List<SelectListItem> StattSelectListItems { get; set; }
-        public string               Statt                { get; set; }
-        public List<string>         UserIds              { get; set; } = new();
-        public List<SelectListItem> UserSelectListItems  { get; set; }
-        public DateTime             Start                { get; set; }
-        public DateTime             End                  { get; set; }
-        public int                  IntervalSeconds      { get; set; }
-        public int                  CountUser            { get; set; }
-        public bool                 Autorefresh          { get; set; }
-        public List<GraphData>      AllGraphs            { get; set; }
+        public List<SelectListItem>    StattSelectListItems { get; set; }
+        public string                  Statt                { get; set; }
+        public List<UserNameId>        UserSelectListItems  { get; set; }
+        public bool[]                  AllUserSelects       { get; set; }
+        public DateTime                Start                { get; set; }
+        public DateTime                End                  { get; set; }
+        public int                     IntervalSeconds      { get; set; }
+        public int                     CountUser            { get; set; }
+        public bool                    Autorefresh          { get; set; }
+        public List<GraphData>         AllGraphs            { get; set; }
+        public bool[]                  AllGraphsSelects     { get; set; }
+        public List<GraphRotationData> AllRotations         { get; set; }
 
-        public static string StatsName(string key) => statsNames.ContainsKey(key) ? statsNames[key] : key;
-        public static string NowNoSeconds() => DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+        public static string               StatsName(string key) => statsNames.ContainsKey(key) ? statsNames[key] : key;
+        public static string               NowNoSeconds()        => DateTime.Now.ToString("yyyy-MM-dd HH:mm");
 
         public async Task<IActionResult> OnGet()
         {
             StattSelectListItems = Stats.FieldNames.Select(x => new SelectListItem(StatsName(x), x)).ToList();
             LastTimeListItems = new List<SelectListItem>{
-                                                            new ("5", (5              * 60).ToString()),
-                                                            new ("10", (10            * 60).ToString()),
-                                                            new ("30", (30            * 60).ToString()),
-                                                            new ("60", (60            * 60).ToString()),
-                                                            new ("120", (120          * 60).ToString()),
-                                                            new ("240", (240            * 60).ToString()),
-                                                            new ("All", (24           * 60 * 60).ToString()),
-                                                            new ("DEBUG 1 year", (365 * 24 * 60 * 60).ToString())
+                                                            new ("1", (1     * 60).ToString()),
+                                                            new ("5", (5     * 60).ToString()),
+                                                            new ("10", (10   * 60).ToString()),
+                                                            new ("30", (30   * 60).ToString()),
+                                                            new ("60", (60   * 60).ToString()),
+                                                            new ("120", (120 * 60).ToString()),
+                                                            new ("240", (240 * 60).ToString()),
+                                                            new ("All", (365 * 24 * 60 * 60).ToString())
                                                         };
-            var stuff = await _dbContext.Users.Select(x => new { x.Id, x.UserName }).ToListAsync();
-            UserSelectListItems = stuff.Select(x => new SelectListItem(x.UserName, x.Id)).ToList();
-            AllGraphs = await _dbContext.GraphData.Include(x => x.UsersReference).ToListAsync();
-            CountUser = 10;
+            await FillComplexArrayFields();
+            AllGraphsSelects    = new bool[AllGraphs.Count];
+            AllUserSelects      = new bool[UserSelectListItems.Count];
+            Array.Fill(AllGraphsSelects, false);
+            Array.Fill(AllUserSelects,   false);
+            CountUser       = 10;
+            IntervalSeconds = 10;
+            Autorefresh     = true;
             return Page();
         }
 
+        [NonAction]
+        private async Task FillComplexArrayFields()
+        {
+            UserSelectListItems = await _dbContext.Users.AsNoTrackingWithIdentityResolution().Select(x => new UserNameId(x.UserName, x.Id)).ToListAsync();
+            AllGraphs           = await _dbContext.GraphData.AsNoTrackingWithIdentityResolution().Include(x => x.UsersReference).ToListAsync();
+            AllRotations        = await _dbContext.GraphRotationData.AsNoTrackingWithIdentityResolution().Include(x => x.ToRotate).ToListAsync();
+        }
+        
         public Task<IActionResult> OnPostCreateTop10WealthAsync()
         {
             return CreateTop10(nameof(Stats.Wealth));
@@ -117,9 +135,19 @@ namespace RimionshipServer.Pages.Admin
                                             .Include(x => x.UsersReference)
                                             .FirstOrDefaultAsync(x => x.Accesscode == AccessCode)
                          ?? new GraphData();
-            graphData.UsersReference = Array.Empty<RimionUser>();
+            graphData.UsersReference = new List<RimionUser>();
             await _dbContext.SaveChangesAsync();
-            graphData.UsersReference = await _dbContext.Users.Where(x => UserIds.Contains(x.Id)).ToArrayAsync();
+            
+            await FillComplexArrayFields();
+            var ids = new List<string>();
+            for (int index = 0; index < AllUserSelects.Length; index++)
+                if (AllUserSelects[index])
+                    ids.Add(UserSelectListItems[index].Id);
+            
+            ((List<RimionUser>) graphData.UsersReference).AddRange(await _dbContext.Users
+                                                                                     .Where(x => ids.Contains(x.Id))
+                                                                                     .ToArrayAsync());
+            
             graphData.Start          = Start;
             graphData.End            = End;
             return await CreateAsync(graphData);
@@ -156,18 +184,29 @@ namespace RimionshipServer.Pages.Admin
             data.Statt           = Statt;
             data.Autorefresh     = Autorefresh;
             data.Accesscode      = AccessCode;
+
+            if (data.IntervalSeconds == 0)
+            {
+                ModelState.AddModelError("AccessCode", "IntervalSeconds may not be 0!");
+                return await OnGet();
+            }
+            if (data.End < data.Start)
+            {
+                ModelState.AddModelError("AccessCode", "data.End < data.Start");
+                return await OnGet();
+            }
+            if (data.CountUser is 0 or null && data.UsersReference.Count() is 0)
+            {
+                ModelState.AddModelError("AccessCode", "No User Selected");
+                return await OnGet();
+            }
             if (data.Id == 0)
-            {
                 _dbContext.GraphData.Add(data);
-                await _dbContext.SaveChangesAsync();
-                Done = true;
-            }
             else
-            {
                 _dbContext.GraphData.Update(data);
-                await _dbContext.SaveChangesAsync();
-                Done = true;
-            }
+            
+            await _dbContext.SaveChangesAsync();
+            Done = true;
             return Page();
         }
 
@@ -177,6 +216,53 @@ namespace RimionshipServer.Pages.Admin
             if (graph == null)
                 throw new ArgumentNullException(nameof(graph));
             _dbContext.GraphData.Remove(graph);
+            await _dbContext.SaveChangesAsync();
+            return RedirectToPage("/Admin/GraphConfigurator");
+        }
+        
+        public async Task<IActionResult> OnPostCreateRotationAsync()
+        {
+            if (AccessCode is null || string.IsNullOrWhiteSpace(AccessCode) || HttpUtility.UrlEncode(AccessCode) != AccessCode)
+            {
+                ModelState.AddModelError("AccessCode", "Name must be set and can not contain forbidden URL symbols (i.E. / ? = < > etc.)");
+                return await OnGet();
+            }
+            var rotation = await _dbContext.GraphRotationData
+                                           .Include(x => x.ToRotate)
+                                           .Where(x => x.RotationName == AccessCode)
+                                           .FirstOrDefaultAsync() ?? new GraphRotationData();
+            await FillComplexArrayFields();
+            rotation.RotationName  = AccessCode;
+            rotation.TimeToDisplay = IntervalSeconds;
+            rotation.ToRotate      = new List<GraphData>();
+            await _dbContext.SaveChangesAsync();
+            
+            for (int index = 0; index < AllGraphs.Count; index++)
+                if (AllGraphsSelects[index])
+                   ((List<GraphData>) rotation.ToRotate).Add(await _dbContext.GraphData.FindAsync(AllGraphs[index].Id) ?? throw new ArgumentNullException());
+            
+            if (rotation.ToRotate.Count() is 0)
+            {
+                ModelState.AddModelError("AccessCode", "No Graph Selected");
+                return await OnGet();
+            }
+            
+            if (rotation.Id is 0)
+                _dbContext.GraphRotationData.Add(rotation);
+            else
+                _dbContext.GraphRotationData.Update(rotation);
+            
+            await _dbContext.SaveChangesAsync();
+            
+            return RedirectToPage("/Admin/GraphConfigurator");
+        }
+        
+        public async Task<IActionResult> OnPostDeleteRotationAsync(int id)
+        {
+            var graph = await _dbContext.GraphRotationData.FindAsync(id);
+            if (graph == null)
+                throw new ArgumentNullException(nameof(graph));
+            _dbContext.GraphRotationData.Remove(graph);
             await _dbContext.SaveChangesAsync();
             return RedirectToPage("/Admin/GraphConfigurator");
         }

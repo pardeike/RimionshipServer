@@ -8,12 +8,13 @@ namespace RimionshipServer.Data
 {
     public class RimionDbContext : IdentityDbContext<RimionUser>
     {
-        public DbSet<AllowedMod> AllowedMods { get; set; } = null!;
-        public DbSet<LatestStats> LatestStats { get; set; } = null!;
-        public DbSet<HistoryStats> HistoryStats { get; set; } = null!;
-        public DbSet<GraphData> GraphData { get; set; } = null!;
-        public DbSet<GraphUser> GraphUsers { get; set; } = null!;
-
+        public DbSet<AllowedMod>        AllowedMods       { get; set; } = null!;
+        public DbSet<LatestStats>       LatestStats       { get; set; } = null!;
+        public DbSet<HistoryStats>      HistoryStats      { get; set; } = null!;
+        public DbSet<GraphData>         GraphData         { get; set; } = null!;
+        public DbSet<GraphUser>         GraphUsers        { get; set; } = null!;
+        public DbSet<GraphRotationData> GraphRotationData { get; set; } = null!;
+        
         public DbSet<SaveFile> SaveFiles { get; set; } = null!;
 
         private DbSet<MiscSettings.State> GameState { get; set; } = null!;

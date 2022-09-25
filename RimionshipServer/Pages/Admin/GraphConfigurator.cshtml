@@ -40,26 +40,6 @@
 @{
 #endif
 }
-    @if (!Model.Done)
-    {                                                                 
-    <script type="text/javascript" defer="">
-        //Taken from https://stackoverflow.com/a/27578356
-        window.onmousedown = function (e) {
-            var el = e.target;
-            if (el.tagName.toLowerCase() == 'option' && el.parentNode.hasAttribute('multiple')) {
-                e.preventDefault();
-        
-                // toggle selection
-                if (el.hasAttribute('selected')) el.removeAttribute('selected');
-                else el.setAttribute('selected', '');
-        
-                // hack to correct buggy behavior
-                var select = el.parentNode.cloneNode(true);
-                el.parentNode.parentNode.replaceChild(select, el.parentNode);
-            }
-        }
-        </script>
-    }
     <script type="text/javascript">
             const links = document.getElementsByTagName("a");
             for (let i = 0; i < links.length; i++) {
@@ -84,12 +64,15 @@
 			<input id="tab2" type="radio" name="tabs" />
 			<input id="tab3" type="radio" name="tabs" />
 			<input id="tab4" type="radio" name="tabs" />
-
+            <input id="tab5" type="radio" name="tabs" />
+            <input id="tab6" type="radio" name="tabs" />
 			<nav>
 				<label for="tab1">Sortiert nach ausgewähltem Wert</label>
 				<label for="tab2">Sortiert nach Tournamentplatz</label>
 				<label for="tab3">Komplexe Graphen</label>
-				<label for="tab4">Alle Graphen</label>
+                <label for="tab4">Alle Graphen</label>
+                <label for="tab5">Rotation Erzeugen</label>
+                <label for="tab6">Alle Rotationen</label>
 			</nav>
 			<figure>
 				<div class="input-group tab1">
@@ -173,7 +156,18 @@
 							</tr>
 							<tr>
 								<td>Spieler</td>
-								<td>@Html.DropDownListFor(m => m.UserIds, Model.UserSelectListItems, new{multiple = "true"})</td>
+                                <td>
+                                    @for (var index = 0; index < Model.UserSelectListItems.Count; index++)
+                                    {
+                                        var index1 = index;
+                                        <label>@Model.UserSelectListItems[index1].Name</label>
+                                        <input asp-for="@Model.AllUserSelects[index1]" type="checkbox"/>
+                                        if ((index + 1) % 6 == 0)
+                                        {
+                                            <br/>
+                                        }
+                                    }
+                                </td>
 							</tr>
 							<tr>
 								<td>Aktualisierung</td>
@@ -183,9 +177,34 @@
 						<button asp-page-handler="CreateAdvanced" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Graph erzeugen</button>
 					</form>
 				</div>
-				<div class="input-group tab4">
-					<partial name="_GraphList" model=Model></partial>
-				</div>
+                <div class="input-group tab4">
+                    <partial name="_GraphList" model=Model></partial>
+                </div>
+                <div class="input-group tab5">
+                    <form method="post">
+                        <label>Name der Rotation</label>
+                        <input asp-for="AccessCode"/>
+                        <br/>
+                        <label>Dauer der Rotation in Sekunden</label>
+                        <input asp-for="IntervalSeconds"/>
+                        <br/>
+                        @for (var index = 0; index < Model.AllGraphs.Count; index++)
+                        {
+                            var index1 = index;
+                            <label>@Model.AllGraphs[index1].Accesscode</label>
+                            <input asp-for="@Model.AllGraphsSelects[index1]" type="checkbox"/>
+                            if ((index + 1) % 6 == 0)
+                            {
+                                <br/>
+                            }
+                        }
+                        <br/>
+                        <button asp-page-handler="CreateRotation" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Graphrotation erzeugen</button>
+                    </form>
+                </div>
+                <div class="input-group tab6">
+                       <partial name="_RotationList" model=Model></partial>
+                </div>
 			</figure>
 		</div>
 	}

@@ -1,0 +1,42 @@
+﻿@model GraphConfigurator
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Intervall (sek)</th>
+        <th scope="col">Graphen</th>
+        <th scope="col">Link</th>
+        <th scope="col">Aktion</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var rotationData in Model.AllRotations)
+    {
+        <tr>
+            <td>
+                @rotationData.RotationName
+            </td>
+            <td>
+                @rotationData.TimeToDisplay
+            </td>
+            <td>
+                @foreach (var graphData in rotationData.ToRotate)
+                {
+                    @graphData.Accesscode
+                    <br />
+                }
+            </td>
+            <td>
+                <a href="/API/RotationGraph/@rotationData.RotationName/0">!will be replaced by js!</a>
+            </td>
+            <td>
+                <form asp-page-handler="DeleteRotation" method="Post">
+                    <input hidden="" name="id" value="@rotationData.Id" />
+                    <button type="submit" class="btn" value="submit request" onclick="return window.confirm(`Do you really want to remove the rotation?`)">Löschen</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
