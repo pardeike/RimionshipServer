@@ -7,64 +7,64 @@ import { CC, displayValue } from "./Utils"
 import { UserInfo } from "./MessageDTOs"
 
 const MiniColumns = [
-  CC('Place', '#'),
-  CC('UserId', 'Spieler')
+  CC('Place'),
+  CC('UserId')
 ]
 
 const Details = [
   [
     [
-      CC('Wealth', 'Koloniereichtum'),
-      CC('Enemies', 'Feinde'),
-      CC('NumThreatBigs', 'Große Bedrohungen'),
+      CC('Wealth'),
+      CC('Enemies'),
+      CC('NumThreatBigs'),
     ], [
-      CC('MapCount', 'Anzahl Karten'),
-      CC('MentalColonists', 'Durchgedrehte Kolonisten'),
-      CC('Fire', 'Brandstellen'),
+      CC('MapCount'),
+      CC('MentalColonists'),
+      CC('Fire'),
     ], [
-      CC('Colonists', 'Anzahl Kolonisten'),
-      CC('DownedColonists', 'Ohnmächtige Kolonisten'),
-      CC('WeaponDps', 'Waffenkraft'),
+      CC('Colonists'),
+      CC('DownedColonists'),
+      CC('WeaponDps'),
     ], [
-      CC('ColonistsNeedTending', 'Verletzte Kolonisten'),
-      CC('Conditions', 'Wetter & Kartenbedingungen'),
-      CC('Electricity', 'Verfügbare Energie'),
+      CC('ColonistsNeedTending'),
+      CC('Conditions'),
+      CC('Electricity'),
     ], [
-      CC('MedicalConditions', 'Krankeiten'),
-      CC('NumRaidsEnemy', 'Feindliche Überfälle'),
-      CC('Prisoners', 'Gefangene'),
+      CC('MedicalConditions'),
+      CC('NumRaidsEnemy'),
+      CC('Prisoners'),
     ],
   ], [
     [
-      CC('TicksIgnoringBloodGod', 'Zeit mit Ignoranz des Blutgottes'),
+      CC('TicksIgnoringBloodGod'),
     ], [
-      CC('TicksLowColonistMood', 'Zeit mit niedriger Moral'),
+      CC('TicksLowColonistMood'),
     ], [
-      CC('ColonistsKilled', 'Kolonisten getötet'),
+      CC('ColonistsKilled'),
     ], [
-      CC('AmountBloodCleaned', 'Menge aufgewischtes Blut'),
+      CC('AmountBloodCleaned'),
     ], [
-      CC('AnimalMeatCreated', 'Geschlachtetes Tierfleisch'),
+      CC('AnimalMeatCreated'),
     ],
   ], [
     [
-      CC('Rooms', 'Bebaute Fläche'),
-      CC('WildAnimals', 'Wilde Tiere'),
-      CC('DamageTakenPawns', 'Schaden an Kolonisten'),
+      CC('Rooms'),
+      CC('WildAnimals'),
+      CC('DamageTakenPawns'),
     ], [
-      CC('Medicine', 'Medizin'),
-      CC('TamedAnimals', 'Gezähmte Tiere'),
-      CC('DamageTakenThings', 'Schaden an der Kolonie'),
+      CC('Medicine'),
+      CC('TamedAnimals'),
+      CC('DamageTakenThings'),
     ], [
-      CC('Food', 'Essen'),
-      CC('Visitors', 'Besucher'),
-      CC('DamageDealt', 'Ausgeteilter Schaden'),
+      CC('Food'),
+      CC('Visitors'),
+      CC('DamageDealt'),
     ], [
-      CC('GreatestPopulation', 'Maximale Anzahl Kolonisten'),
-      CC('Temperature', 'Temperatur auf Hauptkarte'),
+      CC('GreatestPopulation'),
+      CC('Temperature'),
     ], [
-      CC('Caravans', 'Kolonisten in Karawanen'),
-      CC('InGameHours', 'Gespielte Stunden'),
+      CC('Caravans'),
+      CC('InGameHours'),
     ],
   ],
 ]

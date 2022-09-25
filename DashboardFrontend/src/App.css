@@ -9,6 +9,10 @@ body,
     margin: 0;
 }
 
+a {
+    text-decoration: none !important;
+}
+
 .bigger {
     font-size: 12pt;
 }
@@ -35,6 +39,7 @@ body {}
 .mini-avatar {
     width: 16px;
     height: 16px;
+    vertical-align: text-top;
 }
 
 .stats th {
@@ -46,6 +51,24 @@ body {}
     padding-right: 0;
     text-align: center;
     white-space: nowrap;
+}
+
+.stats th:nth-child(1) {
+    text-align: right !important;
+    padding-right: 4px;
+}
+
+.stats tr td:nth-child(1) {
+    text-align: right !important;
+    padding-right: 4px;
+}
+
+.stats tr td:nth-child(2) {
+    text-align: left !important;
+}
+
+.stats tr td:nth-child(2) a {
+    padding-left: 8px;
 }
 
 .left {

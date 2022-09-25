@@ -4,43 +4,43 @@ import { LatestStats } from "./Stats"
 import { CC, ColumnDef, ColumnId, displayValue } from "./Utils"
 
 const DefaultColumns = [
-  CC('Place', '#'),
-  CC('UserId', 'Player'),
-  CC('Wealth', 'Wealth'),
-  CC('WasShownTimes', 'Stream'),
-  CC('MapCount', 'Map'),
-  CC('Colonists', 'Colonist'),
-  CC('ColonistsNeedTending', 'Injured'),
-  CC('MedicalConditions', 'Med Cond'),
-  CC('Enemies', 'Enemies'),
-  CC('MentalColonists', 'Mental'),
-  CC('DownedColonists', 'Downed'),
-  CC('Conditions', 'Map Cond'),
-  CC('NumRaidsEnemy', 'Raid'),
-  CC('NumThreatBigs', 'Thread'),
-  CC('Fire', 'Fire'),
-  CC('WeaponDps', 'Weapon'),
-  CC('Electricity', 'Power'),
-  CC('Prisoners', 'Prisoners'),
-  CC('Rooms', 'Room'),
-  CC('Medicine', 'Med'),
-  CC('Food', 'Food'),
-  CC('GreatestPopulation', 'Max Pop'),
-  CC('Caravans', 'Caravan'),
-  CC('WildAnimals', 'Wild Animal'),
-  CC('TamedAnimals', 'Tame Animal'),
-  CC('Visitors', 'Visitors'),
-  CC('Temperature', 'Temp'),
-  CC('InGameHours', 'Hours'),
-  CC('DamageTakenPawns', 'Dam. Pawn'),
-  CC('DamageTakenThings', 'Dam. Thing'),
-  CC('DamageDealt', 'Dam. Dealt'),
-  CC('ColonistsKilled', 'Casualty'),
-  CC('TicksLowColonistMood', 'Quest Mood'),
-  CC('TicksIgnoringBloodGod', 'Quest God'),
-  CC('AnimalMeatCreated', 'Quest Meat'),
-  CC('AmountBloodCleaned', 'Quest Blood'),
-  CC('Timestamp', 'Seen Ago')
+  CC('Place'),
+  CC('UserId'),
+  CC('Wealth'),
+  CC('WasShownTimes'),
+  CC('MapCount'),
+  CC('Colonists'),
+  CC('ColonistsNeedTending'),
+  CC('MedicalConditions'),
+  CC('Enemies'),
+  CC('MentalColonists'),
+  CC('DownedColonists'),
+  CC('Conditions'),
+  CC('NumRaidsEnemy'),
+  CC('NumThreatBigs'),
+  CC('Fire'),
+  CC('WeaponDps'),
+  CC('Electricity'),
+  CC('Prisoners'),
+  CC('Rooms'),
+  CC('Medicine'),
+  CC('Food'),
+  CC('GreatestPopulation'),
+  CC('Caravans'),
+  CC('WildAnimals'),
+  CC('TamedAnimals'),
+  CC('Visitors'),
+  CC('Temperature'),
+  CC('InGameHours'),
+  CC('DamageTakenPawns'),
+  CC('DamageTakenThings'),
+  CC('DamageDealt'),
+  CC('TicksIgnoringBloodGod'),
+  CC('TicksLowColonistMood'),
+  CC('ColonistsKilled'),
+  CC('AmountBloodCleaned'),
+  CC('AnimalMeatCreated'),
+  CC('Timestamp')
 ]
 
 export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDef[], width: number }> = (props) => {
@@ -109,7 +109,7 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
           c = '#500'
       }
     }
-    let res = { 'background-color': c, 'text-align': 'center', 'padding-left': 'inherit' }
+    let res = { 'background-color': c, 'text-align': 'center', 'padding-left': 'inherit' } as JSX.CSSProperties
     if (col.displayName == 'Spieler') {
       res['text-align'] = 'left'
       res['padding-left'] = '12px'
@@ -163,8 +163,8 @@ export const LatestTable: VoidComponent<{ sortable?: boolean, columns?: ColumnDe
     <thead>
       <tr class="table-dark sortable">
         <For each={props.columns}>{(col) =>
-          <th onClick={() => changeSort(col.id)} title={col.id} style={selectColor(col)}>
-            {col.displayName}
+          <th onClick={() => changeSort(col.id)} title={col.displayName} style={selectColor(col)}>
+            {col.shortName}
             <Show when={false && col.sortable && props.sortable}>
               <span classList={arrowState(col.id, 1)}>&#9660;</span><span classList={arrowState(col.id, -1)}>&#9650;</span>
             </Show>
