@@ -72,11 +72,26 @@
 			</tr>
 		</thead>
 		<tbody>
+			@{
+				string BackgroundColor(Manage.UsersDTO? user)
+				{
+					var background = "bg-default";
+					if (user != null)
+					{
+						if (user.HasQuit)
+							background = "quit";
+						if (user.WasBanned)
+							background = "banned";
+						if (user.Role.Contains(Roles.Admin))
+							background = "admin";
+					}
+					return background;
+				}
+			}
 			@foreach (var user in Model.Users)
 			{
 				var isAdmin = user.Role.Contains(Roles.Admin);
-				var classs = isAdmin ? "admin" : user.WasBanned ? "banned" : "bg-default";
-				<tr class="userrow @classs">
+				<tr class="userrow @BackgroundColor(user)">
 					<td class="userrow">
 						<span title="@user.Id">@user.UserName</span>
 					</td>

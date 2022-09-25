@@ -8,7 +8,7 @@ namespace RimionshipServer.Pages.Admin
 {
     public class Manage : PageModel
     {
-        public record UsersDTO(bool WasBanned, string UserName, string Id, IList<string> Role);
+        public record UsersDTO(bool WasBanned, bool HasQuit, string UserName, string Id, IList<string> Role);
 
         [BindProperty(SupportsGet = true)]
         public IEnumerable<UsersDTO> Users { get; set; } = null!;
@@ -39,7 +39,7 @@ namespace RimionshipServer.Pages.Admin
                                                           .Skip(ElementsPerSite * pageNo)
                                                           .Take(ElementsPerSite)
                                                           .ToListAsync(HttpContext.RequestAborted))
-                                      .Select(async x => new UsersDTO(x.WasBanned, x.UserName, x.Id, await _userManager.GetRolesAsync(x))));
+                                      .Select(async x => new UsersDTO(x.WasBanned, x.HasQuit, x.UserName, x.Id, await _userManager.GetRolesAsync(x))));
             return Page();
         }
 
@@ -88,7 +88,7 @@ namespace RimionshipServer.Pages.Admin
                                                           .OrderBy(x => x.UserName)
                                                           .Take(ElementsPerSite)
                                                           .ToListAsync(HttpContext.RequestAborted))
-                                              .Select(async x => new UsersDTO(x.WasBanned, x.UserName, x.Id, await _userManager.GetRolesAsync(x))));
+                                              .Select(async x => new UsersDTO(x.WasBanned, x.HasQuit, x.UserName, x.Id, await _userManager.GetRolesAsync(x))));
             return Page();
         }
 

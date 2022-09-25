@@ -23,6 +23,10 @@
     background-color: #b0d0ff;
 }
 
+.quit {
+    background-color: #006600;
+}
+
 .userrow * button {
     color: black;
 }
