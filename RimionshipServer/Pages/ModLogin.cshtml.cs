@@ -16,17 +16,14 @@ namespace RimionshipServer.Pages
 		[TempData]
 		public string? ErrorMessage { get; set; }
 
-		public ModLoginModel(
-			 SignInManager<RimionUser> signInManager,
-			 UserManager userManager,
-			 LoginService loginService)
+		public ModLoginModel(SignInManager<RimionUser> signInManager, UserManager userManager, LoginService loginService)
 		{
 			this.signInManager = signInManager;
 			this.userManager = userManager;
 			this.loginService = loginService;
 		}
 
-		public async Task<IActionResult> OnGet(string? token = null)
+		public async Task<IActionResult> OnGetAsync(string? token = null)
 		{
 			if (token == null)
 				return Page();

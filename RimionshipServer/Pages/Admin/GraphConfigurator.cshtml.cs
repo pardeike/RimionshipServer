@@ -63,16 +63,15 @@ namespace RimionshipServer.Pages.Admin
         public List<SelectListItem> LastTimeListItems { get; set; }
 
         public List<SelectListItem> StattSelectListItems { get; set; }
-        public string Statt { get; set; }
-        public List<string> UserIds { get; set; } = new();
-        public List<SelectListItem> UserSelectListItems { get; set; }
-        private RimionUser[] _rimionUser { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
-        public int IntervalSeconds { get; set; }
-        public int CountUser { get; set; }
-        public bool Autorefresh { get; set; }
-        public List<GraphData> AllGraphs { get; set; }
+        public string               Statt                { get; set; }
+        public List<string>         UserIds              { get; set; } = new();
+        public List<SelectListItem> UserSelectListItems  { get; set; }
+        public DateTime             Start                { get; set; }
+        public DateTime             End                  { get; set; }
+        public int                  IntervalSeconds      { get; set; }
+        public int                  CountUser            { get; set; }
+        public bool                 Autorefresh          { get; set; }
+        public List<GraphData>      AllGraphs            { get; set; }
 
         public static string StatsName(string key) => statsNames.ContainsKey(key) ? statsNames[key] : key;
         public static string NowNoSeconds() => DateTime.Now.ToString("yyyy-MM-dd HH:mm");
@@ -106,6 +105,25 @@ namespace RimionshipServer.Pages.Admin
         {
             return CreateTop10(Statt);
         }
+        
+        public async Task<IActionResult> OnPostCreateAdvancedAsync()
+        {
+            if (AccessCode is null || string.IsNullOrWhiteSpace(AccessCode) || HttpUtility.UrlEncode(AccessCode) != AccessCode)
+            {
+                ModelState.AddModelError("AccessCode", "Name must be set and can not contain forbidden URL symbols (i.E. / ? = < > etc.)");
+                return await OnGet();
+            }
+            var graphData = await _dbContext.GraphData
+                                            .Include(x => x.UsersReference)
+                                            .FirstOrDefaultAsync(x => x.Accesscode == AccessCode)
+                         ?? new GraphData();
+            graphData.UsersReference = Array.Empty<RimionUser>();
+            await _dbContext.SaveChangesAsync();
+            graphData.UsersReference = await _dbContext.Users.Where(x => UserIds.Contains(x.Id)).ToArrayAsync();
+            graphData.Start          = Start;
+            graphData.End            = End;
+            return await CreateAsync(graphData);
+        }
 
         [NonAction]
         private async Task<IActionResult> CreateTop10(string stat)
@@ -115,7 +133,6 @@ namespace RimionshipServer.Pages.Admin
                 ModelState.AddModelError("AccessCode", "Name must be set and can not contain forbidden URL symbols (i.E. / ? = < > etc.)");
                 return await OnGet();
             }
-
             var graphData = await _dbContext.GraphData
                                             .Include(x => x.UsersReference)
                                             .FirstOrDefaultAsync(x => x.Accesscode == AccessCode)
@@ -125,22 +142,20 @@ namespace RimionshipServer.Pages.Admin
             {
                 return Forbid();
             }
-
+            var seconds = int.Parse(LastTime);
+            graphData.Start     = DateTime.Now - TimeSpan.FromSeconds(seconds);
+            graphData.End       = DateTime.Now;
+            graphData.CountUser = CountUser;
             return await CreateAsync(graphData);
         }
-
+        
         [NonAction]
         public async Task<IActionResult> CreateAsync(GraphData data)
         {
-            var seconds = int.Parse(LastTime);
-            data.Start = DateTime.Now - TimeSpan.FromSeconds(seconds);
-            data.End = DateTime.Now;
-
-            data.IntervalSeconds = 10;
-            data.CountUser = CountUser;
-            data.Statt = Statt;
-            data.Autorefresh = Autorefresh;
-            data.Accesscode = AccessCode;
+            data.IntervalSeconds = IntervalSeconds;
+            data.Statt           = Statt;
+            data.Autorefresh     = Autorefresh;
+            data.Accesscode      = AccessCode;
             if (data.Id == 0)
             {
                 _dbContext.GraphData.Add(data);
@@ -160,7 +175,7 @@ namespace RimionshipServer.Pages.Admin
         {
             var graph = await _dbContext.GraphData.FindAsync(id);
             if (graph == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(graph));
             _dbContext.GraphData.Remove(graph);
             await _dbContext.SaveChangesAsync();
             return RedirectToPage("/Admin/GraphConfigurator");

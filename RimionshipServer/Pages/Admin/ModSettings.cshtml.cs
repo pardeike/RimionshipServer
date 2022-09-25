@@ -254,10 +254,7 @@ namespace RimionshipServer.Pages.Admin
 
         public async Task<IActionResult> OnPostDeleteAllAsync()
         {
-            if (((State.Types.Game)(await _dbContext.GetGameStateAsync()).GameState) != State.Types.Game.Completed)
-                return Forbid();
-
-            _dbContext.HistoryStats.RemoveRange(await _dbContext.HistoryStats.AsNoTrackingWithIdentityResolution().ToArrayAsync());
+            _dbContext.HistoryStats.RemoveRange(await _dbContext.HistoryStats.ToArrayAsync());
             await _dbContext.SaveChangesAsync();
             return RedirectToPage("/Admin/ModSettings");
         }

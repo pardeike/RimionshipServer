@@ -22,7 +22,7 @@ public class AttentionService : IAsyncDisposable, IDisposable
     // ReSharper disable once RedundantDefaultMemberInitializer
     private ulong _currentIndex = 0;
     private long[] _attentionValues = Array.Empty<long>();
-    private int Decrement { get; set; } = 1;
+    private long Decrement = 1;
     private readonly object _syncLock = new();
 
     private readonly Dictionary<string, int> _users = new();
@@ -45,7 +45,7 @@ public class AttentionService : IAsyncDisposable, IDisposable
                 {
                     var val = Interlocked.Read(ref _attentionValues[i]);
                     if (val > 0L)
-                        Interlocked.Add(ref _attentionValues[i], -Math.Min(val, Decrement));
+                        Interlocked.Add(ref _attentionValues[i], -Math.Min(val, Interlocked.Read(ref Decrement)));
                 }
                 await Task.Delay((int)Interlocked.Read(ref _cooldownMs));
             }
@@ -75,7 +75,8 @@ public class AttentionService : IAsyncDisposable, IDisposable
 
     public void ResetAttentionList()
     {
-        for (var index = 0; index < _attentionValues.Length; index++)
+        var count = (int)Interlocked.Read(ref _currentIndex);
+        for (var index = 0; index < count; index++)
             Interlocked.Exchange(ref _attentionValues[index], 0);
     }
 
@@ -115,8 +116,8 @@ public class AttentionService : IAsyncDisposable, IDisposable
 
     public int ChangeDecrement(int delta)
     {
-        Decrement = Math.Max(0, Decrement + delta);
-        return Decrement;
+        Interlocked.Exchange(ref Decrement, Math.Max(0, Interlocked.Read(ref Decrement) + delta));
+        return (int) Interlocked.Read(ref Decrement);
     }
 
     public void IncreaseAttentionScore(string user, long delta)
