@@ -52,6 +52,16 @@ namespace RimionshipServer.API
                 .ToList();
         }
 
+        public void ResetAttentionList()
+        {
+            attentionService.ResetAttentionList();
+        }
+
+        public void ResetAttention(string userId, long score)
+        {
+            attentionService.ResetAttention(userId, score);
+        }
+
         public int SetAttentionReduction(int delta)
         {
             return attentionService.ChangeDecrement(delta);

@@ -3,28 +3,40 @@ import { PlayerLink } from "./PlayerLink"
 import { useRimionship } from "./RimionshipContext"
 
 const AttentionRow: VoidComponent<{ id: string, score: number }> = (props) => {
-  const { latestStats } = useRimionship()
+  const { latestStats, resetAttention } = useRimionship()
 
   const stats = createMemo(() => latestStats.find(p => p.UserId === props.id))
+
+  const resetOne = async (id: string) => {
+    let pts = prompt(`Neue Punktezahl:`)
+    if (pts === null) return
+    await resetAttention(id, parseInt(pts))
+  }
 
   return (
     <tr>
       <td>{stats()?.Place}</td>
       <td><PlayerLink id={props.id} /></td>
       <td>{stats()?.Wealth}</td>
-      <td>{props.score}</td>
+      <td style="cursor: no-drop;" onClick={() => resetOne(props.id)}>{props.score}</td>
     </tr>
   )
 }
 
 export const AttentionTable: VoidComponent = () => {
-  const { attentionList, setAttentionReduction } = useRimionship()
+  const { attentionList, setAttentionReduction, resetAttentions } = useRimionship()
 
   const [delta, setDelta] = createSignal(0)
 
   const updateDelta = async (delta: number) => {
     setDelta(await setAttentionReduction(delta))
   }
+
+  const resetAll = async () => {
+    if (confirm("Wirklich alle Punkte zurücksetzen?"))
+      await resetAttentions()
+  }
+
   updateDelta(0)
 
   return <>
@@ -38,7 +50,7 @@ export const AttentionTable: VoidComponent = () => {
             <th>Koloniewert</th>
             <th>
               <div class="row">
-                <div class="col" style="padding-top: 2px">Punkte</div>
+                <div class="col" style="padding-top: 2px; cursor: no-drop;" onClick={() => resetAll()}>Punkte</div>
                 <div class="col end stepper" style="text-align: right; white-space: nowrap">
                   Abzug: {delta} Punkt{delta() == 1 ? '' : 'e'}/sek &nbsp;
                   <button onClick={() => updateDelta(-1)}><span>–</span></button> &nbsp;

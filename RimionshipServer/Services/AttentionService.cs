@@ -73,6 +73,20 @@ public class AttentionService : IAsyncDisposable, IDisposable
         }
     }
 
+    public void ResetAttentionList()
+    {
+        for (var index = 0; index < _attentionValues.Length; index++)
+            Interlocked.Exchange(ref _attentionValues[index], 0);
+    }
+
+    public void ResetAttention(string user, long attentionValue)
+    {
+        var index = GetUserReference(user, out var needCreation);
+        if (needCreation)
+            return;
+        Interlocked.Exchange(ref _attentionValues[index], attentionValue);
+    }
+
     public long GetAttentionScore(string user)
     {
         var index = GetUserReference(user, out var needCreation);
