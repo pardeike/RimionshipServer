@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
@@ -44,17 +43,6 @@ namespace RimionshipServer.API
             _linkGenerator = linkGenerator;
         }
 
-
-        public override async Task<StopResponse> Stop(StopRequest request, ServerCallContext context)
-        {
-            VerifyId(request.Id);
-            var user = await db.Users.FirstAsync(x => x.Id == request.Id);
-            user.HasQuit = true;
-            db.Users.Update(user);
-            dataService.InvalidatePlayerCache(request.Id);
-            return new StopResponse();
-        }
-
         /**
 		 * Increases the Attention Score for player X by Y amount
 		 */
@@ -90,6 +78,7 @@ namespace RimionshipServer.API
                 response = new HelloResponse()
                 {
                     UserExists = false,
+                    HasQuit = false,
                     Position = 0,
                     TwitchName = String.Empty
                 };
@@ -100,6 +89,7 @@ namespace RimionshipServer.API
                 response = new HelloResponse()
                 {
                     UserExists = true,
+                    HasQuit = user.HasQuit,
                     TwitchName = user.UserName,
                     Position = user.WasBanned ? -1 : position
                 };
@@ -150,6 +140,16 @@ namespace RimionshipServer.API
                 StartingPawnCount = settings.CountColonists,
                 Settings = await _settingService.GetActiveSetting(db)
             };
+        }
+
+        public override async Task<StopResponse> Stop(StopRequest request, ServerCallContext context)
+        {
+            var user = await GetCachedUserAsync(request.Id);
+            user.HasQuit = true;
+            db.Users.Update(user);
+            await db.SaveChangesAsync();
+            dataService.InvalidatePlayerCache(request.Id);
+            return new StopResponse();
         }
 
         public override async Task<FutureEventsResponse> FutureEvents(FutureEventsRequest request, ServerCallContext context)
