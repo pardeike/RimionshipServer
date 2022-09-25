@@ -11,22 +11,27 @@
 		<h1 class="display-5">Du bist angemeldet / You are registered!</h1>
 
 		<p></p>
-		<p>
-			Du hast es dir anders überlegt? Du kannst deine Teilnahme <a asp-page="/DeleteAccount">hier</a> zurückziehen<br>Don't want to participate? You can delete your account <a asp-page="/DeleteAccount">here</a>
-		</p>
+		<p>Du hast es dir anders überlegt? Du kannst deine Teilnahme <a asp-page="/DeleteAccount">hier</a> zurückziehen<br>Don't want to participate? You can delete your account <a asp-page="/DeleteAccount">here</a></p>
 	}
 	else
 	{
-		<p>
-			Um dein Interesse zu bekunden, melde dich bitte mit Twitch an<br />Please log in with Twitch account
-		</p>
+		<p>Um dein Interesse zu bekunden, melde dich bitte mit Twitch an<br />Please log in with Twitch account</p>
 
 		<form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="/" method="post" class="form-horizontal">
 			<div>
-				<p>
-					<button type="submit" class="btn btn-primary" name="provider" value="Twitch" title="Twitch Login">Twitch Login</button>
-				</p>
+				<p><button type="submit" class="btn btn-primary" name="provider" value="Twitch" title="Twitch Login">Twitch Login</button></p>
 			</div>
 		</form>
 	}
+
+	<div class="row" style="margin-top: 80px; border-radius: 10px; background-color: #fed; border: 4px solid red; padding: 20px">
+		<p style="font-size: 2em; font-weight: bolder">
+			Die Demophase hat begonnen! / The Testphase has started<br />
+			Lad die Mod hier runter / Download the mod below
+		</p>
+		<a class="col btn btn-dark" style="font-size: 1.5em" href="https://gist.github.com/pardeike/471576f4ffdb8987402753ca870b5051">Runterladen + Anleitung</a>
+		<span class="col-3"></span>
+		<a class="col btn btn-dark" style="font-size: 1.5em" href="https://gist.github.com/pardeike/4a516155ead9c18fbeb2482c047a449c">Link + Instructions</a>
+	</div>
+
 </div>
