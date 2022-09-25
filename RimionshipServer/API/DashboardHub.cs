@@ -48,6 +48,7 @@ namespace RimionshipServer.API
         public List<UserAttention> GetAttentionList()
         {
             return attentionService.GetAttentionScores()
+                .Where(asw => asw.Score > 0)
                 .Select(u => new UserAttention(u.Name, u.Score))
                 .ToList();
         }
