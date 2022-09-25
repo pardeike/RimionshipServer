@@ -160,7 +160,7 @@ namespace RimionshipServer.API
                 return new FutureEventsResponse();
 
             var user = await GetCachedUserAsync(request.Id);
-            if (user.HasQuit || user.WasBanned)
+            if ((user.HasQuit && request.Event.Any()) || user.WasBanned)
                 return new FutureEventsResponse();
 
             // PARTIALLY implemented - at least, we keep the events in-memory
