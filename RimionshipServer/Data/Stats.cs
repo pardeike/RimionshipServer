@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 namespace RimionshipServer.Data
 {
@@ -7,6 +8,12 @@ namespace RimionshipServer.Data
         static Stats()
         {
             InitStatToUser();
+        }
+
+        public static void ClearCache()
+        {
+            foreach (ConcurrentDictionary<string,double> concurrentDictionary in _StatToUser.Values)
+                concurrentDictionary.Clear();
         }
         
         public static async Task<(int, string, double)[]> GetTopXNotBannedUserFromDynamicCacheWithValue(string stat, int max, RimionDbContext context)

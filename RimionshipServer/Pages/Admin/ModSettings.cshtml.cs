@@ -12,6 +12,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using Serilog;
 namespace RimionshipServer.Pages.Admin
 {
     public class ModSettings : PageModel
@@ -254,7 +255,10 @@ namespace RimionshipServer.Pages.Admin
 
         public async Task<IActionResult> OnPostDeleteAllAsync()
         {
+            Log.Warning("{User} has deleted the Database!", HttpContext.User.GetTwitchName());
             _dbContext.HistoryStats.RemoveRange(await _dbContext.HistoryStats.ToArrayAsync());
+            _dbContext.LatestStats.RemoveRange(await _dbContext.LatestStats.ToArrayAsync());
+            Stats.ClearCache();
             await _dbContext.SaveChangesAsync();
             return RedirectToPage("/Admin/ModSettings");
         }
