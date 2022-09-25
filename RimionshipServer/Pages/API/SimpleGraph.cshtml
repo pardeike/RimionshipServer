@@ -53,28 +53,31 @@
                      }
                  },
                  plugins: {
-                     @if (Html.ViewData["embed"] is not null)
-                     {
-                         @Html.Raw(@"legend:{
-                            display: false
-                         }
-                        ")
-                     }
-                     else
-                     {
-                         @Html.Raw(@"
-                         legend:
-                         {
-                             position: 'right',
-                             labels:
-                             {
-                                 font:
-                                 {
-                                     size: 24
-                                 }
-                             }
-                         }")
-                     }
+						  @{
+								var embedded = Html.ViewData["embed"] is not null;
+						  }
+						  @if (embedded)
+                    {
+                        @Html.Raw(@"legend:{
+                           display: false
+                        }
+                       ")
+                    }
+                    else
+                    {
+                        @Html.Raw(@"
+                        legend:
+                        {
+                            position: 'right',
+                            labels:
+                            {
+                                font:
+                                {
+                                    size: 24
+                                }
+                            }
+                        }")
+                    }
                  },
                  scales: {
                      x: {
@@ -89,11 +92,27 @@
                                  const date = new Date(ticks[index].value);
                                  return new Intl.DateTimeFormat('de', { hour: '2-digit', minute: '2-digit' }).format(date);
                              }
+									  @if (!embedded)
+									  {
+										  @Html.Raw(@", font:
+										  {
+												size: 24
+										  }")
+									  }
                          }
                      },
                      y: {
                          color: '#9d9d9c',
                          alignToPixels: true
+								@if (!embedded)
+								{
+								@Html.Raw(@", ticks: {
+									font:
+									 {
+										  size: 24
+									 }
+								}")
+								}
                      }
                  }
              }
