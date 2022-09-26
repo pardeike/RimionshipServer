@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using NUglify.Css;
-using NUglify.JavaScript;
 #if RELEASE
 using NUglify;
 #endif
@@ -50,7 +48,8 @@ void ConfigureServices(IServiceCollection services)
         .AddSingleton<EventsService>()
         .AddSingleton<AttentionService>()
         .AddSingleton<DirectionService>()
-        .AddSingleton<SettingService>();
+        .AddSingleton<SettingService>()
+        .AddHostedService<EventsServiceCulling>();
 
     services.AddGrpc();
 

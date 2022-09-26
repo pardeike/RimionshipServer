@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-using Microsoft.Extensions.Options;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
 
@@ -14,7 +13,6 @@ namespace RimionshipServer.API
         private readonly EventsService eventsService;
         private readonly DataService dataService;
         private readonly LoginService loginService;
-        private readonly IOptions<RimionshipOptions> options;
         private readonly AttentionService _attention;
         private readonly SettingService _settingService;
         private readonly LinkGenerator _linkGenerator;
@@ -26,7 +24,6 @@ namespace RimionshipServer.API
              EventsService eventsService,
              DataService dataService,
              LoginService loginService,
-             IOptions<RimionshipOptions> options,
              AttentionService attention,
              SettingService settingService,
              LinkGenerator linkGenerator)
@@ -37,7 +34,6 @@ namespace RimionshipServer.API
             this.eventsService = eventsService;
             this.dataService = dataService;
             this.loginService = loginService;
-            this.options = options;
             _attention = attention;
             _settingService = settingService;
             _linkGenerator = linkGenerator;
@@ -163,7 +159,6 @@ namespace RimionshipServer.API
             if ((user.HasQuit && request.Event.Any()) || user.WasBanned)
                 return new FutureEventsResponse();
 
-            // PARTIALLY implemented - at least, we keep the events in-memory
             var events = request.Event.Select(e => new UserEvent(user.Id, e.Ticks, e.Name, e.Quest, e.Faction, e.Points, e.Strategy, e.ArrivalMode));
             this.eventsService.AddOrUpdateEvents(user.Id, events);
 
@@ -219,7 +214,7 @@ namespace RimionshipServer.API
             };
         }
 
-        private void VerifyId(string id)
+        private static void VerifyId(string id)
         {
             if (string.IsNullOrEmpty(id))
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"{nameof(id)} is empty"));
