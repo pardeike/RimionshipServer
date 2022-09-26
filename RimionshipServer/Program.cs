@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 #if RELEASE
+using NUglify.Css;
+using NUglify.JavaScript;
 using NUglify;
 #endif
 using RimionshipServer;
