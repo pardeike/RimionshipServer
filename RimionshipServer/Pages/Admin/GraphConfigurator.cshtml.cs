@@ -147,8 +147,9 @@ namespace RimionshipServer.Pages.Admin
             ((List<RimionUser>) graphData.UsersReference).AddRange(await _dbContext.Users
                                                                                      .Where(x => ids.Contains(x.Id))
                                                                                      .ToArrayAsync());
-            graphData.Start = Start.ToUniversalTime();
-            graphData.End   = End.ToUniversalTime();
+            //FFS!
+            graphData.Start = Start - TimeSpan.FromHours(2);
+            graphData.End   = End   - TimeSpan.FromHours(2);
             return await CreateAsync(graphData);
         }
 
