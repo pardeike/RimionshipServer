@@ -15,7 +15,7 @@ namespace RimionshipServer.Pages.Admin
         private readonly RandomNumberGenerator _secureRandom = RandomNumberGenerator.Create();
         private readonly RimionDbContext _dbContext;
 
-        private static readonly Dictionary<string, string> statsNames = new()
+        public static readonly Dictionary<string, string> StatsNames = new()
         {
             { nameof(Stats.Wealth), "Koloniewert" },
             { nameof(Stats.MapCount), "Maps" },
@@ -86,7 +86,7 @@ namespace RimionshipServer.Pages.Admin
         public bool[]                  AllGraphsSelects     { get; set; } = null!;
         public List<GraphRotationData> AllRotations         { get; set; } = null!;
 
-        public static string               StatsName(string key) => statsNames.ContainsKey(key) ? statsNames[key] : key;
+        public static string               StatsName(string key) => StatsNames.ContainsKey(key) ? StatsNames[key] : key;
         public static string               NowNoSeconds()        => DateTime.Now.ToString("yyyy-MM-dd HH:mm");
 
         public async Task<IActionResult> OnGet()

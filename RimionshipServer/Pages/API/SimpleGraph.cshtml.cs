@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Data;
 using System.Drawing;
+using RimionshipServer.Pages.Admin;
 
 namespace RimionshipServer.Pages.Api;
 
@@ -109,7 +110,7 @@ public class SimpleGraph : PageModel
 
         Datasets     = datasets;
         GraphName    = _graphData.Accesscode;
-        GraphHeading = _graphData.Statt;
+        GraphHeading = GraphConfigurator.StatsNames[_graphData.Statt];
         return Page();
     }
     
