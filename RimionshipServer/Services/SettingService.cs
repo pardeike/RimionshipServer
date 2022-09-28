@@ -6,6 +6,12 @@ namespace RimionshipServer.Services
     {
         private MiscSettings.Settings?         _activeSetting;
 
+        public async Task ReloadSetting(RimionDbContext dbContext)
+        {
+            if (_activeSetting is not null)
+                await SelectActiveSetting(dbContext, _activeSetting.Id);
+        }
+        
         public async Task<MiscSettings.Settings> GetActiveSetting(RimionDbContext dbContext, CancellationToken cancellationToken = default)
         {
             if (_activeSetting is not null)

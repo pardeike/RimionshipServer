@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using RimionshipServer.Data;
+using RimionshipServer.Services;
 
 namespace RimionshipServer.Pages.Admin
 {
@@ -11,10 +12,11 @@ namespace RimionshipServer.Pages.Admin
         public MiscSettings.Settings Settings { get; set; } = null!;
 
         private readonly RimionDbContext _dbContext;
-        
-        public CreateNewSetting(RimionDbContext dbContext)
+        private readonly SettingService  _settingService;
+        public CreateNewSetting(RimionDbContext dbContext, SettingService settingService)
         {
-            _dbContext = dbContext;
+            _dbContext           = dbContext;
+            _settingService = settingService;
         }
 
         public async Task<IActionResult> OnGetAsync(int? settingId)
@@ -38,15 +40,12 @@ namespace RimionshipServer.Pages.Admin
         public async Task<IActionResult> OnPostCreateAsync()
         {
             if (Settings.Id == 0)
-            {
                 _dbContext.Settings.Add(Settings);
-            }
             else
-            {
                 _dbContext.Settings.Update(Settings);
-            }
             
             await _dbContext.SaveChangesAsync();
+            await _settingService.ReloadSetting(_dbContext);
             return RedirectToPage("/Admin/ModSettings");
         }
         
