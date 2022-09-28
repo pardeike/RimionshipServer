@@ -2,8 +2,8 @@
 {
     public class GraphUser
     {
-        public string UserId   { get; set; }
-        public string UserName { get; set; }
-        public double Value { get; set; }
+        public string UserId   { get; set; } = null!;
+        public string UserName { get; set; } = null!;
+        public double Value    { get; set; }
     }
 }

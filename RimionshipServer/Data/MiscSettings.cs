@@ -5,16 +5,16 @@
         public class BroadcastMessage
         {
             public int    Id   { get; set; }
-            public string Text { get; set; }
+            public string Text { get; set; } = null!;
         }
         
         public class Settings
         {
             public                          int        Id                 { get; set; }
-            public                          string     Name               { get; set; }
-            public                          Rising     Rising             { get; set; }
-            public                          Punishment Punishment         { get; set; }
-            public                          Traits     Traits             { get; set; }
+            public                          string     Name               { get; set; }  = null!;
+            public                          Rising     Rising             { get; set; }  = null!;
+            public                          Punishment Punishment         { get; set; }  = null!;
+            public                          Traits     Traits             { get; set; }  = null!;
             public static implicit operator API.Settings(Settings settings) => new (){
                                                                                          Punishment = settings.Punishment,
                                                                                          Rising     = settings.Rising,
@@ -91,7 +91,7 @@
         {
             public int     Id             { get; set; }
             public string? SaveFile       { get; set; }
-            public string  DownloadURI    { get; set; }
+            public string  DownloadURI    { get; set; } = null!;
             public int     CountColonists { get; set; }
         }
     }

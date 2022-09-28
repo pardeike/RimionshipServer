@@ -22,10 +22,10 @@ namespace RimionshipServer.Data
 
         private DbSet<MiscSettings.SaveSettings> SaveSettings { get; set; } = null!;
 
-        private static MiscSettings.State? _cachedGameState;
-        private static string? _cachedMotd;
-        private static string? _cachedStreamer;
-        private static MiscSettings.SaveSettings _cachedSaveSettings;
+        private static MiscSettings.State?       _cachedGameState;
+        private static string?                   _cachedMotd;
+        private static string?                   _cachedStreamer;
+        private static MiscSettings.SaveSettings _cachedSaveSettings = null!;
 
         public async Task SetSaveSettingsAsync(string downloadURI, SaveFile? saveFile, int countColonist)
         {

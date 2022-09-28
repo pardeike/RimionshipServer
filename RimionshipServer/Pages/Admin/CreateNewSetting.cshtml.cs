@@ -8,7 +8,7 @@ namespace RimionshipServer.Pages.Admin
     public class CreateNewSetting : PageModel
     {
         [BindProperty(SupportsGet = true)]
-        public MiscSettings.Settings Settings { get; set; }
+        public MiscSettings.Settings Settings { get; set; } = null!;
 
         private readonly RimionDbContext _dbContext;
         

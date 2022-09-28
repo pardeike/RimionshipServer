@@ -24,7 +24,7 @@ namespace RimionshipServer.Services
                 if (comment.IsNullOrWhiteSpace())
                     DirectionInstructions = DirectionInstructions.Remove(userId);
                 else
-                    DirectionInstructions = DirectionInstructions.SetItem(userId, comment);
+                    DirectionInstructions = DirectionInstructions.SetItem(userId, comment!);
 
                 await dashboardContext.Clients.All.SetDirectionInstruction(new DirectionInstruction(userId, comment));
             }

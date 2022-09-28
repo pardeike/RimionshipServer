@@ -57,27 +57,34 @@ namespace RimionshipServer.Pages.Admin
             _dbContext = dbContext;
         }
 
+        private static readonly TimeSpan TimeZoneOffset;
+        static GraphConfigurator()
+        {
+            var now = DateTime.Now;
+            TimeZoneOffset = now - now.ToUniversalTime();
+        }
+        
         public record UserNameId(string Name, string Id);
         
         public bool Done { get; set; }
 
-        public string AccessCode { get; set; }
+        public string AccessCode { get; set; } = null!;
 
-        public string LastTime { get; set; }
-        public List<SelectListItem> LastTimeListItems { get; set; }
+        public string               LastTime          { get; set; } = null!;
+        public List<SelectListItem> LastTimeListItems { get; set; } = null!;
 
-        public List<SelectListItem>    StattSelectListItems { get; set; }
-        public string                  Statt                { get; set; }
-        public List<UserNameId>        UserSelectListItems  { get; set; }
-        public bool[]                  AllUserSelects       { get; set; }
+        public List<SelectListItem>    StattSelectListItems { get; set; } = null!;
+        public string                  Statt                { get; set; } = null!;
+        public List<UserNameId>        UserSelectListItems  { get; set; } = null!;
+        public bool[]                  AllUserSelects       { get; set; } = null!;
         public DateTime                Start                { get; set; }
         public DateTime                End                  { get; set; }
         public int                     IntervalSeconds      { get; set; }
         public int                     CountUser            { get; set; }
         public bool                    Autorefresh          { get; set; }
-        public List<GraphData>         AllGraphs            { get; set; }
-        public bool[]                  AllGraphsSelects     { get; set; }
-        public List<GraphRotationData> AllRotations         { get; set; }
+        public List<GraphData>         AllGraphs            { get; set; } = null!;
+        public bool[]                  AllGraphsSelects     { get; set; } = null!;
+        public List<GraphRotationData> AllRotations         { get; set; } = null!;
 
         public static string               StatsName(string key) => statsNames.ContainsKey(key) ? statsNames[key] : key;
         public static string               NowNoSeconds()        => DateTime.Now.ToString("yyyy-MM-dd HH:mm");
@@ -148,8 +155,8 @@ namespace RimionshipServer.Pages.Admin
                                                                                      .Where(x => ids.Contains(x.Id))
                                                                                      .ToArrayAsync());
             
-            graphData.Start          = Start;
-            graphData.End            = End;
+            graphData.Start = new DateTimeOffset(Start, TimeZoneOffset);
+            graphData.End   = new DateTimeOffset(End,   TimeZoneOffset);
             return await CreateAsync(graphData);
         }
 
