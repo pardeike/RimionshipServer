@@ -56,13 +56,6 @@ namespace RimionshipServer.Pages.Admin
         {
             _dbContext = dbContext;
         }
-
-        private static readonly TimeSpan TimeZoneOffset;
-        static GraphConfigurator()
-        {
-            var now = DateTime.Now;
-            TimeZoneOffset = now - now.ToUniversalTime();
-        }
         
         public record UserNameId(string Name, string Id);
         
@@ -154,9 +147,8 @@ namespace RimionshipServer.Pages.Admin
             ((List<RimionUser>) graphData.UsersReference).AddRange(await _dbContext.Users
                                                                                      .Where(x => ids.Contains(x.Id))
                                                                                      .ToArrayAsync());
-            
-            graphData.Start = new DateTimeOffset(Start, TimeZoneOffset);
-            graphData.End   = new DateTimeOffset(End,   TimeZoneOffset);
+            graphData.Start = Start.ToUniversalTime();
+            graphData.End   = End.ToUniversalTime();
             return await CreateAsync(graphData);
         }
 
