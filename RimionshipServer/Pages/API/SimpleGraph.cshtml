@@ -7,10 +7,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preload" href="~/fonts/RimWordFont.ttf" as="font" crossorigin="anonymous">
     @{
     #if DEBUG
     }
-        <link rel="stylesheet" href="/css/fonts.css">
+    <link rel="stylesheet" href="/css/fonts.css">
     @{
     #else
     }
@@ -22,7 +23,7 @@
     <title>Graph @Model.GraphName</title>
 </head>
 <body>
-    <label style="color: #9d9d9c;font-size: xx-large" class="rimfont">@Model.GraphHeading</label>
+    <label style="color: #cd0000; font-size: xx-large" class="rimfont">@Model.GraphHeading</label>
     <div class="chart-container" style="position: relative; height:@(Html.ViewData["height"] ?? 1080)px; width:@(Html.ViewData["width"] ?? 1920)px; margin-top: 40px;">
         <canvas id="myChart"></canvas>
     </div>
