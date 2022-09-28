@@ -11,9 +11,9 @@
         @Html.Label(nameof(MiscSettings.Settings.Name)) <br/>
         @Html.TextBoxFor(x => x.Settings.Name) <br/>
         <br/> <h3>@nameof(MiscSettings.Punishment)</h3><br/>
-        @Html.Label(nameof(MiscSettings.Punishment.StartPauseInterval)) <br/>
+        <label>MaxCooldownFactor</label> <br/>
         @Html.TextBoxFor(x => x.Settings.Punishment.StartPauseInterval) <br/>
-        @Html.Label(nameof(MiscSettings.Punishment.FinalPauseInterval)) <br/>
+        <label>CooldownPawnCap</label> <br/>
         @Html.TextBoxFor(x => x.Settings.Punishment.FinalPauseInterval) <br/>
         @Html.Label(nameof(MiscSettings.Punishment.MinThoughtFactor)) <br/>
         @Html.TextBoxFor(x => x.Settings.Punishment.MinThoughtFactor) <br/>
