@@ -6,12 +6,24 @@
 }
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>Graph @Model.GraphName</title>
-    </head>
-    <body>
-    <div class="chart-container" style="position: relative; height:@(Html.ViewData["height"] ?? 1080)px; width:@(Html.ViewData["width"] ?? 1920)px;">
+<head>
+    @{
+    #if DEBUG
+    }
+        <link rel="stylesheet" href="/css/fonts.css">
+    @{
+    #else
+    }
+        <link rel="stylesheet" href="/css/fonts.min.css">
+    @{
+    #endif
+    }
+    <meta charset="utf-8"/>
+    <title>Graph @Model.GraphName</title>
+</head>
+<body>
+    <label style="color: #9d9d9c;font-size: xx-large" class="rimfont">@Model.GraphHeading</label>
+    <div class="chart-container" style="position: relative; height:@(Html.ViewData["height"] ?? 1080)px; width:@(Html.ViewData["width"] ?? 1920)px; margin-top: 40px;">
         <canvas id="myChart"></canvas>
     </div>
     <script>
@@ -53,31 +65,31 @@
                      }
                  },
                  plugins: {
-						  @{
-								var embedded = Html.ViewData["embed"] is not null;
-						  }
-						  @if (embedded)
-                    {
-                        @Html.Raw(@"legend:{
-                           display: false
-                        }
-                       ")
-                    }
-                    else
-                    {
-                        @Html.Raw(@"
-                        legend:
-                        {
-                            position: 'right',
-                            labels:
-                            {
-                                font:
-                                {
-                                    size: 24
-                                }
-                            }
-                        }")
-                    }
+				     @{
+						var embedded = Html.ViewData["embed"] is not null;
+					    if (embedded)
+                         {
+                             @Html.Raw(@"legend:{
+                                display: false
+                             }
+                            ")
+                         }
+                         else
+                         {
+                             @Html.Raw(@"
+                             legend:
+                             {
+                                 position: 'right',
+                                 labels:
+                                 {
+                                     font:
+                                     {
+                                         size: 24
+                                     }
+                                 }
+                             }")
+                         }
+					 }
                  },
                  scales: {
                      x: {

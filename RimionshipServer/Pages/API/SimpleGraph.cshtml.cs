@@ -9,16 +9,16 @@ namespace RimionshipServer.Pages.Api;
 public class SimpleGraph : PageModel
 {
     public static readonly Color[] Colors ={
-                                                ColorTranslator.FromHtml("#00429d"),
-                                                ColorTranslator.FromHtml("#3c66ad"),
-                                                ColorTranslator.FromHtml("#5f8bbc"),
-                                                ColorTranslator.FromHtml("#82b2c9"),
-                                                ColorTranslator.FromHtml("#abd8d2"),
-                                                ColorTranslator.FromHtml("#fbc8b7"),
-                                                ColorTranslator.FromHtml("#f79291"),
-                                                ColorTranslator.FromHtml("#e45d6f"),
-                                                ColorTranslator.FromHtml("#c42a51"),
-                                                ColorTranslator.FromHtml("#93003a")
+                                                ColorTranslator.FromHtml("#332288"), // #00429d
+                                                ColorTranslator.FromHtml("#88ccee"), // #3c66ad
+                                                ColorTranslator.FromHtml("#44aa99"), // #5f8bbc
+                                                ColorTranslator.FromHtml("#117733"), // #82b2c9
+                                                ColorTranslator.FromHtml("#999933"), // #abd8d2
+                                                ColorTranslator.FromHtml("#ddcc77"), // #fbc8b7
+                                                ColorTranslator.FromHtml("#661100"), // #f79291
+                                                ColorTranslator.FromHtml("#cc6677"), // #e45d6f
+                                                ColorTranslator.FromHtml("#882255"), // #c42a51
+                                                ColorTranslator.FromHtml("#aa4499")  // #93003a
                                             };
     
     public SimpleGraph(RimionDbContext dbContext)
@@ -28,6 +28,9 @@ public class SimpleGraph : PageModel
 
     [BindProperty(SupportsGet = true)]
     public string GraphName { get; set; } = null!;
+
+    [BindProperty(SupportsGet = true)]
+    public string GraphHeading { get; set; } = null!;
 
     [BindProperty(SupportsGet = true)]
     public string[] Labels { get; set; } = null!;
@@ -83,7 +86,7 @@ public class SimpleGraph : PageModel
                                                              ((await _dbContext.FetchDataVerticalAsync(start, end, _graphData.IntervalSeconds, _graphData.Statt, userId.Id)), userId.UserName)
                                                         ));
         }
-
+        
         var datasetRecords = new Dictionary<string, List <DataEntry>>();
         foreach (var perUser in tasks) //per user
         {
@@ -104,8 +107,9 @@ public class SimpleGraph : PageModel
                       .OrderByDescending(x => float.Parse(x.Value.Where(d => d.y is not null && d.y != String.Empty).MaxBy(d => d.x)!.y))
                       .Select((datasetRecord, index) => new Dataset(datasetRecord.Key, Colors[index], datasetRecord.Value));
 
-        Datasets  = datasets;
-        GraphName = _graphData.Accesscode;
+        Datasets     = datasets;
+        GraphName    = _graphData.Accesscode;
+        GraphHeading = _graphData.Statt;
         return Page();
     }
     
