@@ -8,45 +8,45 @@
 <div class="text-center">
     <form method="post">
         <h2>@nameof(MiscSettings.Settings)</h2><br/>
-        @Html.Label(nameof(MiscSettings.Settings.Name)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Name) <br/>
+        <label asp-for="Settings.Name"></label> <br/>
+        <input asp-for="Settings.Name"/> <br/>
         <br/> <h3>@nameof(MiscSettings.Punishment)</h3><br/>
         <label>MaxCooldownFactor</label> <br/>
-        @Html.TextBoxFor(x => x.Settings.Punishment.StartPauseInterval) <br/>
+        <input asp-for="Settings.Punishment.StartPauseInterval"/> <br/>
         <label>CooldownPawnCap</label> <br/>
-        @Html.TextBoxFor(x => x.Settings.Punishment.FinalPauseInterval) <br/>
-        @Html.Label(nameof(MiscSettings.Punishment.MinThoughtFactor)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Punishment.MinThoughtFactor) <br/>
-        @Html.Label(nameof(MiscSettings.Punishment.MaxThoughtFactor)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Punishment.MaxThoughtFactor) <br/>
+        <input asp-for="Settings.Punishment.FinalPauseInterval"/> <br/>
+        <label asp-for="Settings.Punishment.MinThoughtFactor"></label> <br/>
+        <input asp-for="Settings.Punishment.MinThoughtFactor"/> <br/>
+        <label asp-for="Settings.Punishment.MaxThoughtFactor"></label> <br/>
+        <input asp-for="Settings.Punishment.MaxThoughtFactor"/> <br/>
         
         <br/> <h3>@nameof(MiscSettings.Rising)</h3><br/>
-        @Html.Label(nameof(MiscSettings.Rising.RisingCooldown)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Rising.RisingCooldown) <br/>
-        @Html.Label(nameof(MiscSettings.Rising.RisingInterval)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Rising.RisingInterval) <br/>
-        @Html.Label(nameof(MiscSettings.Rising.RisingIntervalMinimum)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Rising.RisingIntervalMinimum) <br/>
-        @Html.Label(nameof(MiscSettings.Rising.MaxFreeColonistCount)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Rising.MaxFreeColonistCount) <br/>
-        @Html.Label(nameof(MiscSettings.Rising.RisingReductionPerColonist)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Rising.RisingReductionPerColonist) <br/>
+        <label asp-for="Settings.Rising.RisingCooldown"></label> <br/>
+        <input asp-for="Settings.Rising.RisingCooldown"/> <br/>
+        <label asp-for="Settings.Rising.RisingInterval"></label> <br/>
+        <input asp-for="Settings.Rising.RisingInterval"/> <br/>
+        <label asp-for="Settings.Rising.RisingIntervalMinimum"></label> <br/>
+        <input asp-for="Settings.Rising.RisingIntervalMinimum"/> <br/>
+        <label asp-for="Settings.Rising.MaxFreeColonistCount"></label> <br/>
+        <input asp-for="Settings.Rising.MaxFreeColonistCount"/> <br/>
+        <label asp-for="Settings.Rising.RisingReductionPerColonist"></label> <br/>
+        <input asp-for="Settings.Rising.RisingReductionPerColonist"/> <br/>
         
          <br/><h3>@nameof(MiscSettings.Traits)</h3><br/>
-        @Html.Label(nameof(MiscSettings.Traits.ScaleFactor)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Traits.ScaleFactor) <br/>
-        @Html.Label(nameof(MiscSettings.Traits.BadTraitSuppression)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Traits.BadTraitSuppression) <br/>
-        @Html.Label(nameof(MiscSettings.Traits.GoodTraitSuppression)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Traits.GoodTraitSuppression) <br/>
-        @Html.Label(nameof(MiscSettings.Traits.MaxMeleeFlames)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Traits.MaxMeleeFlames) <br/>
-        @Html.Label(nameof(MiscSettings.Traits.MaxMeleeSkill)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Traits.MaxMeleeSkill) <br/>
-        @Html.Label(nameof(MiscSettings.Traits.MaxShootingFlames)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Traits.MaxShootingFlames) <br/>
-        @Html.Label(nameof(MiscSettings.Traits.MaxShootingSkill)) <br/>
-        @Html.TextBoxFor(x => x.Settings.Traits.MaxShootingSkill) <br/>
+        <label asp-for="Settings.Traits.ScaleFactor"></label> <br/>
+        <input asp-for="Settings.Traits.ScaleFactor"/> <br/>
+        <label asp-for="Settings.Traits.GoodTraitSuppression"></label> <br/>
+        <input asp-for="Settings.Traits.GoodTraitSuppression"/> <br/>
+        <label asp-for="Settings.Traits.BadTraitSuppression"></label> <br/>
+        <input asp-for="Settings.Traits.BadTraitSuppression"/> <br/>
+        <label asp-for="Settings.Traits.MaxMeleeFlames"></label> <br/>
+        <input asp-for="Settings.Traits.MaxMeleeFlames"/> <br/>
+        <label asp-for="Settings.Traits.MaxMeleeSkill"></label> <br/>
+        <input asp-for="Settings.Traits.MaxMeleeSkill"/> <br/>
+        <label asp-for="Settings.Traits.MaxShootingFlames"></label> <br/>
+        <input asp-for="Settings.Traits.MaxShootingFlames"/> <br/>
+        <label asp-for="Settings.Traits.MaxShootingSkill"></label> <br/>
+        <input asp-for="Settings.Traits.MaxShootingSkill"/> <br/>
         
         <button asp-page-handler="Create" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">
             @(string.IsNullOrWhiteSpace(Model.Settings.Name) ? "Add Setting" : "Update Setting")
@@ -56,9 +56,9 @@
             <button asp-page-handler="Delete" class="btn btn-outline-dark" onclick="return window.confirm(`Do you really want to delete @Model.Settings.Name?`); " type="submit" style="margin-top: 1%">Delete Setting</button>
         }
         
-        @Html.HiddenFor(x => x.Settings.Id)
-        @Html.HiddenFor(x => x.Settings.Punishment.Id)
-        @Html.HiddenFor(x => x.Settings.Traits.Id)
-        @Html.HiddenFor(x => x.Settings.Rising.Id)
+        <input asp-for="Settings.Id" hidden=""/>
+        <input asp-for="Settings.Punishment.Id" hidden=""/>
+        <input asp-for="Settings.Traits.Id" hidden=""/>
+        <input asp-for="Settings.Rising.Id" hidden=""/>
     </form>
 </div>
