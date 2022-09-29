@@ -41,24 +41,28 @@ body {
 
 @media only screen and (min-width: 1920px) {
     .rimtitlebackground {
-        background-image: url("/img/bloodbackground_1080p.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6)) !important;
+        background-image: url("/img/bloodbackground_1080p.png") !important;
     }
 }
+
 @media only screen and (max-width: 1919px) and (min-width: 1600px) {
     .rimtitlebackground {
-        background-image: url("/img/bloodbackground_1600x900.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6)) !important;
+        background-image: url("/img/bloodbackground_1600x900.png") !important;
     }
 }
+
 @media only screen and (max-width: 1599px) and (min-width: 1280px) {
     .rimtitlebackground {
-        background-image: url("/img/bloodbackground_HW_1080p.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6)) !important;
+        background-image: url("/img/bloodbackground_HW_1080p.png") !important;
     }
 }
+
 @media only screen and (max-width: 1279px) {
     .rimtitlebackground {
-        background-image: url("/img/bloodbackground_720p.png"), linear-gradient(rgba(128,0,128,0.6),rgba(128,0,128,0.6)) !important;
+        background-image: url("/img/bloodbackground_720p.png") !important;
     }
 }
+
 .rimtitlebackground {
     background-position: center center;
     background-blend-mode: multiply;

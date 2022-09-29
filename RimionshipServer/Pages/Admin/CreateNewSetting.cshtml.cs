@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using RimionshipServer.API;
 using RimionshipServer.Data;
 using RimionshipServer.Services;
 
@@ -12,10 +13,10 @@ namespace RimionshipServer.Pages.Admin
         public MiscSettings.Settings Settings { get; set; } = null!;
 
         private readonly RimionDbContext _dbContext;
-        private readonly SettingService  _settingService;
+        private readonly SettingService _settingService;
         public CreateNewSetting(RimionDbContext dbContext, SettingService settingService)
         {
-            _dbContext           = dbContext;
+            _dbContext = dbContext;
             _settingService = settingService;
         }
 
@@ -30,11 +31,12 @@ namespace RimionshipServer.Pages.Admin
                                            .FirstAsync(x => x.Id == settingId);
                 return Page();
             }
-            Settings = new MiscSettings.Settings{
-                                                    Punishment = new (),
-                                                    Rising     = new (),
-                                                    Traits     = new (),
-                                                };
+            Settings = new MiscSettings.Settings
+            {
+                Punishment = new(),
+                Rising = new(),
+                Traits = new(),
+            };
             return Page();
         }
         public async Task<IActionResult> OnPostCreateAsync()
@@ -43,18 +45,21 @@ namespace RimionshipServer.Pages.Admin
                 _dbContext.Settings.Add(Settings);
             else
                 _dbContext.Settings.Update(Settings);
-            
+
             await _dbContext.SaveChangesAsync();
             await _settingService.ReloadSetting(_dbContext);
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
-        
+
         public async Task<IActionResult> OnPostDeleteAsync()
         {
-            if (Settings.Id == 1)
-                return RedirectToPage("/Admin/ModSettings");
-            _dbContext.Settings.Remove(Settings);
-            await _dbContext.SaveChangesAsync();
+            if (Settings.Id != 1)
+            {
+                _dbContext.Settings.Remove(Settings);
+                await _dbContext.SaveChangesAsync();
+            }
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
     }

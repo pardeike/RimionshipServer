@@ -6,13 +6,13 @@ using RimionshipServer.API;
 using RimionshipServer.Data;
 using RimionshipServer.Pages.Api;
 using RimionshipServer.Services;
+using Serilog;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using Serilog;
 namespace RimionshipServer.Pages.Admin
 {
     public class ModSettings : PageModel
@@ -69,7 +69,7 @@ namespace RimionshipServer.Pages.Admin
             var toDelete = await _dbContext.SaveFiles.FindAsync(SaveFileId);
             if (toDelete is null)
                 return RedirectToPage("/Admin/ModSettings");
-            
+
             if (SaveFilePageModel.SafeFile?.Name == toDelete.Name)
             {
                 SaveFilePageModel.SafeFile = null;
@@ -77,15 +77,18 @@ namespace RimionshipServer.Pages.Admin
             }
             _dbContext.SaveFiles.Remove(toDelete);
             await _dbContext.SaveChangesAsync();
-            
+
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
-        
+
         public async Task<IActionResult> OnPostFileSelectAsync()
         {
             SaveFilePageModel.SafeFile = await _dbContext.SaveFiles.FindAsync(SaveFileId);
             Debug.Assert(SaveFilePageModel.SafeFile is not null);
             await _dbContext.SetSaveSettingsAsync("http://" + DownloadURI, SaveFilePageModel.SafeFile, StartingPawns);
+
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
 
@@ -130,6 +133,7 @@ namespace RimionshipServer.Pages.Admin
             var md5B64 = Convert.ToHexString(hash).ToLower();
             if (oldFile?.MD5 == md5B64)
             {
+                _ = GrpcService.ToggleResetEvent();
                 return RedirectToPage("/Admin/ModSettings");
             }
             memstream.Seek(0, SeekOrigin.Begin);
@@ -152,6 +156,7 @@ namespace RimionshipServer.Pages.Admin
                 _dbContext.SaveFiles.Update(oldFile);
             }
             await _dbContext.SaveChangesAsync();
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
 
@@ -260,6 +265,7 @@ namespace RimionshipServer.Pages.Admin
             _dbContext.LatestStats.RemoveRange(await _dbContext.LatestStats.ToArrayAsync());
             Stats.ClearCache();
             await _dbContext.SaveChangesAsync();
+            _ = GrpcService.ToggleResetEvent();
             return RedirectToPage("/Admin/ModSettings");
         }
     }
