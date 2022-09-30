@@ -22,7 +22,7 @@
     <meta charset="utf-8"/>
     <title>Graph @Model.GraphName</title>
 </head>
-<body style="overflow: hidden">
+<body>
     <label style="color: #cd0000; font-size: xx-large" class="rimfont">@Model.GraphHeading</label>
     <div class="chart-container" style="position: relative; height:@(Html.ViewData["height"] ?? 1080)px; width:@(Html.ViewData["width"] ?? 1920)px; margin-top: 40px;">
         <canvas id="myChart" style="height:@(Html.ViewData["height"] ?? 1080)px; width:@(Html.ViewData["width"] ?? 1920)px;"></canvas>
