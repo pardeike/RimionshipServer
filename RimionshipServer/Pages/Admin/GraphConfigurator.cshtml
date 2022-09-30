@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{graphId?}"
 @model RimionshipServer.Pages.Admin.GraphConfigurator
 
 @{
@@ -86,10 +86,19 @@
 								<td>Dargestellter Wert</td>
 								<td>@Html.DropDownListFor(x => x.Statt, Model.StattSelectListItems)</td>
 							</tr>
-							<tr>
-								<td>Zeitraum</td>
-								<td>Letzten @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) Minuten</td>
-							</tr>
+                            <tr>
+                                <td>Zeitraum</td>
+                                <td>Letzten <select asp-for="LastTime">
+                                    <option selected="@(Model.LastTime == "1")" value="@(1 * 60)">1</option>
+                                    <option selected="@(Model.LastTime == "5")" value="@(5 * 60)">5</option>
+                                    <option selected="@(Model.LastTime == "10")" value="@(10 * 60)">10</option>
+                                    <option selected="@(Model.LastTime == "30")" value="@(30 * 60)">30</option>
+                                    <option selected="@(Model.LastTime == "60")" value="@(60 * 60)">60</option>
+                                    <option selected="@(Model.LastTime == "120")" value="@(120 * 60)">120</option>
+                                    <option selected="@(Model.LastTime == "240")" value="@(240 * 60)">240</option>
+                                    <option selected="@(Model.LastTime == "" + 365 * 24 * 60)" value="@(365 * 24 * 60 * 60)">All</option>
+                                </select> Minuten</td>
+                            </tr>
 							<tr>
 								<td>Anzahl</td>
 								<td>@Html.TextBoxFor(x => x.CountUser, new { @class = "pmtallocated pull-right" , @dir = "rtl" }) Teilnehmer</td>
@@ -116,7 +125,16 @@
                             </tr>
                             <tr>
                                 <td>Zeitraum</td>
-                                <td>Letzten @Html.DropDownListFor(x => x.LastTime, Model.LastTimeListItems) Minuten</td>
+                                <td>Letzten <select asp-for="LastTime">
+                                    <option selected="@(Model.LastTime == "1")" value="@(1 * 60)">1</option>
+                                    <option selected="@(Model.LastTime == "5")" value="@(5 * 60)">5</option>
+                                    <option selected="@(Model.LastTime == "10")" value="@(10 * 60)">10</option>
+                                    <option selected="@(Model.LastTime == "30")" value="@(30 * 60)">30</option>
+                                    <option selected="@(Model.LastTime == "60")" value="@(60 * 60)">60</option>
+                                    <option selected="@(Model.LastTime == "120")" value="@(120 * 60)">120</option>
+                                    <option selected="@(Model.LastTime == "240")" value="@(240 * 60)">240</option>
+                                    <option selected="@(Model.LastTime == "" + 365 * 24 * 60)" value="@(365 * 24 * 60 * 60)">All</option>
+                                </select> Minuten</td>
                             </tr>
                             <tr>
                                 <td>Anzahl</td>
@@ -144,11 +162,11 @@
 							</tr>
 							<tr>
 								<td>Start</td>
-								<td><input type="datetime-local" class="text-box single-line" asp-for="Start" value="@GraphConfigurator.NowNoSeconds()" asp-format="{0:yyyy-MM-dd HH:mm}" /></td>
+								<td><input type="datetime-local" class="text-box single-line" asp-for="Start" value="@(Model.Start == default ? GraphConfigurator.NowNoSeconds() : Model.Start.ToString("yyyy-MM-dd HH:mm"))" asp-format="{0:yyyy-MM-dd HH:mm}" /></td>
 							</tr>
 							<tr>
 								<td>Ende</td>
-								<td><input type="datetime-local" class="text-box single-line" asp-for="End" value="@GraphConfigurator.NowNoSeconds()" asp-format="{0:yyyy-MM-dd HH:mm}" /></td>
+								<td><input type="datetime-local" class="text-box single-line" asp-for="End" value="@(Model.End == default ? GraphConfigurator.NowNoSeconds() : Model.End.ToString("yyyy-MM-dd HH:mm"))" asp-format="{0:yyyy-MM-dd HH:mm}" /></td>
 							</tr>
 							<tr>
 								<td>Intervall</td>
@@ -156,29 +174,29 @@
 							</tr>
 							<tr style="vertical-align: top;">
 								<td>Spieler (@Model.UserSelectListItems.Count)</td>
-                        <td>
-									<table cellpadding="8">
-										<tr style="vertical-align: top;">
-											@{
-												var all = Model.UserSelectListItems.Count; // 103
-												var count = 0;
-											}
-											@for (var col = 0; col < 5; col++)
-											{
-												<td>
-													@{
-														var rows = (all - count + 4 - col) / (5 - col);
-													}
-													 @for (var row = 0; row < rows; row++)
-													 {
-														  <input asp-for="@Model.AllUserSelects[count]" type="checkbox"/>
-														  <label>@Model.UserSelectListItems[count++].Name</label><br/>
-													 }
-												</td>
-											}
-										</tr>
-									</table>
-                        </td>
+                                <td>
+                                    <table cellpadding="8">
+                                        <tr style="vertical-align: top;">
+                                            @{
+                                                var all = Model.UserSelectListItems.Count; // 103
+                                                var count = 0;
+                                            }
+                                            @for (var col = 0; col < 5; col++)
+                                            {
+                                                <td>
+                                                    @{
+                                                        var rows = (all - count + 4 - col) / (5 - col);
+                                                    }
+                                                    @for (var row = 0; row < rows; row++)
+                                                    {
+                                                        <input asp-for="@Model.AllUserSelects[count]" type="checkbox"/>
+                                                        <label>@Model.UserSelectListItems[count++].Name</label><br/>
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                    </table>
+                                </td>
 							</tr>
 							<tr>
 								<td>Mitrollen</td>
