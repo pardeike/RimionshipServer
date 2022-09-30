@@ -154,24 +154,35 @@
 								<td>Intervall</td>
 								<td>@Html.EditorFor(x => x.IntervalSeconds) Sekunden</td>
 							</tr>
-							<tr>
-								<td>Spieler</td>
-                                <td>
-                                    @for (var index = 0; index < Model.UserSelectListItems.Count; index++)
-                                    {
-                                        var index1 = index;
-                                        <label>@Model.UserSelectListItems[index1].Name</label>
-                                        <input asp-for="@Model.AllUserSelects[index1]" type="checkbox"/>
-                                        if ((index + 1) % 6 == 0)
-                                        {
-                                            <br/>
-                                        }
-                                    }
-                                </td>
+							<tr style="vertical-align: top;">
+								<td>Spieler (@Model.UserSelectListItems.Count)</td>
+                        <td>
+									<table cellpadding="8">
+										<tr style="vertical-align: top;">
+											@{
+												var all = Model.UserSelectListItems.Count; // 103
+												var count = 0;
+											}
+											@for (var col = 0; col < 5; col++)
+											{
+												<td>
+													@{
+														var rows = (all - count + 4 - col) / (5 - col);
+													}
+													 @for (var row = 0; row < rows; row++)
+													 {
+														  <input asp-for="@Model.AllUserSelects[count]" type="checkbox"/>
+														  <label>@Model.UserSelectListItems[count++].Name</label><br/>
+													 }
+												</td>
+											}
+										</tr>
+									</table>
+                        </td>
 							</tr>
 							<tr>
-								<td>Aktualisierung</td>
-								<td>@Html.CheckBoxFor(x => x.Autorefresh) Automatisch</td>
+								<td>Mitrollen</td>
+								<td>@Html.CheckBoxFor(x => x.Autorefresh) Interval immer von 'jetzt' anzeigen</td>
 							</tr>
 						</table>
 						<button asp-page-handler="CreateAdvanced" class="btn btn-outline-dark" type="submit" style="margin-top: 1%">Graph erzeugen</button>
