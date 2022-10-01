@@ -29,10 +29,7 @@ public class SimpleGraph : PageModel
 
     [BindProperty(SupportsGet = true)]
     public string GraphName { get; set; } = null!;
-
-    [BindProperty(SupportsGet = true)]
-    public string GraphHeading { get; set; } = null!;
-
+    
     [BindProperty(SupportsGet = true)]
     public string[] Labels { get; set; } = null!;
 
@@ -110,7 +107,6 @@ public class SimpleGraph : PageModel
 
         Datasets     = datasets;
         GraphName    = _graphData.Accesscode;
-        GraphHeading = GraphConfigurator.StatsNames[_graphData.Statt];
         return Page();
     }
     

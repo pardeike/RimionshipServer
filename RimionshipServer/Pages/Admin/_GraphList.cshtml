@@ -16,9 +16,9 @@
 		@foreach (var modelAllowedMod in Model.AllGraphs)
 		{
 			<tr>
-				<td>
-					@modelAllowedMod.Accesscode
-				</td>
+                <td>
+                    <a href=@modelAllowedMod.Id>@modelAllowedMod.Accesscode</a>
+                </td>
 				<td>
 					@(GraphConfigurator.StatsName(modelAllowedMod.Statt))
 				</td>

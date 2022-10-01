@@ -1,0 +1,33 @@
+﻿@page "{secret}"
+@model RimionshipServer.Pages.Api.SimpleGraphHeading
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@Model.GraphHeading</title>
+    <link rel="preload" href="~/fonts/RimWordFont.ttf" as="font" crossorigin="anonymous">
+@{
+#if DEBUG
+}
+    <link rel="stylesheet" href="/css/fonts.css">
+@{
+#else
+}
+    <link rel="stylesheet" href="/css/fonts.min.css">
+@{
+#endif
+}
+    <meta charset="utf-8"/>
+</head>
+<body>
+<label style="color: #cd0000; font-size: xx-large" class="rimfont">@Model.GraphHeading</label>
+    <script type="text/javascript">
+        window.setTimeout(() => window.location = window.location, 5000);
+    </script>
+</body>
+</html>
