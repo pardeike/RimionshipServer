@@ -6,7 +6,7 @@ namespace RimionshipServer.API
 {
     public class GrpcService : API.APIBase
     {
-        private const int ApiVersion = 1;
+        private const int ApiVersion = 2;
         private readonly RimionDbContext db;
         private readonly ConfigurationService configurationService;
         private readonly ScoreService scoreService;
@@ -61,7 +61,7 @@ namespace RimionshipServer.API
         public override async Task<HelloResponse> Hello(HelloRequest request, ServerCallContext context)
         {
             if (ApiVersion != request.ApiVersion)
-                throw new RpcException(new Status(StatusCode.PermissionDenied, $"Server expects API version {ApiVersion}, but client sent {request.ApiVersion}"));
+                throw new RpcException(new Status(StatusCode.Aborted, $"Expected API version {ApiVersion} but got {request.ApiVersion}"));
 
             VerifyId(request.Id);
 
