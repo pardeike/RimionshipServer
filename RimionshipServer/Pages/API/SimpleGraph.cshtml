@@ -7,6 +7,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="height=1200, initial-scale=1.0">
     <link rel="preload" href="~/fonts/RimWordFont.ttf" as="font" crossorigin="anonymous">
     @{
     #if DEBUG
@@ -25,7 +26,7 @@
 <body>
     <label style="color: #cd0000; font-size: xx-large" class="rimfont">@Model.GraphHeading</label>
     <div class="chart-container" style="position: relative; height:@(Html.ViewData["height"] ?? 1080)px; width:@(Html.ViewData["width"] ?? 1920)px; margin-top: 40px;">
-        <canvas id="myChart" style="height:@(Html.ViewData["height"] ?? 1080)px; width:@(Html.ViewData["width"] ?? 1920)px;"></canvas>
+        <canvas id="myChart"></canvas>
     </div>
     <script>
         window.setTimeout(() => window.location = window.location, 5000);
