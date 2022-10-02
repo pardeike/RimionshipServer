@@ -170,17 +170,17 @@ namespace RimionshipServer.API
             if ((State.Types.Game)(await db.GetGameStateAsync(context.CancellationToken)).GameState
                 is not State.Types.Game.Started
                and not State.Types.Game.Training)
-                return new StatsResponse { Interval = 10 };
+                return new StatsResponse { Interval = 30 };
 
             var user = await GetCachedUserAsync(request.Id);
             if (user.HasQuit)
-                return new StatsResponse { Interval = 10 };
+                return new StatsResponse { Interval = 30 };
 
             // PARTIALLY implemented - at least, we keep the scores in-memory
             await this.scoreService.AddOrUpdateScoreAsync(request.Id, user.UserName, user.AvatarUrl, request.Wealth, context.CancellationToken);
 
             await db.AddOrUpdateStatsAsync(user, request);
-            return new StatsResponse { Interval = 10 };
+            return new StatsResponse { Interval = 30 };
         }
 
         private static readonly ManualResetEventSlim _mres = new();
