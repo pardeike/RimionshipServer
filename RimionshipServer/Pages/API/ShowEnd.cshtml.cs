@@ -18,5 +18,18 @@ namespace RimionshipServer.Pages.Api
             var ret = wealth.OrderBy(x => x.Item3).Aggregate("Name;Koloniewert;\n", (y, x) =>  y + $"{x.Item2};{x.Item3};\n");
             return new OkObjectResult(ret);
         }
+        
+        public async Task<IActionResult> OnGetFull()
+        {
+            var wealth = await Stats.GetFinalResults(_dbContext);
+            var ret    = "Name;" + Stats.FieldNames.Aggregate("", (s, fn) => s + fn + ";") + "\n";
+
+            ret = (wealth.OrderByDescending(x => x.Key)
+                         .Select(pair => new{pair, result = pair.Key + ";"})
+                         .Select(t => Stats.FieldNames.Aggregate(t.result, (current, value) => current + t.pair.Value[value] + ";")))
+               .Aggregate(ret, (current1, result) => current1 + result + "\n");
+
+            return new OkObjectResult(ret);
+        }
     }
 }

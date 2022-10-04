@@ -16,6 +16,39 @@ namespace RimionshipServer.Data
                 concurrentDictionary.Clear();
         }
         
+        public static async Task<Dictionary<string, Dictionary<string, double>>> GetFinalResults(RimionDbContext context)
+        {
+            var ret = new Dictionary<string, Dictionary<string, double>>();
+            foreach (var statInDb in _StatToUser.Keys)
+            {
+                var ids = _StatToUser[statInDb].OrderByDescending(x => x.Value)
+                                               .Select(x => x.Key)
+                                               .ToList();
+                var values = _StatToUser[statInDb].OrderByDescending(x => x.Value)
+                                                  .Select(x => x.Value)
+                                                  .ToList();
+                (string UserName, string stat, double value)[] valueTuples = (await context.Users
+                                                                                           .Where(l => ids.Contains(l.Id))
+                                                                                           .Where(x => !x.WasBanned)
+                                                                                           .ToListAsync())
+                                                                            .OrderBy(l => ids.IndexOf(l.Id))
+                                                                            .Select((x, y) => (x.UserName, statInDb, values[y]))
+                                                                            .ToArray();
+                foreach (var (userName, stat, value) in valueTuples)
+                {
+                    if (!ret.TryGetValue(userName, out var innerDict))
+                    {
+                        ret.Add(userName, new(){{stat, value}});
+                    }
+                    else
+                    {
+                        innerDict.Add(stat, value);
+                    }
+                }
+            }
+            return ret;
+        }
+        
         public static async Task<(int, string, double)[]> GetTopXNotBannedUserFromDynamicCacheWithValue(string stat, int max, RimionDbContext context)
         {
             var ids = _StatToUser[stat].OrderByDescending(x => x.Value)
